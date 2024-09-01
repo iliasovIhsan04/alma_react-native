@@ -1,34 +1,120 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
+import { Tabs } from "expo-router";
+import React from "react";
 
-import { TabBarIcon } from '@/components/navigation/TabBarIcon';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { Image, View } from "react-native";
+import { stylesAll } from "./style";
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: "#DC0200",
         headerShown: false,
-      }}>
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
+          title: "Главная",
+          tabBarIcon: ({ focused }) => (
+            <View>
+              {focused ? (
+                <Image
+                  style={{ width: 26, height: 26 }}
+                  source={require("../../assets/images/home.png")}
+                />
+              ) : (
+                <Image
+                  style={{ width: 26, height: 26 }}
+                  source={require("../../assets/images/homeRed.png")}
+                />
+              )}
+            </View>
           ),
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="catalog"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
+          title: "Каталог",
+
+          tabBarIcon: ({ focused }) => (
+            <View>
+              {focused ? (
+                <Image
+                  style={{ width: 26, height: 26 }}
+                  source={require("../../assets/images/catalogRed.png")}
+                />
+              ) : (
+                <Image
+                  style={{ width: 26, height: 26 }}
+                  source={require("../../assets/images/category.png")}
+                />
+              )}
+            </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="qrCod"
+        options={{
+          title: "Карта",
+          tabBarIcon: ({ focused }) => (
+            <View style={stylesAll.footer_absolute}>
+              {focused ? (
+                <Image
+                  style={{ width: 26, height: 26 }}
+                  source={require("../../assets/images/qrCodWhite.png")}
+                />
+              ) : (
+                <Image
+                  style={{ width: 26, height: 26 }}
+                  source={require("../../assets/images/qrCodWhite.png")}
+                />
+              )}
+            </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="map"
+        options={{
+          title: "Локации",
+          tabBarIcon: ({ focused }) => (
+            <View>
+              {focused ? (
+                <Image
+                  style={{ width: 26, height: 26 }}
+                  source={require("../../assets/images/mapRed.png")}
+                />
+              ) : (
+                <Image
+                  style={{ width: 26, height: 26 }}
+                  source={require("../../assets/images/map.png")}
+                />
+              )}
+            </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: "Профиль",
+          tabBarIcon: ({ focused }) => (
+            <View>
+              {focused ? (
+                <Image
+                  style={{ width: 26, height: 26 }}
+                  source={require("../../assets/images/profileRed.png")}
+                />
+              ) : (
+                <Image
+                  style={{ width: 26, height: 26 }}
+                  source={require("../../assets/images/profile.png")}
+                />
+              )}
+            </View>
           ),
         }}
       />
