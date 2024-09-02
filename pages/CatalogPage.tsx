@@ -39,6 +39,7 @@ const CatalogPage = () => {
   );
 };
 
+
 const styles = StyleSheet.create({
   shop_block: {
     flexDirection: "row",

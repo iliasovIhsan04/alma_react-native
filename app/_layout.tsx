@@ -22,8 +22,13 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack>
+    <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="/navigate/SettingPage"
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen name="/navigate/ToHelp" options={{ headerShown: false }} />
     </Stack>
   );
 }

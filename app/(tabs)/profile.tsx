@@ -1,6 +1,7 @@
 import ProfilePage from "@/pages/ProfilePage";
 import React from "react";
 import { Text, View } from "react-native";
+import SettingPage from "../navigate/SettingPage";
 
 const profile = () => {
   return (
@@ -11,4 +12,3 @@ const profile = () => {
 };
 
 export default profile;
-  
