@@ -29,6 +29,7 @@ export default function RootLayout() {
         options={{ headerShown: false }}
       />
       <Stack.Screen name="/navigate/ToHelp" options={{ headerShown: false }} />
+      <Stack.Screen name="/navigate/AboutTheApplication" options={{ headerShown: false }} />
     </Stack>
   );
 }

@@ -154,7 +154,10 @@ const ProfilePage = () => {
               style={styles.line}
               source={require("../assets/images/line.png")}
             />
-            <TouchableOpacity style={styles.area_box}>
+            <TouchableOpacity
+              style={styles.area_box}
+              onPress={() => router.push("navigate/AboutTheApplication")}
+            >
               <View
                 style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
               >

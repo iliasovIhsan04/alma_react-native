@@ -1,5 +1,12 @@
 import React from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { stylesAll } from "../(tabs)/style";
 import { router } from "expo-router";
 
@@ -25,8 +32,64 @@ const ToHelp = () => {
           source={require("../../assets/images/logo.png")}
         />
         <View style={{ gap: 10 }}>
-          <View style={styles.help_box}></View>
-          <View style={styles.help_box}></View>
+          <View style={styles.help_box}>
+            <View style={{ flexDirection: "column", gap: 6 }}>
+              <Text style={styles.help_text1}>Возникли вопросы?</Text>
+              <Text style={styles.help_text2}>
+                Наша поддержка проконсультирует Вас по любым возникшим вопросам
+              </Text>
+            </View>
+            <View style={styles.social_networks_block}>
+              <Pressable style={styles.social_networks_box}>
+                <Image
+                  style={{ width: 34, height: 34 }}
+                  source={require("../../assets/images/callPhone.png")}
+                />
+              </Pressable>
+              <Pressable style={styles.social_networks_box}>
+                <Image
+                  style={{ width: 34, height: 34 }}
+                  source={require("../../assets/images/whatsapp.png")}
+                />
+              </Pressable>
+              <Pressable style={styles.social_networks_box}>
+                <Image
+                  style={{ width: 28, height: 28 }}
+                  source={require("../../assets/images/telegram.png")}
+                />
+              </Pressable>
+            </View>
+          </View>
+
+          <View style={styles.help_box}>
+            <View style={{ flexDirection: "column", gap: 6 }}>
+              <Text style={styles.help_text1}>Мы в социальных сетях</Text>
+              <Text style={styles.help_text2}>
+                Подписывайтесь на наши социальные сети и будьте в курсе всех
+                новостей
+              </Text>
+            </View>
+            <View style={styles.social_networks_block}>
+              <Pressable style={styles.social_networks_box}>
+                <Image
+                  style={{ width: 30, height: 30 }}
+                  source={require("../../assets/images/instagram.png")}
+                />
+              </Pressable>
+              <Pressable style={styles.social_networks_box}>
+                <Image
+                  style={{ width: 30, height: 30 }}
+                  source={require("../../assets/images/tiktok.png")}
+                />
+              </Pressable>
+              <Pressable style={styles.social_networks_box}>
+                <Image
+                  style={{ width: 36, height: 26 }}
+                  source={require("../../assets/images/youtube.png")}
+                />
+              </Pressable>
+            </View>
+          </View>
         </View>
       </View>
     </View>
@@ -47,6 +110,34 @@ const styles = StyleSheet.create({
     backgroundColor: "#F5F7FA",
     padding: 16,
     borderRadius: 16,
+    flexDirection: "column",
+    justifyContent: "space-between",
+  },
+
+  help_text1: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#191919",
+  },
+  help_text2: {
+    fontSize: 14,
+    fontWeight: "400",
+    color: "#6B6B6B",
+  },
+  social_networks_block: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 22,
+  },
+  social_networks_box: {
+    width: 64,
+    height: 64,
+    backgroundColor: "#FFFFFF",
+    borderRadius: 50,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 

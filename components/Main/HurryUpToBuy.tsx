@@ -95,8 +95,8 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   block_red: {
-    width: "28%",
-    height: 70,
+    width: "29%",
+    height: 68,
     borderRadius: 50,
     backgroundColor: "#DC0200",
   },
