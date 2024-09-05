@@ -91,4 +91,16 @@ export const stylesAll = StyleSheet.create({
     marginTop: 12,
     marginBottom: 30,
   },
+  input: {
+    width: "100%",
+    height: 45,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+  },
+  label: {
+    fontSize: 12,
+    fontWeight: 500,
+    color: "#191919",
+    marginBottom: 5,
+  },
 });

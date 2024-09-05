@@ -58,6 +58,10 @@ export default function RootLayout() {
         name="/navigate/Notifications"
         options={{ headerShown: false }}
       />
+      <Stack.Screen
+        name="/navigate/BasketProducts"
+        options={{ headerShown: false }}
+      />
     </Stack>
   );
 }

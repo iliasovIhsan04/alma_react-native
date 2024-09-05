@@ -36,7 +36,8 @@
     "react-native-screens": "3.31.1",
     "react-native-svg": "^15.6.0",
     "react-native-web": "~0.19.10",
-    "expo-brightness": "~12.0.1"
+    "expo-brightness": "~12.0.1",
+    "@react-native-picker/picker": "2.7.5"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

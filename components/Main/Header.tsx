@@ -5,11 +5,13 @@ import { Image, Pressable, StyleSheet, View } from "react-native";
 const Header = () => {
   return (
     <View style={styles.header}>
-      <Pressable onPress={() => router.push("/navigate/Notications")}>
+      <Pressable onPress={() => router.push("/navigate/Notifications")}>
         <Image source={require("../../assets/images/notificationBing.png")} />
       </Pressable>
       <Image source={require("../../assets/images/blackLogotip.png")} />
-      <Image source={require("../../assets/images/cart.png")} />
+      <Pressable onPress={() => router.push("/navigate/BasketPage")}>
+        <Image source={require("../../assets/images/cart.png")} />
+      </Pressable>
     </View>
   );
 };
