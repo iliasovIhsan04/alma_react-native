@@ -41,7 +41,10 @@ const ProfilePage = () => {
       <View style={stylesAll.container}>
         <View style={styles.area_block_all}>
           <View style={styles.area_block}>
-            <TouchableOpacity style={styles.area_box}>
+            <TouchableOpacity
+              style={styles.area_box}
+              onPress={() => router.push("navigate/MyDetails")}
+            >
               <View
                 style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
               >
@@ -86,7 +89,10 @@ const ProfilePage = () => {
             </Pressable>
           </View>
           <View style={styles.area_block}>
-            <TouchableOpacity style={styles.area_box}>
+            <TouchableOpacity
+              style={styles.area_box}
+              onPress={() => router.push("navigate/FeaturedProducts")}
+            >
               <View
                 style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
               >
@@ -108,7 +114,10 @@ const ProfilePage = () => {
               style={styles.line}
               source={require("../assets/images/line.png")}
             />
-            <TouchableOpacity style={styles.area_box}>
+            <TouchableOpacity
+              style={styles.area_box}
+              onPress={() => router.push("navigate/PurchaseHistory")}
+            >
               <View
                 style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
               >

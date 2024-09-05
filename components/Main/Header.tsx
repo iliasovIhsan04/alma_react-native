@@ -1,10 +1,13 @@
+import { router } from "expo-router";
 import React from "react";
-import { Image, StyleSheet, View } from "react-native";
+import { Image, Pressable, StyleSheet, View } from "react-native";
 
 const Header = () => {
   return (
     <View style={styles.header}>
-      <Image source={require("../../assets/images/notificationBing.png")} />
+      <Pressable onPress={() => router.push("/navigate/Notications")}>
+        <Image source={require("../../assets/images/notificationBing.png")} />
+      </Pressable>
       <Image source={require("../../assets/images/blackLogotip.png")} />
       <Image source={require("../../assets/images/cart.png")} />
     </View>

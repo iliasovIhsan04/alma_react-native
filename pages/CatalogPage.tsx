@@ -1,8 +1,18 @@
+import { stylesAll } from "@/app/(tabs)/style";
 import axios from "axios";
+import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { View, TouchableOpacity, StyleSheet, Image, Text } from "react-native";
+import {
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  Text,
+  ActivityIndicator,
+} from "react-native";
 
 interface CatalogItem {
+  id: string; // Add id to the interface
   color: string;
   img: string;
   name: string;
@@ -25,11 +35,21 @@ const CatalogPage = () => {
     fetchUserData();
   }, []);
 
+  if (data.length === 0) {
+    return (
+      <View style={stylesAll.loading}>
+        <ActivityIndicator color="red" size="small" />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.shop_block}>
       {data.map((item) => (
         <TouchableOpacity
+          key={item.id}
           style={[styles.shop_box, { backgroundColor: item.color }]}
+          onPress={() => router.push(`/details/${item.id}`)}
         >
           <Text style={styles.shop_text}>{item.name}</Text>
           <Image style={styles.image_shop} source={{ uri: item.img }} />
@@ -38,7 +58,6 @@ const CatalogPage = () => {
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   shop_block: {
@@ -61,7 +80,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 0,
     bottom: 0,
-    objectFit: "cover",
+    resizeMode: "cover", // Replace objectFit with resizeMode
     borderBottomRightRadius: 16,
   },
   shop_text: {

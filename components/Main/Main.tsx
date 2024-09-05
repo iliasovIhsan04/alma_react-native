@@ -11,6 +11,7 @@ import BonusCart from "./BonusCart";
 import Header from "./Header";
 import HurryUpToBuy from "./HurryUpToBuy";
 import Promotion from "./Promotion";
+import { stylesAll } from "@/app/(tabs)/style";
 
 export default function Main() {
   return (

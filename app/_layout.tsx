@@ -29,7 +29,35 @@ export default function RootLayout() {
         options={{ headerShown: false }}
       />
       <Stack.Screen name="/navigate/ToHelp" options={{ headerShown: false }} />
-      <Stack.Screen name="/navigate/AboutTheApplication" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="/navigate/AboutTheApplication"
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="/navigate/PurchaseHistory"
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="/navigate/FeaturedProducts"
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="/navigate/MyDetails"
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen name="/details/:cat" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="/navigate/HarryBuyDetails"
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="/details/HarryDetailsId/:id"
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="/navigate/Notifications"
+        options={{ headerShown: false }}
+      />
     </Stack>
   );
 }
