@@ -1,41 +1,52 @@
+import { AppDispatch, RootState } from "@/Redux/reducer/store";
+import { fetchUserInfo } from "@/Redux/reducer/UserInfo";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useState } from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
-import axios from "axios";
-interface CatalogItem {
-  id: number;
-  name: string;
-  image: string;
-  price: number;
-  description: string;
-  count: number;
-  qrimg: string;
-  bonus: number;
-}
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 
 const BonusCart = () => {
-  // const [data, setData] = useState<CatalogItem[]>([]);
-  // const api = "https://alma-market.online/card/type/one/auth/user-info";
+  const dispatch: AppDispatch = useDispatch();
+  const [token, setToken] = useState<string | null>(null);
 
-  // useEffect(() => {
-  //   const fetchUserData = async () => {
-  //     try {
-  //       const response = await axios.get<CatalogItem[]>(api);
-  //       setData(response.data);
-  //     } catch (error) {
-  //       console.error("Error fetching data:", error);
-  //     }
-  //   };
+  const getToken = async (): Promise<void> => {
+    try {
+      const storedToken = await AsyncStorage.getItem("tokenActivation");
+      setToken(storedToken);
+    } catch (error) {
+      console.error("Error retrieving token:", error);
+      setToken(null);
+    }
+  };
 
-  //   fetchUserData();
-  // }, []);
+  useEffect(() => {
+    const loadUserInfo = async () => {
+      await getToken();
+      if (token) {
+        dispatch(fetchUserInfo());
+      }
+    };
+
+    loadUserInfo();
+  }, [dispatch, token]);
+
+  const data = useSelector((state: RootState) => state.users);
+  const user = data?.user;
 
   return (
-    <View style={styles.bonus_block}>
-      <View style={{ flexDirection: "column", marginLeft: 10 }}>
-        <Text style={styles.bonus}>0</Text>
-        <Text style={styles.bonus_text}>бонусов</Text>
-      </View>
-    </View>
+    <>
+      {token && user ? (
+        <Pressable style={styles.bonus_block}>
+          <View style={{ flexDirection: "column", marginLeft: 10 }}>
+            <Text style={styles.bonus}>{user.bonus}</Text>
+            <Text style={styles.bonus_text}>бонусов</Text>
+          </View>
+          <View style={styles.bonus_image_box}>
+            <Image style={styles.bonus_img} source={{ uri: user.qrimg }} />
+          </View>
+        </Pressable>
+      ) : null}
+    </>
   );
 };
 
@@ -43,6 +54,7 @@ const styles = StyleSheet.create({
   bonus_block: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
     height: 168,
     backgroundColor: "#DC0200",
     borderRadius: 16,
@@ -59,6 +71,17 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#FFFFFF",
     fontWeight: "600",
+  },
+  bonus_image_box: {
+    width: 150,
+    height: "100%",
+    borderRadius: 10,
+    overflow: "hidden",
+  },
+  bonus_img: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
   },
 });
 

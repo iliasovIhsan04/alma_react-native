@@ -17,7 +17,7 @@ const ProfilePage = () => {
     <View style={{ backgroundColor: "white", height: "100%" }}>
       <View style={styles.headerWrapper}>
         <ImageBackground
-          source={require("../assets/images/fon_profile.png")}
+          source={require("../../../assets/images/fon_profile.png")}
           style={styles.header_profile}
         >
           <View style={stylesAll.container}>
@@ -31,7 +31,7 @@ const ProfilePage = () => {
             >
               <Image
                 style={{ width: 77, height: 29 }}
-                source={require("../assets/images/vector.png")}
+                source={require("../../../assets/images/vector.png")}
               />
               <Text style={styles.profile_text}>iliyas uulu Ihsan</Text>
             </View>
@@ -50,7 +50,7 @@ const ProfilePage = () => {
               >
                 <View style={styles.area_box_red}>
                   <Image
-                    source={require("../assets/images/profile.png")}
+                    source={require("../../../assets/images/profile.png")}
                     style={{ width: 20, height: 20 }}
                     tintColor={"white"}
                   />
@@ -59,12 +59,12 @@ const ProfilePage = () => {
               </View>
               <Image
                 style={{ width: 24, height: 24, tintColor: "#B3B4B4" }}
-                source={require("../assets/images/moreRight.png")}
+                source={require("../../../assets/images/moreRight.png")}
               />
             </TouchableOpacity>
             <Image
               style={styles.line}
-              source={require("../assets/images/line.png")}
+              source={require("../../../assets/images/line.png")}
             />
             <Pressable
               style={styles.area_box}
@@ -75,7 +75,7 @@ const ProfilePage = () => {
               >
                 <View style={styles.area_box_red}>
                   <Image
-                    source={require("../assets/images/setting.png")}
+                    source={require("../../../assets/images/setting.png")}
                     style={{ width: 20, height: 20 }}
                     tintColor={"white"}
                   />
@@ -84,7 +84,7 @@ const ProfilePage = () => {
               </View>
               <Image
                 style={{ width: 24, height: 24, tintColor: "#B3B4B4" }}
-                source={require("../assets/images/moreRight.png")}
+                source={require("../../../assets/images/moreRight.png")}
               />
             </Pressable>
           </View>
@@ -98,7 +98,7 @@ const ProfilePage = () => {
               >
                 <View style={styles.area_box_red}>
                   <Image
-                    source={require("../assets/images/heart_card.png")}
+                    source={require("../../../assets/images/heart_card.png")}
                     style={{ width: 20, height: 20 }}
                     tintColor={"white"}
                   />
@@ -107,12 +107,12 @@ const ProfilePage = () => {
               </View>
               <Image
                 style={{ width: 24, height: 24, tintColor: "#B3B4B4" }}
-                source={require("../assets/images/moreRight.png")}
+                source={require("../../../assets/images/moreRight.png")}
               />
             </TouchableOpacity>
             <Image
               style={styles.line}
-              source={require("../assets/images/line.png")}
+              source={require("../../../assets/images/line.png")}
             />
             <TouchableOpacity
               style={styles.area_box}
@@ -123,7 +123,7 @@ const ProfilePage = () => {
               >
                 <View style={styles.area_box_red}>
                   <Image
-                    source={require("../assets/images/history_icons.png")}
+                    source={require("../../../assets/images/history_icons.png")}
                     style={{ width: 20, height: 20 }}
                     tintColor={"white"}
                   />
@@ -132,7 +132,7 @@ const ProfilePage = () => {
               </View>
               <Image
                 style={{ width: 24, height: 24, tintColor: "#B3B4B4" }}
-                source={require("../assets/images/moreRight.png")}
+                source={require("../../../assets/images/moreRight.png")}
               />
             </TouchableOpacity>
           </View>
@@ -147,7 +147,7 @@ const ProfilePage = () => {
               >
                 <View style={styles.area_box_red}>
                   <Image
-                    source={require("../assets/images/help.png")}
+                    source={require("../../../assets/images/help.png")}
                     style={{ width: 20, height: 20 }}
                     tintColor={"white"}
                   />
@@ -156,12 +156,12 @@ const ProfilePage = () => {
               </View>
               <Image
                 style={{ width: 24, height: 24, tintColor: "#B3B4B4" }}
-                source={require("../assets/images/moreRight.png")}
+                source={require("../../../assets/images/moreRight.png")}
               />
             </TouchableOpacity>
             <Image
               style={styles.line}
-              source={require("../assets/images/line.png")}
+              source={require("../../../assets/images/line.png")}
             />
             <TouchableOpacity
               style={styles.area_box}
@@ -172,7 +172,7 @@ const ProfilePage = () => {
               >
                 <View style={styles.area_box_red}>
                   <Image
-                    source={require("../assets/images/info.png")}
+                    source={require("../../../assets/images/info.png")}
                     style={{ width: 20, height: 20 }}
                     tintColor={"white"}
                   />
@@ -181,7 +181,7 @@ const ProfilePage = () => {
               </View>
               <Image
                 style={{ width: 24, height: 24, tintColor: "#B3B4B4" }}
-                source={require("../assets/images/moreRight.png")}
+                source={require("../../../assets/images/moreRight.png")}
               />
             </TouchableOpacity>
           </View>
@@ -191,7 +191,7 @@ const ProfilePage = () => {
             >
               <View style={styles.area_box_red}>
                 <Image
-                  source={require("../assets/images/logout.png")}
+                  source={require("../../../assets/images/logout.png")}
                   style={{ width: 20, height: 20 }}
                   tintColor={"white"}
                 />
@@ -200,7 +200,7 @@ const ProfilePage = () => {
             </View>
             <Image
               style={{ width: 24, height: 24, tintColor: "#B3B4B4" }}
-              source={require("../assets/images/moreRight.png")}
+              source={require("../../../assets/images/moreRight.png")}
             />
           </TouchableOpacity>
         </View>

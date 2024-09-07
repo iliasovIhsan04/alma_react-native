@@ -1,4 +1,4 @@
-import CatalogPage from "@/pages/CatalogPage";
+import CatalogPage from "@/Redux/reducer/pages/CatalogPage";
 import {
   StyleSheet,
   ScrollView,

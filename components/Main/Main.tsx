@@ -12,6 +12,7 @@ import Header from "./Header";
 import HurryUpToBuy from "./HurryUpToBuy";
 import Promotion from "./Promotion";
 import { stylesAll } from "@/app/(tabs)/style";
+import { router } from "expo-router";
 
 export default function Main() {
   return (
@@ -21,6 +22,12 @@ export default function Main() {
     >
       <Header />
       <BonusCart />
+      <TouchableOpacity
+        style={stylesAll.button}
+        onPress={() => router.push("/auth/Registration")}
+      >
+        <Text>Войти</Text>
+      </TouchableOpacity>
       <View style={styles.apple_check_price}>
         <TouchableOpacity style={styles.apple_box}>
           <Image

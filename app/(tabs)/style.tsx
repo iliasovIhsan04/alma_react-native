@@ -4,6 +4,13 @@ export const stylesAll = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
   },
+  auth_text: {
+    fontSize: 14,
+    fontWeight: "400",
+    color: "#6B6B6B",
+    textAlign: "center",
+    marginTop: 12,
+  },
   loading: {
     width: "100%",
     height: "100%",
@@ -97,10 +104,34 @@ export const stylesAll = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 10,
   },
+  input_mask: {
+    width: "90%",
+    paddingLeft: 5,
+  },
   label: {
     fontSize: 12,
     fontWeight: 500,
     color: "#191919",
     marginBottom: 5,
+  },
+  input_block_all: {
+    flexDirection: "column",
+    gap: 14,
+    marginTop: 20,
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: 500,
+    color: "white",
+  },
+  phone_input_mask_block: {
+    flexDirection: "row",
+    alignItems: "center",
+    height: 45,
+    backgroundColor: "#f5f7fa",
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "transparent",
+    paddingHorizontal: 10,
   },
 });

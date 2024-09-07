@@ -25,7 +25,7 @@ const Notifications = () => {
     const fetchUserData = async () => {
       try {
         const response = await axios.get<NotificationsItem[]>(
-          `${url}/card/all-one`
+          `${url}/notifications/`
         );
         setNotifications(response.data);
       } catch (error) {
