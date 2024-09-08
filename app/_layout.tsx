@@ -60,7 +60,15 @@ export default function RootLayout() {
               options={{ headerShown: false }}
             />
             <Stack.Screen
+              name="/navigate/PromotionDetails"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
               name="/details/HarryDetailsId/:id"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="/details/PromotionId/:id"
               options={{ headerShown: false }}
             />
             <Stack.Screen

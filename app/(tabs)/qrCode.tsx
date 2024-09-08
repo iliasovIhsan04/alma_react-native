@@ -1,10 +1,11 @@
+import QrCode from "@/components/Main/QrCode";
 import React from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 
 const qrCod = () => {
   return (
     <View>
-      <Text>cart</Text>
+      <QrCode />
     </View>
   );
 };

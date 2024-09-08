@@ -1,6 +1,6 @@
 import { stylesAll } from "@/app/(tabs)/style";
 import { router, useNavigation } from "expo-router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Image,
   ImageBackground,
@@ -10,9 +10,39 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { AppDispatch, RootState } from "../store";
+import { useDispatch, useSelector } from "react-redux";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { fetchUserInfo } from "../UserInfo";
 
 const ProfilePage = () => {
-  const navigation = useNavigation();
+  const dispatch: AppDispatch = useDispatch();
+  const [token, setToken] = useState<string | null>(null);
+
+  const getToken = async (): Promise<void> => {
+    try {
+      const storedToken = await AsyncStorage.getItem("tokenActivation");
+      setToken(storedToken);
+    } catch (error) {
+      console.error("Error retrieving token:", error);
+      setToken(null);
+    }
+  };
+
+  useEffect(() => {
+    const loadUserInfo = async () => {
+      await getToken();
+      if (token) {
+        dispatch(fetchUserInfo());
+      }
+    };
+
+    loadUserInfo();
+  }, [dispatch, token]);
+
+  const data = useSelector((state: RootState) => state.users);
+  const user = data?.user;
+
   return (
     <View style={{ backgroundColor: "white", height: "100%" }}>
       <View style={styles.headerWrapper}>
@@ -33,7 +63,13 @@ const ProfilePage = () => {
                 style={{ width: 77, height: 29 }}
                 source={require("../../../assets/images/vector.png")}
               />
-              <Text style={styles.profile_text}>iliyas uulu Ihsan</Text>
+              {token ? (
+                <Text style={styles.profile_text}>
+                  {user?.first_name} {user?.last_name}!
+                </Text>
+              ) : (
+                ""
+              )}
             </View>
           </View>
         </ImageBackground>

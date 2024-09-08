@@ -134,4 +134,38 @@ export const stylesAll = StyleSheet.create({
     borderColor: "transparent",
     paddingHorizontal: 10,
   },
+  promtion_title: {
+    fontSize: 16,
+    fontWeight: "600",
+    lineHeight: 16,
+    color: "#191919",
+  },
+  btn_all: {
+    width: "100%",
+    height: 45,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  content_modal: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+  },
+  modal_block: {
+    width: "90%",
+    height: 305,
+    backgroundColor: "white",
+    borderRadius: 14,
+    alignItems: "center",
+    overflow: "hidden",
+    position: "relative",
+  },
+  icon_close: {
+    position: "absolute",
+    top: 16,
+    right: 16,
+    zIndex: 1,
+  },
 });

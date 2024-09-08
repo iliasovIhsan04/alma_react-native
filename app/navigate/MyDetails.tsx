@@ -299,12 +299,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   input_box: {
-    height: 50,
-    borderRadius: 5,
-    backgroundColor: "#FFFFFF",
-    borderWidth: 1,
-    borderColor: "#E0E0E0",
-    paddingHorizontal: 10,
+    backgroundColor: "#F5F7FA",
   },
   select_box: {
     flexDirection: "row",

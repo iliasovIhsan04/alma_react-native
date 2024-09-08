@@ -57,7 +57,7 @@ const HarryBuyDetailsId = () => {
         <View style={[stylesAll.header, stylesAll.header_nav]}>
           <TouchableOpacity
             style={stylesAll.header_back_btn}
-            onPress={() => router.push("/navigate/HarryBuyDetails")}
+            onPress={() => router.back()}
           >
             <Image
               style={{ width: 24, height: 24 }}

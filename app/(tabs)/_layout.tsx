@@ -56,7 +56,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="qrCod"
+        name="qrCode"
         options={{
           title: "Карта",
           tabBarIcon: ({ focused }) => (

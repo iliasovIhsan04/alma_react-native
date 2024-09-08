@@ -1,16 +1,47 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Image,
   Pressable,
   StyleSheet,
+  Switch,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import { stylesAll } from "../(tabs)/style";
 import { router } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SettingPage = () => {
+  const [isPetONe, setIsPetOne] = useState(false);
+  const [isPetTwo, setIsPetTwo] = useState(false);
+
+  const toggleSwitchOne = async () => {
+    const newValue = !isPetONe;
+    setIsPetOne(newValue);
+    try {
+      if (newValue) {
+        await AsyncStorage.setItem("notifications", JSON.stringify(newValue));
+      } else {
+        await AsyncStorage.removeItem("notifications");
+      }
+    } catch (error) {
+      console.error("Failed to save switch state to AsyncStorage:", error);
+    }
+  };
+  const toggleSwitchTwo = async () => {
+    const newValue = !isPetTwo;
+    setIsPetTwo(newValue);
+    try {
+      if (newValue) {
+        await AsyncStorage.setItem("auto_brightness", JSON.stringify(newValue));
+      } else {
+        await AsyncStorage.removeItem("auto_brightness");
+      }
+    } catch (error) {
+      console.error("Failed to save switch state to AsyncStorage:", error);
+    }
+  };
   return (
     <View style={styles.settings_block}>
       <View style={stylesAll.container}>
@@ -41,13 +72,19 @@ const SettingPage = () => {
                 Получайте уведомления об акциях и социальных предложениях
               </Text>
             </View>
-            <View style={styles.settings_radio}></View>
+            <Switch
+              trackColor={{ false: "#3e3e3e", true: "#25D366" }}
+              thumbColor={isPetONe ? "#f4f3f4" : "#f4f3f4"}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={toggleSwitchOne}
+              value={isPetONe}
+            />
           </View>
           <View style={styles.settings_box}>
             <View
               style={{
                 flexDirection: "column",
-                gap: 6,
+                gap: 10,
                 width: 240,
               }}
             >
@@ -56,7 +93,13 @@ const SettingPage = () => {
                 Автояркость нужна для корректного считывания шрихкода
               </Text>
             </View>
-            <View style={styles.settings_radio}></View>
+            <Switch
+              trackColor={{ false: "#3e3e3e", true: "#25D366" }}
+              thumbColor={isPetTwo ? "#f4f3f4" : "#f4f3f4"}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={toggleSwitchTwo}
+              value={isPetTwo}
+            />
           </View>
         </View>
         <Pressable style={{ marginTop: 20 }}>
@@ -82,7 +125,6 @@ const styles = StyleSheet.create({
   },
   settings_box: {
     width: "100%",
-    minHeight: 90,
     backgroundColor: "#F5F7FA",
     borderRadius: 10,
     padding: 16,
@@ -109,11 +151,6 @@ const styles = StyleSheet.create({
     fontWeight: 400,
     color: "#6B6B6B",
     lineHeight: 16,
-  },
-  settings_radio: {
-    width: 45,
-    height: 24,
-    backgroundColor: "red",
   },
   remove_accaunt: {
     fontSize: 16,

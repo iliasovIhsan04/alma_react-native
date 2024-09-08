@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Image,
   StyleSheet,
@@ -6,30 +6,56 @@ import {
   View,
   TouchableOpacity,
   ScrollView,
+  Modal,
+  Pressable,
 } from "react-native";
 import BonusCart from "./BonusCart";
 import Header from "./Header";
 import HurryUpToBuy from "./HurryUpToBuy";
 import Promotion from "./Promotion";
-import { stylesAll } from "@/app/(tabs)/style";
 import { router } from "expo-router";
+import { stylesAll } from "@/app/(tabs)/style";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function Main() {
+  const [openModal, setOpenModal] = useState(false);
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
       showsHorizontalScrollIndicator={false}
     >
+      <Modal visible={openModal} transparent={true} animationType="slide">
+        <Pressable
+          style={stylesAll.content_modal}
+          onPress={() => setOpenModal(false)}
+        >
+          <View style={stylesAll.modal_block}>
+            <Ionicons
+              onPress={() => setOpenModal(false)}
+              size={24}
+              style={stylesAll.icon_close}
+              name="close"
+            />
+            <Image
+              style={styles.image_modal}
+              source={require("../../assets/images/soonAlmaGoo.png")}
+            />
+          </View>
+        </Pressable>
+      </Modal>
       <Header />
       <BonusCart />
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={stylesAll.button}
         onPress={() => router.push("/auth/Registration")}
       >
         <Text>Войти</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <View style={styles.apple_check_price}>
-        <TouchableOpacity style={styles.apple_box}>
+        <TouchableOpacity
+          style={styles.apple_box}
+          onPress={() => setOpenModal(true)}
+        >
           <Image
             style={styles.image_apple}
             source={require("../../assets/images/almaGoo.png")}
@@ -50,6 +76,11 @@ export default function Main() {
 }
 
 const styles = StyleSheet.create({
+  image_modal: {
+    width: "100%",
+    height: "100%",
+    objectFit: "cover",
+  },
   apple_check_price: {
     width: "100%",
     flexDirection: "row",
