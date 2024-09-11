@@ -28,7 +28,7 @@ const PromotionId = () => {
       const fetchUserData = async () => {
         try {
           const response = await axios.get<PromotionIdInter>(
-            `${url}/card/${id}`
+            `${url}/card/one${id}`
           );
           setHarryId(response.data);
         } catch (error) {

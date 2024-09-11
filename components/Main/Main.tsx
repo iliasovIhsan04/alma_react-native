@@ -40,17 +40,17 @@ export default function Main() {
               style={styles.image_modal}
               source={require("../../assets/images/soonAlmaGoo.png")}
             />
-          </View>
+          </View> 
         </Pressable>
       </Modal>
       <Header />
       <BonusCart />
-      {/* <TouchableOpacity
+      <TouchableOpacity
         style={stylesAll.button}
         onPress={() => router.push("/auth/Registration")}
       >
         <Text>Войти</Text>
-      </TouchableOpacity> */}
+      </TouchableOpacity>
       <View style={styles.apple_check_price}>
         <TouchableOpacity
           style={styles.apple_box}

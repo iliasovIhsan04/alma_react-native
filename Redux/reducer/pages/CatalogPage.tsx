@@ -12,7 +12,7 @@ import {
 } from "react-native";
 
 interface CatalogItem {
-  id: string; // Add id to the interface
+  id: string;
   color: string;
   img: string;
   name: string;
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 0,
     bottom: 0,
-    resizeMode: "cover", // Replace objectFit with resizeMode
+    resizeMode: "cover",
     borderBottomRightRadius: 16,
   },
   shop_text: {

@@ -70,7 +70,8 @@ const Promotion = () => {
         {
           <View style={{ flexDirection: "row", gap: 10 }}>
             {data.map((el) => (
-              <Pressable
+              <Pressable 
+                key={el.id}
                 style={styles.promotion_box}
                 onPress={() => router.push(`/details/PromotionId/${el.id}`)}
               >

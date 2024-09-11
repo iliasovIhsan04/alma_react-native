@@ -18,6 +18,10 @@ export const stylesAll = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  loading_catalog: {
+    width: "100%",
+    height: 400,
+  },
   header_nav: {
     backgroundColor: "white",
     paddingBottom: 20,
@@ -66,6 +70,7 @@ export const stylesAll = StyleSheet.create({
     width: "100%",
     height: "100%",
     backgroundColor: "white",
+
   },
   purchase_history: {
     width: "100%",
