@@ -1,3 +1,4 @@
+import { stylesAll } from "@/app/(tabs)/style";
 import { router } from "expo-router";
 import React from "react";
 import { Image, Pressable, StyleSheet, View } from "react-native";
@@ -6,11 +7,11 @@ const Header = () => {
   return (
     <View style={styles.header}>
       <Pressable onPress={() => router.push("/navigate/Notifications")}>
-        <Image source={require("../../assets/images/notificationBing.png")} />
+        <Image style={stylesAll.icons} source={require("../../assets/images/notifications.png")}/>
       </Pressable>
-      <Image source={require("../../assets/images/blackLogotip.png")} />
+      <Image style={stylesAll.logotip} source={require("../../assets/images/logotipCenter.png")} />
       <Pressable onPress={() => router.push("/navigate/BasketPage")}>
-        <Image source={require("../../assets/images/cart.png")} />
+        <Image style={stylesAll.icons} source={require("../../assets/images/cart_gray.png")} />
       </Pressable>
     </View>
   );

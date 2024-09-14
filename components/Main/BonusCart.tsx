@@ -3,7 +3,14 @@ import { fetchUserInfo } from "@/Redux/reducer/UserInfo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  ImageBackground,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
 const BonusCart = () => {
@@ -29,7 +36,7 @@ const BonusCart = () => {
     };
 
     loadUserInfo();
-  }, [dispatch, token]);
+  }, [dispatch, token])
 
   const data = useSelector((state: RootState) => state.users);
   const user = data?.user;
@@ -37,17 +44,28 @@ const BonusCart = () => {
   return (
     <>
       {token && user ? (
-        <Pressable
-          style={styles.bonus_block}
-          onPress={() => router.push("/(tabs)/qrCode")}
-        >
-          <View style={{ flexDirection: "column", marginLeft: 10 }}>
-            <Text style={styles.bonus}>{user.bonus}</Text>
-            <Text style={styles.bonus_text}>бонусов</Text>
-          </View>
-          <View style={styles.bonus_image_box}>
-            <Image style={styles.bonus_img} source={{ uri: user.qrimg }} />
-          </View>
+        <Pressable onPress={() => router.push("/(tabs)/qrCode")}>
+          <ImageBackground
+            source={require("../../assets/images/pattern.png")}
+            style={styles.bonus_block}
+          >
+            <View style={{ flexDirection: "column", marginLeft: 10 }}>
+              <Text style={styles.bonus_title}>Бонусная {"\n"} карта</Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={styles.bonus}>{user.bonus}</Text>
+                <Text style={styles.bonus_text}>бонусов</Text>
+              </View>
+            </View>
+
+            <View style={styles.bonus_image_box}>
+              <Image style={styles.bonus_img} source={{ uri: user.qrimg }} />
+            </View>
+          </ImageBackground>
         </Pressable>
       ) : null}
     </>
@@ -55,6 +73,13 @@ const BonusCart = () => {
 };
 
 const styles = StyleSheet.create({
+  bonus_title: {
+    fontSize: 24,
+    fontWeight: "700",
+    color: "#fff",
+    marginBottom: 10,
+    lineHeight: 24,
+  },
   bonus_block: {
     flexDirection: "row",
     alignItems: "center",
@@ -67,14 +92,15 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   bonus: {
-    fontSize: 20,
+    fontSize: 24,
     color: "#FFFFFF",
     fontWeight: "700",
   },
   bonus_text: {
-    fontSize: 18,
+    fontSize: 20,
     color: "#FFFFFF",
     fontWeight: "600",
+    marginLeft: 3,
   },
   bonus_image_box: {
     width: 150,

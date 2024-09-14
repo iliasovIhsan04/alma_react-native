@@ -4,6 +4,26 @@ export const stylesAll = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
   },
+  cell_box: {
+    width: 24,
+    height: 24,
+    borderRadius: 50,
+    borderWidth: 2,
+    borderColor: "#DC0200",
+  },
+  logotip: {
+    width: 80,
+    height: 30,
+  },
+  icons: {
+    width: 24,
+    height: 24,
+  },
+  cell_text: {
+    fontSize: 18,
+    fontWeight: "500",
+    color: "#191919",
+  },
   auth_text: {
     fontSize: 14,
     fontWeight: "400",
@@ -40,7 +60,7 @@ export const stylesAll = StyleSheet.create({
     width: "100%",
     height: 45,
     backgroundColor: "#DC0200",
-    borderRadius: 16,
+    borderRadius: 10,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -70,7 +90,6 @@ export const stylesAll = StyleSheet.create({
     width: "100%",
     height: "100%",
     backgroundColor: "white",
-
   },
   purchase_history: {
     width: "100%",

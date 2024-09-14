@@ -4,6 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Image,
   ScrollView,
   StyleSheet,
@@ -25,6 +26,7 @@ const BasketProducts = () => {
   const [shopCart, setShopCart] = useState<BasketProduct[]>([]);
   const [count, setCount] = useState(0);
   const [basket, setBasket] = useState<BasketProduct[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -45,22 +47,14 @@ const BasketProducts = () => {
 
   const handlePlus = async (id: number) => {
     try {
-      // Найти элемент в корзине и в магазине
       const itemTo = basket.find((el) => el.id === id);
       const itemToLocal = shopCart.find((el) => el.id === id);
 
-      // Вывод отладочного сообщения для проверки значений
-      console.log("itemTo:", itemTo);
-      console.log("itemToLocal:", itemToLocal);
-
-      // Если элемент найден
       const item = itemTo || itemToLocal;
       if (!item) {
         console.error(`Элемент с id ${id} не найден в корзине или магазине`);
         return;
       }
-
-      // Обновление корзины
       const updatedCart = [
         ...shopCart.filter((cartItem) => cartItem.id !== id),
         item,
@@ -68,7 +62,6 @@ const BasketProducts = () => {
       await AsyncStorage.setItem("shopCart", JSON.stringify(updatedCart));
       setShopCart(updatedCart);
 
-      // Обновление счетчика
       const newPlus = { ...plus, [id]: (plus[id] || 0) + 1 };
       await AsyncStorage.setItem("plus", JSON.stringify(newPlus));
       setPlus(newPlus);
@@ -84,19 +77,14 @@ const BasketProducts = () => {
       const currentPlus = { ...plus };
       const currentCount = currentPlus[id] || 0;
 
-      // Уменьшаем количество на 1
       if (currentCount > 0) {
         currentPlus[id] = currentCount - 1;
-
-        // Обновляем AsyncStorage
         await AsyncStorage.setItem("plus", JSON.stringify(currentPlus));
         setPlus(currentPlus);
 
-        // Если количество стало равно нулю, удаляем товар из корзины
         if (currentPlus[id] === 0) {
           await handleRemoveItem(id);
         } else {
-          // Обновляем корзину, если количество больше нуля
           const updatedCart = shopCart.map((item) =>
             item.id === id ? { ...item } : item
           );
@@ -104,7 +92,6 @@ const BasketProducts = () => {
           setShopCart(updatedCart);
         }
 
-        // Пересчитываем общую сумму
         PriceCalculation();
       }
     } catch (error) {
@@ -118,12 +105,20 @@ const BasketProducts = () => {
       const currentCart = currentCartString
         ? JSON.parse(currentCartString)
         : [];
+      AsyncStorage.removeItem(`activeItemsBasket_${id}`);
       const updatedCart = currentCart.filter(
         (item: BasketProduct) => item.id !== id
       );
       await AsyncStorage.setItem("cartsBasket", JSON.stringify(updatedCart));
       setBasket(updatedCart);
-      setShopCart(shopCart.filter((item) => item.id !== id));
+      const updatedShopCart = shopCart.filter((item) => item.id !== id);
+      await AsyncStorage.setItem("shopCart", JSON.stringify(updatedShopCart));
+      setShopCart(updatedShopCart);
+      const newPlus = { ...plus };
+      delete newPlus[id];
+      await AsyncStorage.setItem("plus", JSON.stringify(newPlus));
+      setPlus(newPlus);
+
       PriceCalculation();
     } catch (error) {
       console.error("Ошибка удаления элемента:", error);
@@ -131,21 +126,29 @@ const BasketProducts = () => {
   };
 
   const PriceCalculation = async () => {
-    const shopCart = await AsyncStorage.getItem("shopCart");
-    if (shopCart) {
-      const total = JSON.parse(shopCart).reduce(
+    try {
+      const shopCartString = await AsyncStorage.getItem("shopCart");
+      const shopCart = shopCartString ? JSON.parse(shopCartString) : [];
+
+      const price = shopCart.reduce(
         (acc: number, item: BasketProduct) => acc + item.price,
         0
       );
+
+      let total = 0;
+      shopCart.forEach((item: BasketProduct) => {
+        const itemCount = plus[item.id] || 0;
+        total += item.price * itemCount;
+      });
+
       setCount(total);
-    } else {
-      setCount(0);
+    } catch (error) {
+      console.error("Ошибка вычисления цены:", error);
     }
   };
-
   useEffect(() => {
     PriceCalculation();
-  }, [shopCart]);
+  }, [shopCart, plus]);
 
   return (
     <View style={[stylesAll.background_block]}>
@@ -153,7 +156,7 @@ const BasketProducts = () => {
         <View style={stylesAll.header}>
           <TouchableOpacity
             style={stylesAll.header_back_btn}
-            onPress={() => router.push("/(tabs)/profile")}
+            onPress={() => router.push("/")}
           >
             <Image
               style={{ width: 24, height: 24 }}
@@ -163,97 +166,133 @@ const BasketProducts = () => {
           <Text style={stylesAll.header_name}>Корзина</Text>
           <View style={stylesAll.header_back_btn}></View>
         </View>
-        {basket.length > 0 ? (
-          <View>
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              showsHorizontalScrollIndicator={false}
-              style={{ marginTop: 20, backgroundColor: "blue" }}
-            >
-              <View style={styles.basket_block}>
-                {basket.map((item) =>
-                  item ? (
-                    <View style={styles.product_block} key={item.id}>
-                      {item.preview_img ? (
-                        <Image
-                          style={styles.product_image}
-                          source={{ uri: item.preview_img }}
-                        />
-                      ) : (
-                        <View style={styles.product_image} />
-                      )}
-                      <View
-                        style={{
-                          flexDirection: "column",
-                          justifyContent: "space-between",
-                        }}
-                      >
-                        <Text style={styles.product_title} numberOfLines={2}>
-                          {item.title}
-                        </Text>
-                        <View
-                          style={{
-                            width: "80%",
-                            flexDirection: "row",
-                            alignItems: "center",
-                            justifyContent: "space-between",
-                          }}
+      </View>
+      {basket.length > 0 ? (
+        <View style={styles.basket_block}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+            style={{
+              marginTop: 20,
+              paddingHorizontal: 20,
+              height: "100%",
+            }}
+          >
+            <View style={{ paddingBottom: 500 }}>
+              {basket.map((item) => (
+                <View style={styles.product_block} key={item.id}>
+                  <View style={styles.product_image_block}>
+                    {item.preview_img ? (
+                      <Image
+                        style={styles.product_image}
+                        source={{ uri: item.preview_img }}
+                      />
+                    ) : (
+                      <View style={styles.product_image} />
+                    )}
+                  </View>
+                  <View style={styles.product_info}>
+                    <Text style={styles.product_title} numberOfLines={2}>
+                      {item.title}
+                    </Text>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <Text style={styles.product_price}>{item.price} сом</Text>
+                      <View style={styles.buttons_block}>
+                        <TouchableOpacity
+                          style={styles.add_remove}
+                          onPress={() => handleMinus(item.id)}
                         >
-                          <Text style={styles.product_price}>
-                            {item.price} сом
-                          </Text>
-                          <View style={styles.buttons_block}>
-                            <TouchableOpacity
-                              style={styles.add_remove}
-                              onPress={() => handleMinus(item.id)}
-                            >
-                              <Ionicons
-                                color="black"
-                                style={{ width: 24, height: 24 }}
-                                name="remove"
-                                size={24}
-                              />
-                            </TouchableOpacity>
-                            <Text style={styles.basketTxt}>
-                              {plus[item.id] || 0}
-                            </Text>
-                            {plus[item.id] === 0 && (
-                              <TouchableOpacity
-                                onPress={() => handleRemoveItem(item.id)}
-                              />
-                            )}
-                            <TouchableOpacity
-                              style={styles.add_remove}
-                              onPress={() => handlePlus(item.id)}
-                            >
-                              <Ionicons
-                                color="black"
-                                style={{ width: 24, height: 24 }}
-                                name="add"
-                                size={24}
-                              />
-                            </TouchableOpacity>
-                          </View>
-                        </View>
+                          <Ionicons
+                            color="black"
+                            style={{ width: 24, height: 24 }}
+                            name="remove"
+                            size={24}
+                          />
+                        </TouchableOpacity>
+                        <Text style={styles.basketTxt}>
+                          {plus[item.id] || 0}
+                        </Text>
+                        {plus[item.id] === 0 && (
+                          <TouchableOpacity
+                            onPress={() => handleRemoveItem(item.id)}
+                          />
+                        )}
+                        <TouchableOpacity
+                          style={styles.add_remove}
+                          onPress={() => handlePlus(item.id)}
+                        >
+                          <Ionicons
+                            color="black"
+                            style={{ width: 24, height: 24 }}
+                            name="add"
+                            size={24}
+                          />
+                        </TouchableOpacity>
                       </View>
                     </View>
-                  ) : null
-                )}
-              </View>
-            </ScrollView>
-            <View style={styles.placing_price_block}>
-              <Text style={styles.placing_price_text}>
-                Общая сумма: {count} сом
-              </Text>
-              <TouchableOpacity
-                style={stylesAll.button}
-                onPress={() => router.push("/(tabs)/profile")}
-              >
-                <Text style={stylesAll.button_text}>Оформить заказ</Text>
-              </TouchableOpacity>
+                  </View>
+                </View>
+              ))}
             </View>
+          </ScrollView>
+          <View style={[styles.placing_price_block]}>
+            <View style={{ flexDirection: "column", gap: 10 }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Text style={styles.placing_price_name}>Сумма:</Text>
+                <Text style={styles.placing_price_result}>{count} сом</Text>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Text style={styles.placing_price_name}>Доставка:</Text>
+                <Text style={styles.placing_price_result}>0 сом</Text>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  borderTopWidth: 1,
+                  borderColor: "#CFCFCF",
+                  paddingTop: 10,
+                }}
+              >
+                <Text style={styles.placing_price_name}>Итого:</Text>
+                <Text style={[styles.placing_price_result, styles.total_text]}>
+                  {count} сом
+                </Text>
+              </View>
+            </View>
+            <TouchableOpacity
+              style={stylesAll.button}
+              onPress={() => router.push("/navigate/PlacingOrder")}
+            >
+              {isLoading ? (
+                <ActivityIndicator size="small" color={"white"} />
+              ) : (
+                <Text style={stylesAll.button_text}>К оформлению</Text>
+              )}
+            </TouchableOpacity>
           </View>
-        ) : (
+        </View>
+      ) : (
+        <View style={stylesAll.container}>
           <View style={stylesAll.purchase_history}>
             <View style={stylesAll.history_image_box}>
               <Image
@@ -275,34 +314,49 @@ const BasketProducts = () => {
               <Text style={stylesAll.button_text}>Перейти в каталог</Text>
             </TouchableOpacity>
           </View>
-        )}
-      </View>
+        </View>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  total_text: {
+    color: "#FE211F",
+  },
+  placing_price_result: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#191919",
+  },
+  placing_price_name: {
+    fontSize: 14,
+    fontWeight: "400",
+    color: "#6B6B6B",
+  },
   basket_container: {
     width: "100%",
   },
-  basket_background: {
+  basket_block: {
     position: "relative",
     width: "100%",
     height: "100%",
-    backgroundColor: "blue",
   },
   placing_price_block: {
-    top: 70,
+    position: "absolute",
+    width: "100%",
+    bottom: 80,
     left: 0,
     right: 0,
-    bottom: 0,
-    width: "100%",
-    height: 200,
-    backgroundColor: "red",
+    minHeight: 200,
+    backgroundColor: "#F5F7FA",
     padding: 16,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     zIndex: 1,
+    flexDirection: "column",
+    gap: 15,
+    paddingBottom: 30,
   },
   product_price: {
     fontSize: 18,
@@ -329,9 +383,6 @@ const styles = StyleSheet.create({
     color: "#191919",
     lineHeight: 16,
   },
-  basket_block: {
-    paddingBottom: 300,
-  },
   product_block: {
     width: "100%",
     backgroundColor: "#F5F7FA",
@@ -340,11 +391,24 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     gap: 10,
     flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  product_info: {
+    width: "65.7%",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    padding: 4,
+  },
+  product_image_block: {
+    height: 100,
+    width: "30.3%",
+    borderRadius: 14,
+    overflow: "hidden",
+    backgroundColor: "#FFFFFF",
   },
   product_image: {
-    width: 100,
-    height: 100,
-    backgroundColor: "#f0f0f0",
+    width: "100%",
+    height: "100%",
   },
   buttons_block: {
     flexDirection: "row",

@@ -17,26 +17,17 @@ import { stylesAll } from "../(tabs)/style";
 import { Ionicons } from "@expo/vector-icons";
 import { useRoute, RouteProp } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useCartContext } from "../_layout";
+import ModalDown from "@/Modal";
+import MultiSlider from "@ptomasroos/react-native-multi-slider";
 
 interface Tab {
   id: number;
   name: string;
 }
 
-interface Product {
-  id: number;
-  name: string;
-}
-
 interface CatalogDetailsParams {
   cat: string;
-  saveToLocalStorage: (id: number) => void;
 }
-
-type CartItem = {
-  id: number;
-};
 
 const CatalogDetails: React.FC = ({}) => {
   const [tabs, setTabs] = useState<Tab[]>([]);
@@ -47,23 +38,58 @@ const CatalogDetails: React.FC = ({}) => {
   const [value, setValue] = useState<string>("");
   const [isDataAvailable, setIsDataAvailable] = useState<boolean>(true);
   const [favoriteItems, setFavoriteItems] = useState<Set<number>>(new Set());
+  const [modal, setModal] = useState(false);
+  const [modalFilter, setModalFilter] = useState(false);
+  const [cart, setCart] = useState<Product[]>([]);
+  const [rangeValue, setRangeValue] = useState<number[]>([0, 47990]);
 
   const route =
     useRoute<RouteProp<Record<string, CatalogDetailsParams>, string>>();
   const { cat } = route.params || {};
-  const { saveToLocalStorage } = useCartContext();
-
+  const saveToAsyncStorage = async (id: number) => {
+    const itemToAdd = data.find((item) => item.id === id);
+    if (itemToAdd) {
+      let updatedCart = [...cart];
+      if (!updatedCart.some((item) => item.id === itemToAdd.id)) {
+        updatedCart.push(itemToAdd);
+      } else {
+        updatedCart = updatedCart.filter((item) => item.id !== itemToAdd.id);
+      }
+      setCart(updatedCart);
+      await AsyncStorage.setItem("cartFeatured", JSON.stringify(updatedCart));
+    }
+  };
   const toggleFavorite = async (id: number) => {
+    const itemExists = await AsyncStorage.getItem(`activeItemFeatured${id}`);
     let updatedFavorites = new Set(favoriteItems);
-    if (favoriteItems.has(id)) {
+
+    if (itemExists) {
+      await AsyncStorage.removeItem(`activeItemFeatured${id}`);
       updatedFavorites.delete(id);
     } else {
+      await AsyncStorage.setItem(`activeItemFeatured${id}`, `${id}`);
       updatedFavorites.add(id);
     }
+
     setFavoriteItems(updatedFavorites);
-    saveToLocalStorage(id);
   };
 
+  const initializeData = async () => {
+    const cartItems = await AsyncStorage.getItem("cartFeatured");
+    if (cartItems) {
+      setCart(JSON.parse(cartItems));
+    }
+    const favoriteItemsKeys = await AsyncStorage.getAllKeys();
+    const favoriteIds = favoriteItemsKeys
+      .filter((key) => key.startsWith("activeItemFeatured"))
+      .map((key) => parseInt(key.replace("activeItemFeatured", "")));
+
+    setFavoriteItems(new Set(favoriteIds));
+  };
+
+  useEffect(() => {
+    initializeData();
+  }, []);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -209,20 +235,97 @@ const CatalogDetails: React.FC = ({}) => {
           </View>
         </ScrollView>
         <View style={styles.sort_filter_block}>
-          <View style={styles.sort_box}>
+          <ModalDown modal={modal} setModal={setModal}>
+            <Text style={styles.sort_title}>Сортировка</Text>
+            <View style={styles.modal_content_sort_block}>
+              <View style={styles.modal_content_sort_item}>
+                <TouchableOpacity style={stylesAll.cell_box}></TouchableOpacity>
+                <Text style={stylesAll.cell_text}>По умолчанию</Text>
+              </View>
+              <View style={styles.modal_content_sort_item}>
+                <TouchableOpacity style={stylesAll.cell_box}></TouchableOpacity>
+                <Text style={stylesAll.cell_text}>Сначала популярные</Text>
+              </View>
+              <View style={styles.modal_content_sort_item}>
+                <TouchableOpacity style={stylesAll.cell_box}></TouchableOpacity>
+                <Text style={stylesAll.cell_text}>Сначала дешевые</Text>
+              </View>
+              <View style={styles.modal_content_sort_item}>
+                <TouchableOpacity style={stylesAll.cell_box}></TouchableOpacity>
+                <Text style={stylesAll.cell_text}>Сначала дорогие</Text>
+              </View>
+              <View style={styles.modal_content_sort_item}>
+                <TouchableOpacity style={stylesAll.cell_box}></TouchableOpacity>
+                <Text style={stylesAll.cell_text}>По алфавиту от А до Я</Text>
+              </View>
+              <View style={styles.modal_content_sort_item}>
+                <TouchableOpacity style={stylesAll.cell_box}></TouchableOpacity>
+                <Text style={stylesAll.cell_text}>По алфавиту от Я до А</Text>
+              </View>
+            </View>
+          </ModalDown>
+          <ModalDown modal={modalFilter} setModal={setModalFilter}>
+            <Text style={styles.sort_title}>Фильтр</Text>
+            <View style={styles.filter_block}>
+              <View style={styles.filter_tab}>
+                <Text style={styles.filter_text}>От</Text>
+                <View style={styles.filter_box}>{rangeValue[0]}</View>
+              </View>
+              <View style={styles.filter_tab}>
+                <Text style={styles.filter_text}>До</Text>
+                <View style={styles.filter_box}>{rangeValue[1]}</View>
+              </View>
+              <TouchableOpacity style={[stylesAll.button]}>
+                {loading ? (
+                  <ActivityIndicator
+                    style={stylesAll.loading}
+                    color="white"
+                    size="small"
+                  />
+                ) : (
+                  <Text style={stylesAll.button_text}>Применить</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+            <MultiSlider
+              values={rangeValue}
+              onValuesChange={(values) => {
+                setRangeValue(values);
+              }}
+              min={0}
+              max={47990}
+              step={1}
+              allowOverlap={false}
+              snapped
+              selectedStyle={{ backgroundColor: "rgba(55, 9, 238, 1)" }}
+              unselectedStyle={{ backgroundColor: "rgba(234, 234, 234, 1)" }}
+              markerStyle={{
+                height: 20,
+                width: 20,
+                backgroundColor: "rgba(55, 9, 238, 1)",
+              }}
+            />
+          </ModalDown>
+          <TouchableOpacity
+            style={styles.sort_box}
+            onPress={() => setModalFilter(true)}
+          >
             <Image
               style={{ width: 24, height: 24 }}
               source={require("../../assets/images/filter.png")}
             />
             <Text style={styles.sort_text}>Фильтр</Text>
-          </View>
-          <View style={styles.sort_box}>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.sort_box}
+            onPress={() => setModal(true)}
+          >
             <Image
               style={{ width: 24, height: 24 }}
               source={require("../../assets/images/sort.png")}
             />
             <Text style={styles.sort_text}>Сортировка</Text>
-          </View>
+          </TouchableOpacity>
         </View>
       </View>
       {loading ? (
@@ -244,19 +347,21 @@ const CatalogDetails: React.FC = ({}) => {
                 onPress={() => router.push(`/details/ProductId/${el.id}`)}
               >
                 <Pressable
-                  onPress={() => toggleFavorite(el.id)}
+                  onPress={() => {
+                    toggleFavorite(el.id);
+                    saveToAsyncStorage(el.id);
+                  }}
                   style={styles.heart_img_box}
                 >
                   <Image
                     style={styles.heart_img}
                     source={
                       favoriteItems.has(el.id)
-                        ? require("../../assets/images/active_heard.png")
+                        ? require("../../assets/images/heart_card_new.png")
                         : require("../../assets/images/heart_card.png")
                     }
                   />
                 </Pressable>
-
                 <View style={styles.catgalog_img_box}>
                   <Image
                     source={{ uri: el.preview_img }}
@@ -299,6 +404,46 @@ const CatalogDetails: React.FC = ({}) => {
 };
 
 const styles = StyleSheet.create({
+  filter_text: {
+    fontSize: 16,
+    fontWeight: "400",
+    color: "#AAAAAA",
+  },
+  filter_block: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    flexWrap: "wrap",
+    gap: 20,
+    marginTop: 20,
+  },
+  filter_tab: {
+    flexDirection: "column",
+    gap: 7,
+    width: "46%",
+  },
+  filter_box: {
+    height: 45,
+    backgroundColor: "#F5F7FA",
+    borderRadius: 10,
+    padding: 10,
+  },
+  sort_title: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#191919",
+    marginTop: 20,
+  },
+  modal_content_sort_item: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  modal_content_sort_block: {
+    flexDirection: "column",
+    gap: 14,
+    marginTop: 20,
+  },
   heart_img_box: {
     position: "absolute",
     top: 10,

@@ -14,10 +14,12 @@ import { AppDispatch, RootState } from "../store";
 import { useDispatch, useSelector } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { fetchUserInfo } from "../UserInfo";
+import ModalDown from "@/Modal";
 
 const ProfilePage = () => {
   const dispatch: AppDispatch = useDispatch();
   const [token, setToken] = useState<string | null>(null);
+  const [modal, setModal] = useState(false);
 
   const getToken = async (): Promise<void> => {
     try {
@@ -39,6 +41,17 @@ const ProfilePage = () => {
 
     loadUserInfo();
   }, [dispatch, token]);
+
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem("tokenActivation");
+      await AsyncStorage.removeItem("token_block");
+      setToken(null);
+      router.push("/auth/Login");
+    } catch (error) {
+      console.error("Error deleting token:", error);
+    }
+  };
 
   const data = useSelector((state: RootState) => state.users);
   const user = data?.user;
@@ -86,7 +99,7 @@ const ProfilePage = () => {
               >
                 <View style={styles.area_box_red}>
                   <Image
-                    source={require("../../../assets/images/profile.png")}
+                    source={require("../../../assets/images/profile_gray.png")}
                     style={{ width: 20, height: 20 }}
                     tintColor={"white"}
                   />
@@ -221,7 +234,10 @@ const ProfilePage = () => {
               />
             </TouchableOpacity>
           </View>
-          <TouchableOpacity style={[styles.area_box, styles.area_box_get_out]}>
+          <TouchableOpacity
+            style={[styles.area_box, styles.area_box_get_out]}
+            onPress={() => setModal(true)}
+          >
             <View
               style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
             >
@@ -239,13 +255,70 @@ const ProfilePage = () => {
               source={require("../../../assets/images/moreRight.png")}
             />
           </TouchableOpacity>
+          <ModalDown modal={modal} setModal={setModal}>
+            <Text style={styles.modal_title}>Выйти с аккаунта?</Text>
+            <Text style={styles.modal_text}>
+              Вам придется повторно выполнить авторизацию
+            </Text>
+            <View style={{ flexDirection: "row", gap: 10 }}>
+              <TouchableOpacity
+                style={styles.btn_cancel}
+                onPress={() => setModal(false)}
+              >
+                <Text style={styles.btn_cancel_text}>Отмена</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.btn_cancel, styles.btn_confirm]}
+                onPress={async () => {
+                  await handleLogout();
+                  setModal(false);
+                }}
+              >
+                <Text style={[styles.btn_cancel_text, styles.btn_text]}>
+                  Выйти
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </ModalDown>
         </View>
       </View>
     </View>
   );
 };
-
 const styles = StyleSheet.create({
+  btn_confirm: {
+    backgroundColor: "#DC0200",
+  },
+  btn_text: {
+    color: "#FFFFFF",
+  },
+  btn_cancel_text: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#191919",
+  },
+  btn_cancel: {
+    width: "48%",
+    height: 45,
+    backgroundColor: "#E4E4E4",
+    borderRadius: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  modal_title: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#191919",
+  },
+  modal_text: {
+    width: "80%",
+    fontSize: 14,
+    fontWeight: "400",
+    color: "#6B6B6B",
+    marginTop: 12,
+    marginBottom: 20,
+  },
   headerWrapper: {
     overflow: "hidden",
     borderBottomRightRadius: 20,
@@ -260,7 +333,7 @@ const styles = StyleSheet.create({
   profile_text: {
     fontSize: 20,
     fontWeight: 700,
-    color: "#FFFFFF",
+    color: "#fff",
   },
   area_block: {
     width: "100%",

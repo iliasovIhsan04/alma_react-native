@@ -16,13 +16,11 @@ export default function CatalogScreen() {
     >
       <View style={stylesAll.container}>
         <View style={styles.header}>
-          <TouchableOpacity style={styles.header_back_btn}>
-            <Image
-              style={{ width: 24, height: 24 }}
-              source={require("../../assets/images/moreLeft.png")}
-            />
-          </TouchableOpacity>
-          <Image source={require("../../assets/images/blackLogotip.png")} />
+          <TouchableOpacity style={styles.header_back_btn}></TouchableOpacity>
+          <Image
+            style={stylesAll.logotip}
+            source={require("../../assets/images/logotipCenter.png")}
+          />
           <View style={styles.header_back_btn}></View>
         </View>
         <CatalogPage />

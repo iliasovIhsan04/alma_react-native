@@ -21,12 +21,12 @@ export default function TabLayout() {
               {focused ? (
                 <Image
                   style={{ width: 26, height: 26 }}
-                  source={require("../../assets/images/home.png")}
+                  source={require("../../assets/images/home_red.png")}
                 />
               ) : (
                 <Image
                   style={{ width: 26, height: 26 }}
-                  source={require("../../assets/images/homeRed.png")}
+                  source={require("../../assets/images/home_gray.png")}
                 />
               )}
             </View>
@@ -43,12 +43,12 @@ export default function TabLayout() {
               {focused ? (
                 <Image
                   style={{ width: 26, height: 26 }}
-                  source={require("../../assets/images/catalogRed.png")}
+                  source={require("../../assets/images/catalog_red.png")}
                 />
               ) : (
                 <Image
                   style={{ width: 26, height: 26 }}
-                  source={require("../../assets/images/category.png")}
+                  source={require("../../assets/images/category_gray.png")}
                 />
               )}
             </View>
@@ -64,12 +64,12 @@ export default function TabLayout() {
               {focused ? (
                 <Image
                   style={{ width: 26, height: 26 }}
-                  source={require("../../assets/images/qrCodWhite.png")}
+                  source={require("../../assets/images/card_white.png")}
                 />
               ) : (
                 <Image
                   style={{ width: 26, height: 26 }}
-                  source={require("../../assets/images/qrCodWhite.png")}
+                  source={require("../../assets/images/card_white.png")}
                 />
               )}
             </View>
@@ -85,12 +85,12 @@ export default function TabLayout() {
               {focused ? (
                 <Image
                   style={{ width: 26, height: 26 }}
-                  source={require("../../assets/images/mapRed.png")}
+                  source={require("../../assets/images/map_red.png")}
                 />
               ) : (
                 <Image
                   style={{ width: 26, height: 26 }}
-                  source={require("../../assets/images/map.png")}
+                  source={require("../../assets/images/map_gray.png")}
                 />
               )}
             </View>
@@ -106,12 +106,12 @@ export default function TabLayout() {
               {focused ? (
                 <Image
                   style={{ width: 26, height: 26 }}
-                  source={require("../../assets/images/profileRed.png")}
+                  source={require("../../assets/images/profile_red.png")}
                 />
               ) : (
                 <Image
                   style={{ width: 26, height: 26 }}
-                  source={require("../../assets/images/profile.png")}
+                  source={require("../../assets/images/profile_gray.png")}
                 />
               )}
             </View>

@@ -1,96 +1,61 @@
 import React, { useState } from "react";
 import {
   Image,
-  Modal,
+  ScrollView,
   StyleSheet,
+  Switch,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
-  FlatList,
-  TextInput,
-  Switch,
-  ScrollView,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Dropdown } from "react-native-element-dropdown";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { stylesAll } from "../(tabs)/style";
 import { router } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
-interface MyDetailsItem {
-  title: string;
+interface DropdownItem {
+  label: string;
   value: string;
-  selected: boolean;
-  modalType: string;
 }
 
-const dataSelect = {
-  language: [{ value: "Кыргызча" }, { value: "Русский" }],
-  gender: [{ value: "Мужской" }, { value: "Женский" }],
-  married: [{ value: "Холост/не замужем" }, { value: "Женат/замужем" }],
-  social_status: [
-    { value: "Студент" },
-    { value: "Пенсионер" },
-    { value: "Сотрудник частной компании" },
-    { value: "Безработный" },
-    { value: "Частный предприниматель" },
-    { value: "Другое" },
-  ],
-  city_accommodation: [
-    { value: "Бишкек" },
-    { value: "Кант" },
-    { value: "Токмок" },
-    { value: "Чолпон-ата" },
-    { value: "Кара-Балта" },
-    { value: "Сокулук" },
-    { value: "Бостери" },
-    { value: "Балыкчы" },
-    { value: "Белеводское" },
-    { value: "Ош" },
-    { value: "Каракол" },
-    { value: "Базар-Коргон" },
-    { value: "Другой город" },
-  ],
-};
+const data: DropdownItem[] = [
+  { label: "Бишкек", value: "Бишкек" },
+  { label: "Кант", value: "Кант" },
+  { label: "Токмок", value: "Токмок" },
+  { label: "Чолпон-ата", value: "Чолпон-ата" },
+  { label: "Кара-Балта", value: "Кара-Балта" },
+  { label: "Сокулук", value: "Сокулук" },
+  { label: "Бостери", value: "Бостери" },
+  { label: "Балыкчы", value: "Балыкчы" },
+  { label: "Белеводское", value: "Белеводское" },
+  { label: "Ош", value: "Ош" },
+  { label: "Каракол", value: "Каракол" },
+  { label: "Базар-Коргон", value: "Базар-Коргон" },
+  { label: "Другой город", value: "Другой город" },
+];
 
-const placeholderLabels = {
-  city_accommodation: "город",
-  language: "язык",
-  gender: "пол",
-  married: "семейное положение",
-  social_status: "социальный статус",
-};
+const gender: DropdownItem[] = [
+  { label: "Мужской", value: "Мужской" },
+  { label: "Женский", value: "Женский" },
+];
+const language = [
+  { label: "Кыргызча", value: "Кыргызча" },
+  { label: "Русский", value: "Русский" },
+];
+const married = [
+  { label: "Холост/не замужем", value: "Холост/не замужем" },
+  { label: "Женат/замужем", value: "Женат/замужем" },
+];
 
-const MyDetails = () => {
-  const [selected, setSelected] = useState({
-    city: "",
-    language: "",
-    gender: "",
-    married: "",
-    social_status: "",
-  });
-  const [modalType, setModalType] = useState<string | null>(null);
-  const [isModalVisible, setModalVisible] = useState(false);
+const DropdownComponent = () => {
+  const [isFocus, setIsFocus] = useState(false);
   const [isPetONe, setIsPetOne] = useState(false);
   const [isPetTwo, setIsPetTwo] = useState(false);
-
-  const openModal = (type: string) => {
-    setModalType(type);
-    setModalVisible(true);
-  };
-
-  const closeModal = () => {
-    setModalVisible(false);
-  };
-
-  const selectOption = (value: string) => {
-    if (modalType) {
-      setSelected((prev) => ({
-        ...prev,
-        [modalType]: value,
-      }));
-      closeModal();
-    }
-  };
+  const [genderValue, setGenderValue] = useState(null);
+  const [languageValue, setLanguageValue] = useState(null);
+  const [marriedValue, setMarriedValue] = useState(null);
+  const [cityValue, setCityValue] = useState(null);
 
   const toggleSwitchONe = async () => {
     const newValue = !isPetONe;
@@ -126,35 +91,6 @@ const MyDetails = () => {
     }
   };
 
-  const renderModalContent = () => {
-    if (!modalType) return null;
-
-    const data = dataSelect[modalType as keyof typeof dataSelect];
-    const placeholder =
-      placeholderLabels[modalType as keyof typeof placeholderLabels];
-
-    return (
-      <>
-        <Text style={styles.modalTitle}>Выберите {placeholder}</Text>
-        <FlatList
-          data={data}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.modalItem}
-              onPress={() => selectOption(item.value)}
-            >
-              <Text style={styles.modalItemText}>{item.value}</Text>
-            </TouchableOpacity>
-          )}
-        />
-        <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
-          <Text style={styles.closeButtonText}>Закрыть</Text>
-        </TouchableOpacity>
-      </>
-    );
-  };
-
   return (
     <View style={stylesAll.background_block}>
       <ScrollView
@@ -165,7 +101,7 @@ const MyDetails = () => {
           <View style={stylesAll.header}>
             <TouchableOpacity
               style={stylesAll.header_back_btn}
-              onPress={() => router.push("/(tabs)/profile")}
+              onPress={() => router.back()}
             >
               <Image
                 style={{ width: 24, height: 24 }}
@@ -198,55 +134,114 @@ const MyDetails = () => {
                 keyboardType="phone-pad"
               />
             </View>
-            {Object.keys(dataSelect).map((key) => (
-              <View style={styles.input_block} key={key}>
-                <Text style={stylesAll.label}>
-                  {key === "city_accommodation"
-                    ? "Город проживания"
-                    : key === "language"
-                    ? "Язык"
-                    : key === "gender"
-                    ? "Пол"
-                    : key === "married"
-                    ? "Семейное положение"
-                    : "Социальный статус"}
-                </Text>
-                <TouchableOpacity
-                  style={[styles.select_box, stylesAll.input]}
-                  onPress={() => openModal(key)}
-                >
-                  <Text style={styles.selected_text}>
-                    {selected[key] ||
-                      `Выберите ${
-                        key === "city_accommodation"
-                          ? "город"
-                          : key === "language"
-                          ? "язык"
-                          : key === "gender"
-                          ? "пол"
-                          : key === "married"
-                          ? "семейное положение"
-                          : "социальный статус"
-                      }`}
-                  </Text>
-                  <Ionicons
-                    size={24}
-                    color="black"
-                    style={styles.select_arrow}
-                  />
-                </TouchableOpacity>
-              </View>
-            ))}
-
-            <Modal
-              visible={isModalVisible}
-              animationType="slide"
-              transparent={true}
-            >
-              <View style={styles.modalContainer}>
-                <View style={styles.modalContent}>{renderModalContent()}</View>
-              </View>
-            </Modal>
+            <View style={styles.input_block}>
+              <Text style={stylesAll.label}>Дата рождения</Text>
+              <TextInput
+                style={[stylesAll.input, styles.input_box]}
+                placeholder="Номер телефона"
+                keyboardType="phone-pad"
+              />
+            </View>
+            <View style={styles.input_block}>
+              <Text style={stylesAll.label}>Пол</Text>
+              <Dropdown
+                style={[
+                  stylesAll.input,
+                  styles.input_box,
+                  isFocus && { borderColor: "blue" },
+                ]}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
+                iconStyle={styles.iconStyle}
+                data={gender}
+                search
+                maxHeight={300}
+                labelField="label"
+                valueField="value"
+                placeholder={!isFocus ? "Выберите пол" : "..."}
+                searchPlaceholder="Search..."
+                value={genderValue}
+                onFocus={() => setIsFocus(true)}
+                onBlur={() => setIsFocus(false)}
+                onChange={(item) => setGenderValue(item.value)}
+              />
+            </View>
+            <View style={styles.input_block}>
+              <Text style={stylesAll.label}>Родной язык</Text>
+              <Dropdown
+                style={[
+                  stylesAll.input,
+                  styles.input_box,
+                  isFocus && { borderColor: "blue" },
+                ]}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
+                iconStyle={styles.iconStyle}
+                data={language}
+                search
+                maxHeight={300}
+                labelField="label"
+                valueField="value"
+                placeholder={!isFocus ? "Выберите язык" : "..."}
+                searchPlaceholder="Search..."
+                value={languageValue}
+                onFocus={() => setIsFocus(true)}
+                onBlur={() => setIsFocus(false)}
+                onChange={(item) => setLanguageValue(item.value)}
+              />
+            </View>
+            <View style={styles.input_block}>
+              <Text style={stylesAll.label}>Семейное положение</Text>
+              <Dropdown
+                style={[
+                  stylesAll.input,
+                  styles.input_box,
+                  isFocus && { borderColor: "blue" },
+                ]}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
+                iconStyle={styles.iconStyle}
+                data={married}
+                search
+                maxHeight={300}
+                labelField="label"
+                valueField="value"
+                placeholder={!isFocus ? "Выберите семейное положение" : "..."}
+                searchPlaceholder="Search..."
+                value={marriedValue}
+                onFocus={() => setIsFocus(true)}
+                onBlur={() => setIsFocus(false)}
+                onChange={(item) => setMarriedValue(item.value)}
+              />
+            </View>
+            <View style={styles.input_block}>
+              <Text style={stylesAll.label}>Город проживания</Text>
+              <Dropdown
+                style={[
+                  stylesAll.input,
+                  styles.input_box,
+                  isFocus && { borderColor: "blue" },
+                ]}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
+                iconStyle={styles.iconStyle}
+                data={data}
+                search
+                maxHeight={300}
+                labelField="label"
+                valueField="value"
+                placeholder={!isFocus ? "Выберите город" : "..."}
+                searchPlaceholder="Search..."
+                value={cityValue}
+                onFocus={() => setIsFocus(true)}
+                onBlur={() => setIsFocus(false)}
+                onChange={(item) => setCityValue(item.value)}
+              />
+            </View>
             <View
               style={[
                 stylesAll.input,
@@ -294,9 +289,11 @@ const MyDetails = () => {
   );
 };
 
+export default DropdownComponent;
+
 const styles = StyleSheet.create({
   input_block: {
-    marginBottom: 20,
+    flexDirection: "column",
   },
   input_box: {
     backgroundColor: "#F5F7FA",
@@ -312,49 +309,22 @@ const styles = StyleSheet.create({
     borderColor: "#E0E0E0",
     paddingHorizontal: 10,
   },
-  selected_text: {
+  selectedTextStyle: {
     fontSize: 16,
   },
-  select_arrow: {
-    marginLeft: 10,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-  },
-  modalContent: {
-    width: "80%",
-    backgroundColor: "#FFFFFF",
-    borderRadius: 10,
-    padding: 20,
-    alignItems: "center",
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  modalItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0",
-    width: "100%",
-  },
-  modalItemText: {
+  placeholderStyle: {
     fontSize: 16,
+    color: "#AAAAAA",
   },
-  closeButton: {
-    marginTop: 10,
-    padding: 10,
-    backgroundColor: "#25D366",
-    borderRadius: 5,
+  icon: {
+    marginRight: 5,
   },
-  closeButtonText: {
-    color: "#FFFFFF",
+  iconStyle: {
+    width: 20,
+    height: 20,
+  },
+  inputSearchStyle: {
+    height: 40,
     fontSize: 16,
   },
 });
-
-export default MyDetails;

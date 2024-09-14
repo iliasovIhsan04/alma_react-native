@@ -37,39 +37,22 @@ const Productid = () => {
   const route = useRoute();
   const [data, setData] = useState<Product | null>(null);
   const { id } = route.params as { id: number };
-  const [basket, setIsBasket] = useState([]);
-  const [shopCart, setShopCart] = useState([]);
   const [isInBasket, setIsInBasket] = useState<boolean>(false);
 
   useEffect(() => {
     const checkIfInBasket = async () => {
       try {
-        const activeItem = await AsyncStorage.getItem(`cartsBasket_${id}`);
+        const activeItem = await AsyncStorage.getItem(
+          `activeItemsBasket_${id}`
+        );
         setIsInBasket(!!activeItem);
+        console.log(`Item ${id} is in basket:`, !!activeItem); // Debugging line
       } catch (error) {
         console.error("Ошибка при проверке корзины:", error);
       }
     };
     checkIfInBasket();
   }, [id]);
-
-  useEffect(() => {
-    const loadBasketAndShopCart = async () => {
-      try {
-        const basketString = await AsyncStorage.getItem("cartsBasket");
-        const storedBasket = basketString ? JSON.parse(basketString) : [];
-
-        const shopCartString = await AsyncStorage.getItem("shopCart");
-        const storedShopCart = shopCartString ? JSON.parse(shopCartString) : [];
-        setShopCart(storedShopCart);
-        setIsBasket(storedBasket);
-      } catch (error) {
-        console.error("Ошибка при загрузке данных:", error);
-      }
-    };
-
-    loadBasketAndShopCart();
-  }, []);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -85,46 +68,29 @@ const Productid = () => {
     fetchUserData();
   }, [id]);
 
-  if (!data) {
-    return (
-      <View style={stylesAll.loading}>
-        <ActivityIndicator color="red" size="small" />
-      </View>
-    );
-  }
-
   const Basket = async (id: number, datas: Product) => {
     setIsInBasket(true);
     try {
-      // Получение предыдущих данных из AsyncStorage
       const prevIDString = await AsyncStorage.getItem("plus");
       const prevID = prevIDString !== null ? JSON.parse(prevIDString) : {};
       const updatedPrevID = { ...prevID, [id]: 1 };
-
-      // Обновление AsyncStorage новыми данными
       await AsyncStorage.setItem("plus", JSON.stringify(updatedPrevID));
       await AsyncStorage.setItem("plusOne", JSON.stringify(updatedPrevID));
-
-      // Обновление shopCart в AsyncStorage
       const prevShopCartString = await AsyncStorage.getItem("shopCart");
       const prevShopCart =
         prevShopCartString !== null ? JSON.parse(prevShopCartString) : [];
       const updatedShopCart = [...prevShopCart, datas];
       await AsyncStorage.setItem("shopCart", JSON.stringify(updatedShopCart));
-
-      // Обновление carts в AsyncStorage
       const prevCartsString = await AsyncStorage.getItem("cartsBasket");
       const prevCarts =
         prevCartsString !== null ? JSON.parse(prevCartsString) : [];
       const updatedCarts = [...prevCarts, datas];
       await AsyncStorage.setItem("cartsBasket", JSON.stringify(updatedCarts));
-
-      // Проверка, активен ли элемент
       await AsyncStorage.setItem(`activeItemsBasket_${id}`, JSON.stringify(id));
       const activeItem = await AsyncStorage.getItem(`activeItemsBasket_${id}`);
 
       if (activeItem) {
-        Alert.alert("Товар добавлен в корзину!", "success");
+        Alert.alert("Ваш товар успешно добавлен в корзину!");
       } else {
         Alert.alert("Ошибка", "Не удалось добавить товар в корзину");
       }
@@ -133,6 +99,14 @@ const Productid = () => {
       console.error(error);
     }
   };
+
+  if (!data) {
+    return (
+      <View style={stylesAll.loading}>
+        <ActivityIndicator color="red" size="small" />
+      </View>
+    );
+  }
 
   return (
     <View style={stylesAll.background_block}>
@@ -150,7 +124,6 @@ const Productid = () => {
           <Text style={stylesAll.header_name}></Text>
           <View style={stylesAll.header_back_btn}></View>
         </View>
-
         <View style={styles.product_block}>
           <View style={styles.product_img_box}></View>
           <Text style={styles.product_title}>{data.title}</Text>
@@ -194,19 +167,19 @@ const Productid = () => {
           </View>
         </View>
       </View>
-      {isInBasket ? (
-        <TouchableOpacity
-          style={[stylesAll.button, styles.btn_product]}
-          onPress={() => router.push(`navigate/BasketPage`)}
-        >
-          <Text style={stylesAll.button_text}>в корзине</Text>
-        </TouchableOpacity>
-      ) : (
+      {!isInBasket ? (
         <TouchableOpacity
           style={[stylesAll.button, styles.btn_product]}
           onPress={() => Basket(data.id, data)}
         >
           <Text style={stylesAll.button_text}>Добавить в корзину</Text>
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity
+          style={[stylesAll.button, styles.btn_product]}
+          onPress={() => router.push(`navigate/BasketPage`)}
+        >
+          <Text style={stylesAll.button_text}>В корзине</Text>
         </TouchableOpacity>
       )}
     </View>
@@ -253,15 +226,15 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#191919",
   },
+  product_img_box: {
+    height: 300,
+    backgroundColor: "#E8E8E8",
+    marginBottom: 20,
+  },
   product_name: {
     fontSize: 14,
-    fontWeight: "400",
-    color: "#AAAAAA",
-  },
-  product_img_box: {
-    width: "100%",
-    height: 240,
-    backgroundColor: "blue",
+    fontWeight: "500",
+    color: "#6B6B6B",
   },
 });
 

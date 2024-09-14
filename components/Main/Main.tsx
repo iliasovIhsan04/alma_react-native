@@ -40,7 +40,7 @@ export default function Main() {
               style={styles.image_modal}
               source={require("../../assets/images/soonAlmaGoo.png")}
             />
-          </View> 
+          </View>
         </Pressable>
       </Modal>
       <Header />

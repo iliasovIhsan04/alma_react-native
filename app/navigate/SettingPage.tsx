@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  Alert,
   Image,
   Pressable,
   StyleSheet,
@@ -11,10 +12,34 @@ import {
 import { stylesAll } from "../(tabs)/style";
 import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import ModalDown from "@/Modal";
+import axios from "axios";
+import { url } from "@/Api";
 
 const SettingPage = () => {
   const [isPetONe, setIsPetOne] = useState(false);
   const [isPetTwo, setIsPetTwo] = useState(false);
+  const [modal, setModal] = useState(false);
+
+  const deleteAccount = async () => {
+    try {
+      const local = await AsyncStorage.getItem("tokenActivation");
+      const headers = {
+        Authorization: `Token ${local}`,
+      };
+      const response = await axios.get(url + "/auth/delete-account", {
+        headers,
+      });
+      if (response.data.response === true) {
+        Alert.alert("Success", response.data.message);
+        await AsyncStorage.removeItem("tokenActivation");
+        await AsyncStorage.removeItem("token_block");
+        router.push("/auth/Login");
+      }
+    } catch (error) {
+      console.log("Error:", error);
+    }
+  };
 
   const toggleSwitchOne = async () => {
     const newValue = !isPetONe;
@@ -42,6 +67,7 @@ const SettingPage = () => {
       console.error("Failed to save switch state to AsyncStorage:", error);
     }
   };
+
   return (
     <View style={styles.settings_block}>
       <View style={stylesAll.container}>
@@ -102,15 +128,74 @@ const SettingPage = () => {
             />
           </View>
         </View>
-        <Pressable style={{ marginTop: 20 }}>
+        <Pressable style={{ marginTop: 20 }} onPress={() => setModal(true)}>
           <Text style={styles.remove_accaunt}>Удалить аккаунт</Text>
         </Pressable>
+        <ModalDown modal={modal} setModal={setModal}>
+          <Text style={styles.modal_title}>Удалить аккаунт?</Text>
+          <Text style={styles.modal_text}>
+            Ваш аккаунт удалится насвегда, и вам придется заново
+            зарегистрироваться
+          </Text>
+          <View style={{ flexDirection: "row", gap: 10 }}>
+            <TouchableOpacity
+              style={styles.btn_cancel}
+              onPress={() => setModal(false)}
+            >
+              <Text style={styles.btn_cancel_text}>Отмена</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.btn_cancel, styles.btn_confirm]}
+              onPress={async () => {
+                await deleteAccount();
+                setModal(false);
+              }}
+            >
+              <Text style={[styles.btn_cancel_text, styles.btn_text]}>
+                Удалить
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </ModalDown>
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  btn_confirm: {
+    backgroundColor: "#DC0200",
+  },
+  btn_text: {
+    color: "#FFFFFF",
+  },
+  btn_cancel_text: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#191919",
+  },
+  btn_cancel: {
+    width: "48%",
+    height: 45,
+    backgroundColor: "#E4E4E4",
+    borderRadius: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  modal_title: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#191919",
+  },
+  modal_text: {
+    width: "80%",
+    fontSize: 14,
+    fontWeight: "400",
+    color: "#6B6B6B",
+    marginTop: 12,
+    marginBottom: 20,
+  },
   header: {
     flexDirection: "row",
     alignItems: "center",
