@@ -92,26 +92,37 @@ const DropdownComponent = () => {
   };
 
   return (
-    <View style={stylesAll.background_block}>
+    <View style={[stylesAll.background_block]}>
+      <View
+        style={[
+          stylesAll.header,
+          stylesAll.header_nav,
+          { position: "relative", paddingHorizontal: 20 },
+        ]}
+      >
+        <TouchableOpacity
+          style={stylesAll.header_back_btn}
+          onPress={() => router.back()}
+        >
+          <Image
+            style={{ width: 24, height: 24 }}
+            source={require("../../assets/images/moreLeft.png")}
+          />
+        </TouchableOpacity>
+        <Text style={stylesAll.header_name}>Мои данные</Text>
+        <View style={stylesAll.header_back_btn}></View>
+      </View>
       <ScrollView
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
       >
         <View style={stylesAll.container}>
-          <View style={stylesAll.header}>
-            <TouchableOpacity
-              style={stylesAll.header_back_btn}
-              onPress={() => router.back()}
-            >
-              <Image
-                style={{ width: 24, height: 24 }}
-                source={require("../../assets/images/moreLeft.png")}
-              />
-            </TouchableOpacity>
-            <Text style={stylesAll.header_name}>Мои данные</Text>
-            <View style={stylesAll.header_back_btn}></View>
-          </View>
-          <View style={stylesAll.input_block_all}>
+          <View
+            style={[
+              stylesAll.input_block_all,
+              { marginTop: 0, marginBottom: 50 },
+            ]}
+          >
             <View style={styles.input_block}>
               <Text style={stylesAll.label}>Имя</Text>
               <TextInput

@@ -74,7 +74,7 @@ const HarryBuyDetails = () => {
             style={{
               gap: 10,
               flexDirection: "column",
-              marginBottom: 200,
+              marginBottom: 150,
             }}
           >
             {harry.map((item) => (

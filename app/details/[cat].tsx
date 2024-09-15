@@ -4,6 +4,7 @@ import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Dimensions,
   Image,
   Pressable,
   ScrollView,
@@ -42,6 +43,7 @@ const CatalogDetails: React.FC = ({}) => {
   const [modalFilter, setModalFilter] = useState(false);
   const [cart, setCart] = useState<Product[]>([]);
   const [rangeValue, setRangeValue] = useState<number[]>([0, 47990]);
+  const screenWidth = Dimensions.get("window").width;
 
   const route =
     useRoute<RouteProp<Record<string, CatalogDetailsParams>, string>>();
@@ -269,11 +271,44 @@ const CatalogDetails: React.FC = ({}) => {
             <View style={styles.filter_block}>
               <View style={styles.filter_tab}>
                 <Text style={styles.filter_text}>От</Text>
-                <View style={styles.filter_box}>{rangeValue[0]}</View>
+                <View style={styles.filter_box}>
+                  <Text>{rangeValue[0]}</Text>
+                </View>
               </View>
               <View style={styles.filter_tab}>
                 <Text style={styles.filter_text}>До</Text>
-                <View style={styles.filter_box}>{rangeValue[1]}</View>
+                <View style={styles.filter_box}>
+                  <Text>{rangeValue[1]}</Text>
+                </View>
+              </View>
+              <View
+                style={{
+                  width: "100%",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <MultiSlider
+                  values={rangeValue}
+                  sliderLength={screenWidth - 50}
+                  onValuesChange={(values) => {
+                    setRangeValue(values);
+                  }}
+                  min={0}
+                  max={50000}
+                  step={1}
+                  allowOverlap={false}
+                  snapped
+                  selectedStyle={{ backgroundColor: "#DC0200" }}
+                  unselectedStyle={{ backgroundColor: "#DC0200" }}
+                  markerStyle={{
+                    height: 20,
+                    width: 20,
+                    backgroundColor: "#DC0200",
+                    borderColor: "#DC0200",
+                  }}
+                />
               </View>
               <TouchableOpacity style={[stylesAll.button]}>
                 {loading ? (
@@ -287,24 +322,6 @@ const CatalogDetails: React.FC = ({}) => {
                 )}
               </TouchableOpacity>
             </View>
-            <MultiSlider
-              values={rangeValue}
-              onValuesChange={(values) => {
-                setRangeValue(values);
-              }}
-              min={0}
-              max={47990}
-              step={1}
-              allowOverlap={false}
-              snapped
-              selectedStyle={{ backgroundColor: "rgba(55, 9, 238, 1)" }}
-              unselectedStyle={{ backgroundColor: "rgba(234, 234, 234, 1)" }}
-              markerStyle={{
-                height: 20,
-                width: 20,
-                backgroundColor: "rgba(55, 9, 238, 1)",
-              }}
-            />
           </ModalDown>
           <TouchableOpacity
             style={styles.sort_box}

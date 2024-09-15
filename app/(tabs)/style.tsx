@@ -42,9 +42,20 @@ export const stylesAll = StyleSheet.create({
     width: "100%",
     height: 400,
   },
+  loading_catalog_page: {
+    width: "100%",
+    height: 600,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
   header_nav: {
     backgroundColor: "white",
-    paddingBottom: 20,
+    paddingBottom: 15,
+  },
+  header_nav_gray: {
+    backgroundColor: "none",
+    paddingBottom: 15,
   },
   footer_absolute: {
     width: 60,

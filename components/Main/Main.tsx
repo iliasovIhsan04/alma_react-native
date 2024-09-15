@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Image,
   StyleSheet,
@@ -8,6 +8,7 @@ import {
   ScrollView,
   Modal,
   Pressable,
+  Animated,
 } from "react-native";
 import BonusCart from "./BonusCart";
 import Header from "./Header";
@@ -19,17 +20,58 @@ import { Ionicons } from "@expo/vector-icons";
 
 export default function Main() {
   const [openModal, setOpenModal] = useState(false);
+  const scaleValue = useRef(new Animated.Value(0)).current;
+  const opacityValue = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (openModal) {
+      Animated.parallel([
+        Animated.spring(scaleValue, {
+          toValue: 1,
+          friction: 5,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacityValue, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else {
+      Animated.parallel([
+        Animated.timing(scaleValue, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacityValue, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [openModal]);
+
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
       showsHorizontalScrollIndicator={false}
     >
-      <Modal visible={openModal} transparent={true} animationType="slide">
+      <Modal visible={openModal} transparent={true} animationType="none">
         <Pressable
           style={stylesAll.content_modal}
           onPress={() => setOpenModal(false)}
         >
-          <View style={stylesAll.modal_block}>
+          <Animated.View
+            style={[
+              stylesAll.modal_block,
+              {
+                transform: [{ scale: scaleValue }],
+                opacity: opacityValue,
+              },
+            ]}
+          >
             <Ionicons
               onPress={() => setOpenModal(false)}
               size={24}
@@ -40,37 +82,40 @@ export default function Main() {
               style={styles.image_modal}
               source={require("../../assets/images/soonAlmaGoo.png")}
             />
-          </View>
+          </Animated.View>
         </Pressable>
       </Modal>
-      <Header />
-      <BonusCart />
-      <TouchableOpacity
-        style={stylesAll.button}
-        onPress={() => router.push("/auth/Registration")}
-      >
-        <Text>Войти</Text>
-      </TouchableOpacity>
-      <View style={styles.apple_check_price}>
+
+      <View style={{ marginBottom: 30 }}>
+        <Header />
+        <BonusCart />
         <TouchableOpacity
-          style={styles.apple_box}
-          onPress={() => setOpenModal(true)}
+          style={stylesAll.button}
+          onPress={() => router.push("/auth/Registration")}
         >
-          <Image
-            style={styles.image_apple}
-            source={require("../../assets/images/almaGoo.png")}
-          />
+          <Text>Войти</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.check_price_box}>
-          <Image
-            style={{ width: 24, height: 24 }}
-            source={require("../../assets/images/scanning.png")}
-          />
-          <Text>Проверить цену</Text>
-        </TouchableOpacity>
+        <View style={styles.apple_check_price}>
+          <TouchableOpacity
+            style={styles.apple_box}
+            onPress={() => setOpenModal(true)}
+          >
+            <Image
+              style={styles.image_apple}
+              source={require("../../assets/images/alma_go.png")}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.check_price_box}>
+            <Image
+              style={{ width: 24, height: 24 }}
+              source={require("../../assets/images/scanning.png")}
+            />
+            <Text>Проверить цену</Text>
+          </TouchableOpacity>
+        </View>
+        <HurryUpToBuy />
+        <Promotion />
       </View>
-      <HurryUpToBuy />
-      <Promotion />
     </ScrollView>
   );
 }

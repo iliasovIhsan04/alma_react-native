@@ -1,4 +1,4 @@
-import CatalogPage from "@/Redux/reducer/pages/CatalogPage";
+import CatalogPage from "@/pages/CatalogPage";
 import {
   StyleSheet,
   ScrollView,
@@ -10,12 +10,9 @@ import { stylesAll } from "./style";
 
 export default function CatalogScreen() {
   return (
-    <ScrollView
-      showsVerticalScrollIndicator={false}
-      showsHorizontalScrollIndicator={false}
-    >
+    <View style={stylesAll.background_block}>
       <View style={stylesAll.container}>
-        <View style={styles.header}>
+        <View style={[styles.header, stylesAll.header_nav]}>
           <TouchableOpacity style={styles.header_back_btn}></TouchableOpacity>
           <Image
             style={stylesAll.logotip}
@@ -23,9 +20,16 @@ export default function CatalogScreen() {
           />
           <View style={styles.header_back_btn}></View>
         </View>
-        <CatalogPage />
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+        >
+          <View style={{ marginBottom: 115 }}>
+            <CatalogPage />
+          </View>
+        </ScrollView>
       </View>
-    </ScrollView>
+    </View>
   );
 }
 

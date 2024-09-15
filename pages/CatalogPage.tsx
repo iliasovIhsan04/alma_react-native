@@ -37,7 +37,7 @@ const CatalogPage = () => {
 
   if (data.length === 0) {
     return (
-      <View style={stylesAll.loading}>
+      <View style={stylesAll.loading_catalog_page}>
         <ActivityIndicator color="red" size="small" />
       </View>
     );
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "space-between",
     gap: 10,
-    marginTop: 30,
+    marginTop: 10,
   },
   shop_box: {
     width: "48%",

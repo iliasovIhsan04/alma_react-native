@@ -122,7 +122,12 @@ const Productid = () => {
             />
           </TouchableOpacity>
           <Text style={stylesAll.header_name}></Text>
-          <View style={stylesAll.header_back_btn}></View>
+          <View style={stylesAll.header_back_btn}>
+            <Image
+              style={stylesAll.icons}
+              source={require("../../../assets/images/heart_card.png")}
+            />
+          </View>
         </View>
         <View style={styles.product_block}>
           <View style={styles.product_img_box}></View>
