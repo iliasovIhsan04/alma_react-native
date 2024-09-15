@@ -14,6 +14,8 @@ import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { url } from "@/Api";
+import { useSelector } from "react-redux";
+import { RootState } from "@/Redux/reducer/store";
 
 const PlacingOrder = () => {
   const [receiveInput, setReceiveInput] = useState(false);
@@ -23,6 +25,12 @@ const PlacingOrder = () => {
   const [placingModal, setPlacingModal] = useState(false);
   const [totalPrice, setTotalPrice] = useState(0);
   const [plus, setPlus] = useState<any>({});
+  const selectedAddressId = useSelector(
+    (state: RootState) => state.selectedAddress.selectedAddress
+  );
+  const addressId = useSelector(
+    (state: RootState) => state.selectedAddress.selectedId
+  );
   const [address, setAddress] = useState({
     address_to: "",
     get_date: "",
@@ -157,9 +165,15 @@ const PlacingOrder = () => {
                   style={stylesAll.icons}
                   source={require("../../assets/images/address.png")}
                 />
-                <Text style={styles.placeholder_static}>
-                  Выберите адрес доставки
-                </Text>
+                {selectedAddressId ? (
+                  <Text style={styles.placeholder_static}>
+                    {selectedAddressId}
+                  </Text>
+                ) : (
+                  <Text style={styles.placeholder_static}>
+                    Выберите адрес доставки
+                  </Text>
+                )}
               </View>
               <Image
                 style={[stylesAll.icons, { tintColor: "#CFCFCF" }]}

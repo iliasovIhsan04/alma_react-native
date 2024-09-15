@@ -42,8 +42,11 @@ const CatalogDetails: React.FC = ({}) => {
   const [modal, setModal] = useState(false);
   const [modalFilter, setModalFilter] = useState(false);
   const [cart, setCart] = useState<Product[]>([]);
-  const [rangeValue, setRangeValue] = useState<number[]>([0, 47990]);
+  const [rangeValue, setRangeValue] = useState<number[]>([0, 50000]);
   const screenWidth = Dimensions.get("window").width;
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(50000);
+  const [ordering, setOrdering] = useState("");
 
   const route =
     useRoute<RouteProp<Record<string, CatalogDetailsParams>, string>>();
@@ -92,22 +95,44 @@ const CatalogDetails: React.FC = ({}) => {
   useEffect(() => {
     initializeData();
   }, []);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(`${url}/product/list?cat=${cat}`);
-        setData(response.data);
-        setIsDataAvailable(response.data.length > 0);
-      } catch (error) {
-        console.error("Ошибка при получении данных:", error);
-      } finally {
-        setLoading(false);
+  const fetchData = async (min = minPrice, max = maxPrice) => {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `${url}/product/list?cat=${cat}&pricefrom=${min}&priceto=${max}&ordering=${ordering}`
+      );
+      const fetchedData = response.data;
+      setData(fetchedData);
+      if (fetchedData.length > 0) {
+        if (min === minPrice && max === maxPrice) {
+          const prices = fetchedData.map((product) => product.price);
+          const minPrice = Math.min(...prices);
+          const maxPrice = Math.max(...prices);
+          setMinPrice(minPrice);
+          setMaxPrice(maxPrice);
+          setRangeValue([minPrice, maxPrice]);
+        }
       }
-    };
+      setIsDataAvailable(fetchedData.length > 0);
+    } catch (error) {
+      console.error("Ошибка при получении данных:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchData();
-  }, [cat]);
+  useEffect(() => {
+    fetchData(minPrice, maxPrice, ordering);
+  }, [cat, ordering]);
+
+  const applyFilter = () => {
+    fetchData(rangeValue[0], rangeValue[1]);
+  };
+
+  const handleOrdering = async (newOrder: string) => {
+    await setOrdering(newOrder);
+    fetchData(minPrice, maxPrice, newOrder);
+  };
 
   const fetchCategoryData = async (dataID: number) => {
     try {
@@ -123,7 +148,6 @@ const CatalogDetails: React.FC = ({}) => {
     setSelectedIndex(-1);
     fetchCategoryData(parseInt(cat));
   };
-
   const fetchSubCategoryData = async (subCatId: number) => {
     try {
       const response = await axios.get(
@@ -135,7 +159,6 @@ const CatalogDetails: React.FC = ({}) => {
       console.error("Ошибка при получении данных:", error);
     }
   };
-
   const handleTabClick = (selectedId: number) => {
     setSubCat(selectedId);
     setSelectedIndex(selectedId);
@@ -241,27 +264,69 @@ const CatalogDetails: React.FC = ({}) => {
             <Text style={styles.sort_title}>Сортировка</Text>
             <View style={styles.modal_content_sort_block}>
               <View style={styles.modal_content_sort_item}>
-                <TouchableOpacity style={stylesAll.cell_box}></TouchableOpacity>
+                <TouchableOpacity
+                  style={stylesAll.cell_box}
+                  onPress={() => handleOrdering("")}
+                >
+                  <View
+                    style={ordering === "" && styles.active_cell_box}
+                  ></View>
+                </TouchableOpacity>
                 <Text style={stylesAll.cell_text}>По умолчанию</Text>
               </View>
               <View style={styles.modal_content_sort_item}>
-                <TouchableOpacity style={stylesAll.cell_box}></TouchableOpacity>
+                <TouchableOpacity
+                  style={stylesAll.cell_box}
+                  onPress={() => handleOrdering("-sales")}
+                >
+                  <View
+                    style={ordering === "-sales" && styles.active_cell_box}
+                  ></View>
+                </TouchableOpacity>
                 <Text style={stylesAll.cell_text}>Сначала популярные</Text>
               </View>
               <View style={styles.modal_content_sort_item}>
-                <TouchableOpacity style={stylesAll.cell_box}></TouchableOpacity>
+                <TouchableOpacity
+                  style={stylesAll.cell_box}
+                  onPress={() => handleOrdering("price")}
+                >
+                  <View
+                    style={ordering === "price" && styles.active_cell_box}
+                  ></View>
+                </TouchableOpacity>
                 <Text style={stylesAll.cell_text}>Сначала дешевые</Text>
               </View>
               <View style={styles.modal_content_sort_item}>
-                <TouchableOpacity style={stylesAll.cell_box}></TouchableOpacity>
+                <TouchableOpacity
+                  style={stylesAll.cell_box}
+                  onPress={() => handleOrdering("-price")}
+                >
+                  <View
+                    style={ordering === "-price" && styles.active_cell_box}
+                  ></View>
+                </TouchableOpacity>
                 <Text style={stylesAll.cell_text}>Сначала дорогие</Text>
               </View>
               <View style={styles.modal_content_sort_item}>
-                <TouchableOpacity style={stylesAll.cell_box}></TouchableOpacity>
+                <TouchableOpacity
+                  style={stylesAll.cell_box}
+                  onPress={() => handleOrdering("title")}
+                >
+                  <View
+                    style={ordering === "title" && styles.active_cell_box}
+                  ></View>
+                </TouchableOpacity>
                 <Text style={stylesAll.cell_text}>По алфавиту от А до Я</Text>
               </View>
               <View style={styles.modal_content_sort_item}>
-                <TouchableOpacity style={stylesAll.cell_box}></TouchableOpacity>
+                <TouchableOpacity
+                  style={stylesAll.cell_box}
+                  onPress={() => handleOrdering("-title")}
+                >
+                  <View
+                    style={ordering === "-title" && styles.active_cell_box}
+                  ></View>
+                </TouchableOpacity>
                 <Text style={stylesAll.cell_text}>По алфавиту от Я до А</Text>
               </View>
             </View>
@@ -292,11 +357,9 @@ const CatalogDetails: React.FC = ({}) => {
                 <MultiSlider
                   values={rangeValue}
                   sliderLength={screenWidth - 50}
-                  onValuesChange={(values) => {
-                    setRangeValue(values);
-                  }}
-                  min={0}
-                  max={50000}
+                  onValuesChange={(values) => setRangeValue(values)}
+                  min={minPrice}
+                  max={maxPrice}
                   step={1}
                   allowOverlap={false}
                   snapped
@@ -310,7 +373,10 @@ const CatalogDetails: React.FC = ({}) => {
                   }}
                 />
               </View>
-              <TouchableOpacity style={[stylesAll.button]}>
+              <TouchableOpacity
+                style={[stylesAll.button]}
+                onPress={applyFilter}
+              >
                 {loading ? (
                   <ActivityIndicator
                     style={stylesAll.loading}
@@ -438,6 +504,12 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     gap: 7,
     width: "46%",
+  },
+  active_cell_box: {
+    width: 15,
+    height: 15,
+    backgroundColor: "#DC0200",
+    borderRadius: 50,
   },
   filter_box: {
     height: 45,

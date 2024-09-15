@@ -6,6 +6,9 @@ import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { url } from "@/Api";
+import { useDispatch, useSelector } from "react-redux";
+import { setSelectedAddress } from "@/Redux/address/addressesSlice";
+import { RootState } from "@/Redux/reducer/store";
 
 interface Address {
   id: number;
@@ -18,9 +21,19 @@ interface Address {
 }
 
 const EmptyAddress = () => {
+  const dispatch = useDispatch();
   const [data, setData] = useState<Address[]>([]);
   const [orderDelete, setOrderDelete] = useState<number[]>([]);
   const [local, setLocal] = useState<string | null>(null);
+
+  const addressId = useSelector(
+    (state: RootState) => state.selectedAddress.selectedId
+  );
+
+  const handleActive = (id: number, address: string) => {
+    router.push("/navigate/PlacingOrder");
+    dispatch(setSelectedAddress({ id, address }));
+  };
 
   const getToken = async () => {
     const token = await AsyncStorage.getItem("tokenActivation");
@@ -96,11 +109,19 @@ const EmptyAddress = () => {
                       gap: 12,
                     }}
                   >
-                    <View style={stylesAll.cell_box}></View>
+                    <TouchableOpacity
+                      onPress={() => handleActive(item.id, item.street)}
+                      style={stylesAll.cell_box}
+                    >
+                      {addressId === item.id && (
+                        <View style={styles.line}> </View>
+                      )}
+                    </TouchableOpacity>
                     <Text style={styles.placeholder_static} numberOfLines={1}>
                       {item.street} {item.number} {item.building}{" "}
                       {item.apartment} {item.floor}
                     </Text>
+                    <Text>{item.id}</Text>
                   </View>
                   <Ionicons
                     name="trash-outline"
@@ -148,6 +169,12 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     color: "#191919",
     width: 240,
+  },
+  line: {
+    width: 15,
+    height: 15,
+    backgroundColor: "rgb(220, 2, 0)",
+    borderRadius: 50,
   },
   input_box: {
     backgroundColor: "#F5F7FA",

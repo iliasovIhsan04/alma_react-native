@@ -10,6 +10,8 @@ export const stylesAll = StyleSheet.create({
     borderRadius: 50,
     borderWidth: 2,
     borderColor: "#DC0200",
+    justifyContent: "center",
+    alignItems: "center",
   },
   logotip: {
     width: 80,

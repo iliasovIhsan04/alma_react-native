@@ -14,6 +14,7 @@ import {
   View,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Images from "./Images";
 
 interface Product {
   id: number;
@@ -31,6 +32,10 @@ interface Product {
   quantity: number | null;
   price_for: string;
   code: number;
+  img:{
+    id: number;
+    img: string;
+  }[];
 }
 
 const Productid = () => {
@@ -46,7 +51,7 @@ const Productid = () => {
           `activeItemsBasket_${id}`
         );
         setIsInBasket(!!activeItem);
-        console.log(`Item ${id} is in basket:`, !!activeItem); // Debugging line
+        console.log(`Item ${id} is in basket:`, !!activeItem);
       } catch (error) {
         console.error("Ошибка при проверке корзины:", error);
       }
@@ -130,7 +135,9 @@ const Productid = () => {
           </View>
         </View>
         <View style={styles.product_block}>
-          <View style={styles.product_img_box}></View>
+          <View >
+            <Images data={data.img} />
+          </View>
           <Text style={styles.product_title}>{data.title}</Text>
           <View style={{ flexDirection: "column", gap: 5, marginTop: 16 }}>
             <View
