@@ -26,7 +26,6 @@ const BonusCart = () => {
       setToken(null);
     }
   };
-
   useEffect(() => {
     const loadUserInfo = async () => {
       await getToken();
@@ -36,7 +35,7 @@ const BonusCart = () => {
     };
 
     loadUserInfo();
-  }, [dispatch, token])
+  }, [dispatch, token]);
 
   const data = useSelector((state: RootState) => state.users);
   const user = data?.user;

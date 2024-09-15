@@ -1,6 +1,7 @@
 import React from "react";
 import {
   Image,
+  Linking,
   Pressable,
   StyleSheet,
   Text,
@@ -40,19 +41,28 @@ const ToHelp = () => {
               </Text>
             </View>
             <View style={styles.social_networks_block}>
-              <Pressable style={styles.social_networks_box}>
+              <Pressable
+                style={styles.social_networks_box}
+                onPress={() => Linking.openURL("tel:+996508882056")}
+              >
                 <Image
                   style={{ width: 34, height: 34 }}
                   source={require("../../assets/images/callPhone.png")}
                 />
               </Pressable>
-              <Pressable style={styles.social_networks_box}>
+              <Pressable
+                style={styles.social_networks_box}
+                onPress={() => Linking.openURL("https://wa.me/+996704616802")}
+              >
                 <Image
                   style={{ width: 34, height: 34 }}
                   source={require("../../assets/images/whatsapp.png")}
                 />
               </Pressable>
-              <Pressable style={styles.social_networks_box}>
+              <Pressable
+                style={styles.social_networks_box}
+                onPress={() => Linking.openURL("https://t.me/+996704616802")}
+              >
                 <Image
                   style={{ width: 28, height: 28 }}
                   source={require("../../assets/images/telegram.png")}
@@ -60,7 +70,6 @@ const ToHelp = () => {
               </Pressable>
             </View>
           </View>
-
           <View style={styles.help_box}>
             <View style={{ flexDirection: "column", gap: 6 }}>
               <Text style={styles.help_text1}>Мы в социальных сетях</Text>
@@ -70,7 +79,12 @@ const ToHelp = () => {
               </Text>
             </View>
             <View style={styles.social_networks_block}>
-              <Pressable style={styles.social_networks_box}>
+              <Pressable
+                style={styles.social_networks_box}
+                onPress={() =>
+                  Linking.openURL("https://www.instagram.com/almamarket.kg/")
+                }
+              >
                 <Image
                   style={{ width: 30, height: 30 }}
                   source={require("../../assets/images/instagram.png")}

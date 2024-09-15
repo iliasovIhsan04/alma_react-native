@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
+  Alert,
   Image,
   ScrollView,
   StyleSheet,
@@ -11,15 +12,36 @@ import {
 } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 import { stylesAll } from "../(tabs)/style";
 import { router } from "expo-router";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUserInfo } from "@/Redux/reducer/UserInfo";
+import { AppDispatch, RootState } from "@/Redux/reducer/store";
+import { url } from "@/Api";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 interface DropdownItem {
   label: string;
   value: string;
 }
 
-const data: DropdownItem[] = [
+const gender: DropdownItem[] = [
+  { label: "Мужской", value: "Мужской" },
+  { label: "Женский", value: "Женский" },
+];
+
+const language: DropdownItem[] = [
+  { label: "Кыргызча", value: "Кыргызча" },
+  { label: "Русский", value: "Русский" },
+];
+
+const married: DropdownItem[] = [
+  { label: "Холост/не замужем", value: "Холост/не замужем" },
+  { label: "Женат/замужем", value: "Женат/замужем" },
+];
+
+const cities: DropdownItem[] = [
   { label: "Бишкек", value: "Бишкек" },
   { label: "Кант", value: "Кант" },
   { label: "Токмок", value: "Токмок" },
@@ -35,30 +57,128 @@ const data: DropdownItem[] = [
   { label: "Другой город", value: "Другой город" },
 ];
 
-const gender: DropdownItem[] = [
-  { label: "Мужской", value: "Мужской" },
-  { label: "Женский", value: "Женский" },
-];
-const language = [
-  { label: "Кыргызча", value: "Кыргызча" },
-  { label: "Русский", value: "Русский" },
-];
-const married = [
-  { label: "Холост/не замужем", value: "Холост/не замужем" },
-  { label: "Женат/замужем", value: "Женат/замужем" },
-];
-
-const DropdownComponent = () => {
-  const [isFocus, setIsFocus] = useState(false);
-  const [isPetONe, setIsPetOne] = useState(false);
+const MyDetails = () => {
+  const [isPetOne, setIsPetOne] = useState(false);
   const [isPetTwo, setIsPetTwo] = useState(false);
-  const [genderValue, setGenderValue] = useState(null);
-  const [languageValue, setLanguageValue] = useState(null);
-  const [marriedValue, setMarriedValue] = useState(null);
-  const [cityValue, setCityValue] = useState(null);
+  const [genderValue, setGenderValue] = useState<string | null>(null);
+  const [languageValue, setLanguageValue] = useState<string | null>(null);
+  const [marriedValue, setMarriedValue] = useState<string | null>(null);
+  const [cityValue, setCityValue] = useState<string | null>(null);
+  const [show, setShow] = useState(false);
+
+  const [info, setInfo] = useState({
+    phone: "",
+    first_name: "",
+    last_name: "",
+    birthday: new Date(),
+    gender: "",
+    language: "",
+    married: "",
+    status: "",
+    city: "",
+    animal: false,
+    car: false,
+  });
+  const [loading, setLoading] = useState(false);
+  const [isModified, setIsModified] = useState(false);
+  const dispatch: AppDispatch = useDispatch();
+  const [local, setLocal] = useState("");
+
+  const getToken = async (): Promise<void> => {
+    try {
+      const storedToken = await AsyncStorage.getItem("tokenActivation");
+      setLocal(storedToken);
+    } catch (error) {
+      console.error("Error retrieving token:", error);
+    }
+  };
+
+  useEffect(() => {
+    const loadUserInfo = async () => {
+      await getToken();
+      if (local) {
+        dispatch(fetchUserInfo());
+      }
+    };
+
+    loadUserInfo();
+  }, [dispatch, local]);
+
+  const headers = {
+    Authorization: `Token ${local}`,
+  };
+
+  const data = useSelector((state: RootState) => state.users);
+  const user = data?.user;
+
+  useEffect(() => {
+    if (user) {
+      setInfo({
+        phone: user.phone,
+        last_name: user.last_name,
+        first_name: user.first_name,
+        language: user.language,
+        birthday: new Date(user.birthday),
+        married: user.married,
+        gender: user.gender,
+        status: user.status,
+        city: user.city,
+        animal: user.animal,
+        car: user.car,
+      });
+      setGenderValue(user.gender);
+      setLanguageValue(user.language);
+      setMarriedValue(user.married);
+      setCityValue(user.city);
+    }
+  }, [user]);
+
+  const handleInputChange = (field: string, value: any) => {
+    setInfo((prev) => ({ ...prev, [field]: value }));
+    setIsModified(true);
+  };
+
+  const createPerson = async () => {
+    if (local) {
+      setLoading(true);
+      const post = {
+        phone: info.phone,
+        first_name: info.first_name,
+        last_name: info.last_name,
+        birthday: info.birthday.toISOString().split("T")[0],
+        gender: info.gender,
+        language: info.language,
+        married: info.married,
+        status: info.status,
+        city: info.city,
+        car: info.car,
+        animal: info.animal,
+      };
+      try {
+        const response = await axios.post(
+          `${url}/auth/update-user-detail`,
+          post,
+          {
+            headers,
+          }
+        );
+        setLoading(false);
+        if (response.data.response === true) {
+          setIsModified(false);
+          Alert.alert("Успешно изменён!", "success");
+        } else {
+          Alert.alert("Ошибка", "Не удалось сохранить изменения.");
+        }
+      } catch (error) {
+        console.error("Error saving user details:", error);
+        Alert.alert("Ошибка", "Не удалось сохранить изменения.");
+        setLoading(false);
+      }
+    }
+  };
 
   const toggleSwitchONe = async () => {
-    const newValue = !isPetONe;
+    const newValue = !isPetOne;
     setIsPetOne(newValue);
     try {
       if (newValue) {
@@ -128,6 +248,8 @@ const DropdownComponent = () => {
               <TextInput
                 style={[stylesAll.input, styles.input_box]}
                 placeholder="Имя"
+                value={info.first_name}
+                onChangeText={(text) => handleInputChange("first_name", text)}
               />
             </View>
             <View style={styles.input_block}>
@@ -135,122 +257,117 @@ const DropdownComponent = () => {
               <TextInput
                 style={[stylesAll.input, styles.input_box]}
                 placeholder="Фамилия"
+                value={info.last_name}
+                onChangeText={(text) => handleInputChange("last_name", text)}
               />
             </View>
             <View style={styles.input_block}>
               <Text style={stylesAll.label}>Номер телефона</Text>
               <TextInput
                 style={[stylesAll.input, styles.input_box]}
+                value={info.phone}
+                onChangeText={(text) => handleInputChange("phone", text)}
                 placeholder="Номер телефона"
-                keyboardType="phone-pad"
+                keyboardType="numeric"
+                editable={false}
               />
             </View>
-            <View style={styles.input_block}>
+            <TouchableOpacity style={styles.input_block}>
               <Text style={stylesAll.label}>Дата рождения</Text>
-              <TextInput
-                style={[stylesAll.input, styles.input_box]}
-                placeholder="Номер телефона"
-                keyboardType="phone-pad"
-              />
-            </View>
+              <View style={[styles.input_box_date]}>
+                <DateTimePicker
+                  style={styles.date_picker}
+                  testID="dateTimePicker"
+                  value={info.birthday}
+                  mode="date"
+                  onChange={(event, selectedDate) => {
+                    const currentDate = selectedDate || info.birthday;
+                    setShow(false);
+                    handleInputChange("birthday", currentDate);
+                  }}
+                />
+              </View>
+            </TouchableOpacity>
             <View style={styles.input_block}>
               <Text style={stylesAll.label}>Пол</Text>
               <Dropdown
-                style={[
-                  stylesAll.input,
-                  styles.input_box,
-                  isFocus && { borderColor: "blue" },
-                ]}
-                placeholderStyle={styles.placeholderStyle}
-                selectedTextStyle={styles.selectedTextStyle}
-                inputSearchStyle={styles.inputSearchStyle}
-                iconStyle={styles.iconStyle}
+                style={[stylesAll.input, styles.input_box]}
+                placeholder="Выберите пол"
                 data={gender}
-                search
-                maxHeight={300}
                 labelField="label"
                 valueField="value"
-                placeholder={!isFocus ? "Выберите пол" : "..."}
-                searchPlaceholder="Search..."
                 value={genderValue}
-                onFocus={() => setIsFocus(true)}
-                onBlur={() => setIsFocus(false)}
-                onChange={(item) => setGenderValue(item.value)}
+                onChange={(item) => {
+                  setGenderValue(item.value);
+                  handleInputChange("gender", item.value);
+                }}
               />
             </View>
             <View style={styles.input_block}>
-              <Text style={stylesAll.label}>Родной язык</Text>
+              <Text style={stylesAll.label}>Язык</Text>
               <Dropdown
-                style={[
-                  stylesAll.input,
-                  styles.input_box,
-                  isFocus && { borderColor: "blue" },
-                ]}
-                placeholderStyle={styles.placeholderStyle}
-                selectedTextStyle={styles.selectedTextStyle}
-                inputSearchStyle={styles.inputSearchStyle}
-                iconStyle={styles.iconStyle}
+                style={[stylesAll.input, styles.input_box]}
+                placeholder="Выберите язык"
                 data={language}
-                search
-                maxHeight={300}
                 labelField="label"
                 valueField="value"
-                placeholder={!isFocus ? "Выберите язык" : "..."}
-                searchPlaceholder="Search..."
                 value={languageValue}
-                onFocus={() => setIsFocus(true)}
-                onBlur={() => setIsFocus(false)}
-                onChange={(item) => setLanguageValue(item.value)}
+                onChange={(item) => {
+                  setLanguageValue(item.value);
+                  handleInputChange("language", item.value);
+                }}
               />
             </View>
             <View style={styles.input_block}>
               <Text style={stylesAll.label}>Семейное положение</Text>
               <Dropdown
-                style={[
-                  stylesAll.input,
-                  styles.input_box,
-                  isFocus && { borderColor: "blue" },
-                ]}
-                placeholderStyle={styles.placeholderStyle}
-                selectedTextStyle={styles.selectedTextStyle}
-                inputSearchStyle={styles.inputSearchStyle}
-                iconStyle={styles.iconStyle}
+                style={[stylesAll.input, styles.input_box]}
+                placeholder="Выберите семейное положение"
                 data={married}
-                search
-                maxHeight={300}
                 labelField="label"
                 valueField="value"
-                placeholder={!isFocus ? "Выберите семейное положение" : "..."}
-                searchPlaceholder="Search..."
                 value={marriedValue}
-                onFocus={() => setIsFocus(true)}
-                onBlur={() => setIsFocus(false)}
-                onChange={(item) => setMarriedValue(item.value)}
+                onChange={(item) => {
+                  setMarriedValue(item.value);
+                  handleInputChange("married", item.value);
+                }}
               />
             </View>
             <View style={styles.input_block}>
-              <Text style={stylesAll.label}>Город проживания</Text>
+              <Text style={stylesAll.label}>Город</Text>
               <Dropdown
-                style={[
-                  stylesAll.input,
-                  styles.input_box,
-                  isFocus && { borderColor: "blue" },
-                ]}
-                placeholderStyle={styles.placeholderStyle}
-                selectedTextStyle={styles.selectedTextStyle}
-                inputSearchStyle={styles.inputSearchStyle}
-                iconStyle={styles.iconStyle}
-                data={data}
-                search
-                maxHeight={300}
+                style={[stylesAll.input, styles.input_box]}
+                placeholder="Выберите город"
+                data={cities}
                 labelField="label"
                 valueField="value"
-                placeholder={!isFocus ? "Выберите город" : "..."}
-                searchPlaceholder="Search..."
                 value={cityValue}
-                onFocus={() => setIsFocus(true)}
-                onBlur={() => setIsFocus(false)}
-                onChange={(item) => setCityValue(item.value)}
+                onChange={(item) => {
+                  setCityValue(item.value);
+                  handleInputChange("city", item.value);
+                  setIsModified(true);
+                }}
+              />
+            </View>
+            <View
+              style={[
+                styles.input_box,
+                stylesAll.input,
+                {
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                },
+              ]}
+            >
+              <Text style={styles.switch_text}>Наличие домашних животных</Text>
+              <Switch
+                value={info.car}
+                onValueChange={(value) => {
+                  setInfo((prev) => ({ ...prev, car: value }));
+                  toggleSwitchONe();
+                  setIsModified(true);
+                }}
               />
             </View>
             <View
@@ -264,35 +381,30 @@ const DropdownComponent = () => {
                 },
               ]}
             >
-              <Text>Наличие домашних животных</Text>
+              <Text style={styles.switch_text}>Наличие автомобиля</Text>
               <Switch
                 trackColor={{ false: "#3e3e3e", true: "#25D366" }}
-                thumbColor={isPetONe ? "#f4f3f4" : "#f4f3f4"}
-                ios_backgroundColor="#3e3e3e"
-                onValueChange={toggleSwitchONe}
-                value={isPetONe}
+                value={info.animal}
+                onValueChange={(value) => {
+                  setInfo((prev) => ({ ...prev, animal: value }));
+                  toggleSwitchTwo();
+                }}
               />
             </View>
-            <View
-              style={[
-                stylesAll.input,
-                styles.input_box,
-                {
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                },
-              ]}
+            {isModified && (
+              <Text style={styles.saveReminder}>
+                Есть несохраненные изменения
+              </Text>
+            )}
+            <TouchableOpacity
+              style={[isModified ? stylesAll.button : styles.my_btn]}
+              onPress={createPerson}
+              disabled={loading}
             >
-              <Text>Наличие автомобиля</Text>
-              <Switch
-                trackColor={{ false: "#3e3e3e", true: "#25D366" }}
-                thumbColor={isPetTwo ? "#f4f3f4" : "#f4f3f4"}
-                ios_backgroundColor="#3e3e3e"
-                onValueChange={toggleSwitchTwo}
-                value={isPetTwo}
-              />
-            </View>
+              <Text style={stylesAll.button_text}>
+                {loading ? "Сохранение..." : "Сохранить"}
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
@@ -300,14 +412,39 @@ const DropdownComponent = () => {
   );
 };
 
-export default DropdownComponent;
-
 const styles = StyleSheet.create({
+  my_btn: {
+    height: 45,
+    backgroundColor: "#6B6B6B",
+    borderRadius: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  switch_text: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#191919",
+  },
+  saveReminder: {
+    color: "red",
+    fontSize: 12,
+    marginBottom: 10,
+  },
   input_block: {
     flexDirection: "column",
   },
   input_box: {
     backgroundColor: "#F5F7FA",
+  },
+  input_box_date: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  date_picker: {
+    height: 45,
+    marginLeft: 0,
   },
   select_box: {
     flexDirection: "row",
@@ -339,3 +476,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+
+export default MyDetails;
