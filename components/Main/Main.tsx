@@ -70,13 +70,7 @@ export default function Main() {
   }, [openModal]);
 
   return (
-    <ScrollView
-      showsVerticalScrollIndicator={false}
-      showsHorizontalScrollIndicator={false}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
-    >
+    <>
       <Modal visible={openModal} transparent={true} animationType="none">
         <Pressable
           style={stylesAll.content_modal}
@@ -104,38 +98,45 @@ export default function Main() {
           </Animated.View>
         </Pressable>
       </Modal>
-
-      <View style={{ marginBottom: 30 }}>
-        <Header />
-        <BonusCart />
-        <TouchableOpacity
-          style={stylesAll.button}
-          onPress={() => router.push("/auth/Registration")}
-        >
-          <Text>Войти</Text>
-        </TouchableOpacity>
-        <View style={styles.apple_check_price}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        <View style={{ marginBottom: 30 }}>
+          <Header />
+          <BonusCart />
           <TouchableOpacity
-            style={styles.apple_box}
-            onPress={() => setOpenModal(true)}
+            style={stylesAll.button}
+            onPress={() => router.push("/auth/Registration")}
           >
-            <Image
-              style={styles.image_apple}
-              source={require("../../assets/images/alma_go.png")}
-            />
+            <Text>Войти</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.check_price_box}>
-            <Image
-              style={{ width: 24, height: 24 }}
-              source={require("../../assets/images/scanning.png")}
-            />
-            <Text>Проверить цену</Text>
-          </TouchableOpacity>
+          <View style={styles.apple_check_price}>
+            <TouchableOpacity
+              style={styles.apple_box}
+              onPress={() => setOpenModal(true)}
+            >
+              <Image
+                style={styles.image_apple}
+                source={require("../../assets/images/alma_go.png")}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.check_price_box}>
+              <Image
+                style={{ width: 24, height: 24 }}
+                source={require("../../assets/images/scanning.png")}
+              />
+              <Text>Проверить цену</Text>
+            </TouchableOpacity>
+          </View>
+          <HurryUpToBuy />
+          <Promotion />
         </View>
-        <HurryUpToBuy />
-        <Promotion />
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </>
   );
 }
 
