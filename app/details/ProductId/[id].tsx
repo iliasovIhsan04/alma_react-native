@@ -32,7 +32,7 @@ interface Product {
   quantity: number | null;
   price_for: string;
   code: number;
-  img:{
+  img: {
     id: number;
     img: string;
   }[];
@@ -135,7 +135,8 @@ const Productid = () => {
           </View>
         </View>
         <View style={styles.product_block}>
-          <View >
+          
+          <View>
             <Images data={data.img} />
           </View>
           <Text style={styles.product_title}>{data.title}</Text>

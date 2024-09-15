@@ -98,14 +98,14 @@ export default function Main() {
           </Animated.View>
         </Pressable>
       </Modal>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        showsHorizontalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      >
-        <View style={{ marginBottom: 30 }}>
+      <View style={{ marginBottom: 30 }}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
           <Header />
           <BonusCart />
           <TouchableOpacity
@@ -134,8 +134,8 @@ export default function Main() {
           </View>
           <HurryUpToBuy />
           <Promotion />
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </View>
     </>
   );
 }

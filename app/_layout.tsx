@@ -62,10 +62,10 @@ export default function RootLayout() {
         <Stack.Screen name="/navigate/BasketProducts" />
         <Stack.Screen name="/navigate/PlacingOrder" />
         <Stack.Screen name="/auth/Registration" />
-        <Stack.Screen name="/auth/Login" />
         <Stack.Screen name="/auth/ForgotPassword" />
-        <Stack.Screen name="/auth/ForgotActivationCode" />
-        <Stack.Screen name="/auth/ResetPassword" />
+        <Stack.Screen name="/auth/ResetPassword"/>
+        <Stack.Screen name="/auth/Login"/>
+        <Stack.Screen name="/auth/ForgotActivationCode"/>
       </Stack>
     </Provider>
   );
