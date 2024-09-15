@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
   Image,
   StyleSheet,
@@ -9,6 +9,7 @@ import {
   Modal,
   Pressable,
   Animated,
+  RefreshControl,
 } from "react-native";
 import BonusCart from "./BonusCart";
 import Header from "./Header";
@@ -17,11 +18,26 @@ import Promotion from "./Promotion";
 import { router } from "expo-router";
 import { stylesAll } from "@/app/(tabs)/style";
 import { Ionicons } from "@expo/vector-icons";
+import { AppDispatch } from "@/Redux/reducer/store";
+import { useDispatch } from "react-redux";
+import { fetchUserInfo } from "@/Redux/reducer/UserInfo";
 
 export default function Main() {
+  const dispatch: AppDispatch = useDispatch();
   const [openModal, setOpenModal] = useState(false);
   const scaleValue = useRef(new Animated.Value(0)).current;
   const opacityValue = useRef(new Animated.Value(0)).current;
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await dispatch(fetchUserInfo());
+    } finally {
+      setRefreshing(false);
+    }
+  }, [dispatch]);
 
   useEffect(() => {
     if (openModal) {
@@ -57,6 +73,9 @@ export default function Main() {
     <ScrollView
       showsVerticalScrollIndicator={false}
       showsHorizontalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
     >
       <Modal visible={openModal} transparent={true} animationType="none">
         <Pressable
