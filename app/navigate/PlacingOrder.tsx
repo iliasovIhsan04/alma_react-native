@@ -16,6 +16,7 @@ import axios from "axios";
 import { url } from "@/Api";
 import { useSelector } from "react-redux";
 import { RootState } from "@/Redux/reducer/store";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 const PlacingOrder = () => {
   const [receiveInput, setReceiveInput] = useState(false);
@@ -25,6 +26,7 @@ const PlacingOrder = () => {
   const [placingModal, setPlacingModal] = useState(false);
   const [totalPrice, setTotalPrice] = useState(0);
   const [plus, setPlus] = useState<any>({});
+  const [show, setShow] = useState(false);
   const selectedAddressId = useSelector(
     (state: RootState) => state.selectedAddress.selectedAddress
   );
@@ -70,6 +72,7 @@ const PlacingOrder = () => {
 
   const handleSubmit = async () => {
     setIsLoading(true);
+    console.log("Address:", address); // Добавьте этот вывод
     try {
       const shopCart = await AsyncStorage.getItem("shopCart");
       const parsedShopCart = shopCart ? JSON.parse(shopCart) : [];
@@ -81,15 +84,15 @@ const PlacingOrder = () => {
         },
         {}
       );
+      const addresing = 24;
 
       const productsForOrder = Object.keys(idCount).map((id) => ({
         product: parseInt(id),
         count: idCount[id],
       }));
-
       const dataToSend = {
-        address_to: address.address_to,
-        get_date: address.get_date,
+        address_to: addressId ? addressId : null,
+        get_date: addresing,
         comment: address.comment,
         product: productsForOrder,
       };
@@ -110,6 +113,7 @@ const PlacingOrder = () => {
         setPlacingModal(true);
       }
     } catch (error) {
+      console.error("Error during order placement:", error); // Добавьте этот вывод
       if (!address.address_to) {
         Alert.alert("Ошибка", "Добавьте адрес прежде чем заказать!");
       } else if (!address.get_date) {
@@ -118,7 +122,6 @@ const PlacingOrder = () => {
       setIsLoading(false);
     }
   };
-
   const calculateTotalPrice = async () => {
     const shopCart = await AsyncStorage.getItem("shopCart");
     const parsedCart = shopCart ? JSON.parse(shopCart) : [];
@@ -194,13 +197,38 @@ const PlacingOrder = () => {
             <TouchableOpacity
               style={[stylesAll.input, styles.input_box, { marginTop: 10 }]}
             >
-              <View
+              <TouchableOpacity
+                onPress={() => setShow(true)}
                 style={{ flexDirection: "row", alignItems: "center", gap: 12 }}
               >
                 <View style={stylesAll.cell_box}></View>
                 <Text style={styles.placeholder_static}>
                   Выбрать дату и время
                 </Text>
+              </TouchableOpacity>
+              <View style={stylesAll.input_block_all}>
+                {show && (
+                  <View style={styles.input_box_date}>
+                    <DateTimePicker
+                      style={styles.date_picker}
+                      testID="dateTimePicker"
+                      value={
+                        address.get_date
+                          ? new Date(address.get_date)
+                          : new Date()
+                      }
+                      mode="datetime"
+                      onChange={(event, selectedDate) => {
+                        const currentDate = selectedDate || new Date();
+                        setShow(false);
+                        setAddress((prevAddress) => ({
+                          ...prevAddress,
+                          get_date: currentDate.toISOString(),
+                        }));
+                      }}
+                    />
+                  </View>
+                )}
               </View>
             </TouchableOpacity>
           </View>
@@ -212,6 +240,12 @@ const PlacingOrder = () => {
               placeholderTextColor={"#6B6B6B"}
               multiline
               numberOfLines={10}
+              onChangeText={(text) =>
+                setAddress((prevAddress) => ({
+                  ...prevAddress,
+                  comment: text,
+                }))
+              }
             />
           </View>
           <View style={{ marginTop: 75 }}>
@@ -301,6 +335,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
+  },
+  input_box_date: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: 20,
+  },
+  date_picker: {
+    height: 45,
+    marginLeft: 0,
   },
   btn_placing: {
     backgroundColor: "#6B6B6B",

@@ -42,7 +42,7 @@ const EmptyAddress = () => {
 
   const ordering = async () => {
     try {
-      const response = await axios.get(url + "/order/address/list/", {
+      const response = await axios.get(`${url}/order/address/list/`, {
         headers: { Authorization: `Token ${local}` },
       });
       setData(response.data);
@@ -113,15 +113,16 @@ const EmptyAddress = () => {
                       onPress={() => handleActive(item.id, item.street)}
                       style={stylesAll.cell_box}
                     >
-                      {addressId === item.id && (
-                        <View style={styles.line}> </View>
-                      )}
+                      <View>
+                        {addressId === item.id && (
+                          <View style={styles.line}></View>
+                        )}
+                      </View>
                     </TouchableOpacity>
                     <Text style={styles.placeholder_static} numberOfLines={1}>
                       {item.street} {item.number} {item.building}{" "}
                       {item.apartment} {item.floor}
                     </Text>
-                    <Text>{item.id}</Text>
                   </View>
                   <Ionicons
                     name="trash-outline"
