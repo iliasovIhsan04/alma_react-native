@@ -72,7 +72,6 @@ const PlacingOrder = () => {
 
   const handleSubmit = async () => {
     setIsLoading(true);
-    console.log("Address:", address); // Добавьте этот вывод
     try {
       const shopCart = await AsyncStorage.getItem("shopCart");
       const parsedShopCart = shopCart ? JSON.parse(shopCart) : [];
@@ -84,15 +83,13 @@ const PlacingOrder = () => {
         },
         {}
       );
-      const addresing = 24;
-
       const productsForOrder = Object.keys(idCount).map((id) => ({
         product: parseInt(id),
         count: idCount[id],
       }));
       const dataToSend = {
         address_to: addressId ? addressId : null,
-        get_date: addresing,
+        get_date: address.get_date,
         comment: address.comment,
         product: productsForOrder,
       };
@@ -113,7 +110,7 @@ const PlacingOrder = () => {
         setPlacingModal(true);
       }
     } catch (error) {
-      console.error("Error during order placement:", error); // Добавьте этот вывод
+      console.error("Error during order placement:", error);
       if (!address.address_to) {
         Alert.alert("Ошибка", "Добавьте адрес прежде чем заказать!");
       } else if (!address.get_date) {
