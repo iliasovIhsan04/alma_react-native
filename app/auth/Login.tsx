@@ -50,7 +50,7 @@ const Login = () => {
 
       if (response.data.isactivated === false) {
         await AsyncStorage.setItem("phone", phone.replace(/\D/g, ""));
-        router.push("Activation");
+        router.push("activation");
       }
 
       if (response.data.token) {
@@ -161,7 +161,7 @@ const Login = () => {
             </TouchableOpacity>
             <Text
               style={styles.yes_text}
-              onPress={() => router.push("auth/Registration")}
+              onPress={() => router.push("auth/registration")}
             >
               Еще нет аккаунта?{" "}
               <Text style={styles.terms_red}>Зарегистрироваться</Text>

@@ -41,7 +41,7 @@ const ForgotPassword = () => {
       await AsyncStorage.setItem("phone", JSON.stringify(formattedPhone));
 
       if (response.data.response === true) {
-        router.push("auth/ForgotActivationCode");
+        router.push("auth/activationforgot");
         Alert.alert("Успешно!", response.data.message);
       } else {
         Alert.alert("Ошибка!", response.data.message || "Произошла ошибка");

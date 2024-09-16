@@ -99,6 +99,7 @@ export default function Main() {
         </Pressable>
       </Modal>
       <View style={{ marginBottom: 30 }}>
+        <Header />
         <ScrollView
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
@@ -106,7 +107,6 @@ export default function Main() {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
         >
-          <Header />
           <BonusCart />
           <TouchableOpacity
             style={stylesAll.button}
