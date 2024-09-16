@@ -103,6 +103,7 @@ const CatalogDetails: React.FC = ({}) => {
       );
       const fetchedData = response.data;
       setData(fetchedData);
+      setLoading(true);
       if (fetchedData.length > 0) {
         if (min === minPrice && max === maxPrice) {
           const prices = fetchedData.map((product) => product.price);
@@ -113,6 +114,9 @@ const CatalogDetails: React.FC = ({}) => {
           setRangeValue([minPrice, maxPrice]);
         }
       }
+      setLoading(false);
+      setModal(false);
+      setModalFilter(false);
       setIsDataAvailable(fetchedData.length > 0);
     } catch (error) {
       console.error("Ошибка при получении данных:", error);
@@ -263,72 +267,72 @@ const CatalogDetails: React.FC = ({}) => {
           <ModalDown modal={modal} setModal={setModal}>
             <Text style={styles.sort_title}>Сортировка</Text>
             <View style={styles.modal_content_sort_block}>
-              <View style={styles.modal_content_sort_item}>
-                <TouchableOpacity
-                  style={stylesAll.cell_box}
-                  onPress={() => handleOrdering("")}
-                >
+              <TouchableOpacity
+                style={styles.modal_content_sort_item}
+                onPress={() => handleOrdering("")}
+              >
+                <TouchableOpacity style={stylesAll.cell_box}>
                   <View
                     style={ordering === "" && styles.active_cell_box}
                   ></View>
                 </TouchableOpacity>
                 <Text style={stylesAll.cell_text}>По умолчанию</Text>
-              </View>
-              <View style={styles.modal_content_sort_item}>
-                <TouchableOpacity
-                  style={stylesAll.cell_box}
-                  onPress={() => handleOrdering("-sales")}
-                >
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.modal_content_sort_item}
+                onPress={() => handleOrdering("-sales")}
+              >
+                <TouchableOpacity style={stylesAll.cell_box}>
                   <View
                     style={ordering === "-sales" && styles.active_cell_box}
                   ></View>
                 </TouchableOpacity>
                 <Text style={stylesAll.cell_text}>Сначала популярные</Text>
-              </View>
-              <View style={styles.modal_content_sort_item}>
-                <TouchableOpacity
-                  style={stylesAll.cell_box}
-                  onPress={() => handleOrdering("price")}
-                >
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.modal_content_sort_item}
+                onPress={() => handleOrdering("price")}
+              >
+                <TouchableOpacity style={stylesAll.cell_box}>
                   <View
                     style={ordering === "price" && styles.active_cell_box}
                   ></View>
                 </TouchableOpacity>
                 <Text style={stylesAll.cell_text}>Сначала дешевые</Text>
-              </View>
-              <View style={styles.modal_content_sort_item}>
-                <TouchableOpacity
-                  style={stylesAll.cell_box}
-                  onPress={() => handleOrdering("-price")}
-                >
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.modal_content_sort_item}
+                onPress={() => handleOrdering("-price")}
+              >
+                <TouchableOpacity style={stylesAll.cell_box}>
                   <View
                     style={ordering === "-price" && styles.active_cell_box}
                   ></View>
                 </TouchableOpacity>
                 <Text style={stylesAll.cell_text}>Сначала дорогие</Text>
-              </View>
-              <View style={styles.modal_content_sort_item}>
-                <TouchableOpacity
-                  style={stylesAll.cell_box}
-                  onPress={() => handleOrdering("title")}
-                >
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.modal_content_sort_item}
+                onPress={() => handleOrdering("title")}
+              >
+                <TouchableOpacity style={stylesAll.cell_box}>
                   <View
                     style={ordering === "title" && styles.active_cell_box}
                   ></View>
                 </TouchableOpacity>
                 <Text style={stylesAll.cell_text}>По алфавиту от А до Я</Text>
-              </View>
-              <View style={styles.modal_content_sort_item}>
-                <TouchableOpacity
-                  style={stylesAll.cell_box}
-                  onPress={() => handleOrdering("-title")}
-                >
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.modal_content_sort_item}
+                onPress={() => handleOrdering("-title")}
+              >
+                <TouchableOpacity style={stylesAll.cell_box}>
                   <View
                     style={ordering === "-title" && styles.active_cell_box}
                   ></View>
                 </TouchableOpacity>
                 <Text style={stylesAll.cell_text}>По алфавиту от Я до А</Text>
-              </View>
+              </TouchableOpacity>
             </View>
           </ModalDown>
           <ModalDown modal={modalFilter} setModal={setModalFilter}>

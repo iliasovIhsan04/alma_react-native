@@ -134,11 +134,12 @@ const Productid = () => {
             />
           </View>
         </View>
+      </View>
+      <View>
+        <Images data={data.img} />
+      </View>
+      <View style={stylesAll.container}>
         <View style={styles.product_block}>
-          
-          <View>
-            <Images data={data.img} />
-          </View>
           <Text style={styles.product_title}>{data.title}</Text>
           <View style={{ flexDirection: "column", gap: 5, marginTop: 16 }}>
             <View
@@ -180,6 +181,7 @@ const Productid = () => {
           </View>
         </View>
       </View>
+
       {!isInBasket ? (
         <TouchableOpacity
           style={[stylesAll.button, styles.btn_product]}

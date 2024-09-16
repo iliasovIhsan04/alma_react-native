@@ -21,16 +21,18 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { Modal } from "react-native";
 import { Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { Line } from "react-native-svg";
 
 const PlacingOrder = () => {
-  const [receiveInput, setReceiveInput] = useState(false);
   const [local, setLocal] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [cart, setCart] = useState<any[]>([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [plus, setPlus] = useState<any>({});
   const [show, setShow] = useState(false);
-  const [openModal, setOpenModal] = useState(false);
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [date1, setDate1] = useState<any>();
+  const [date2, setDate2] = useState();
   const scaleValue = useRef(new Animated.Value(0)).current;
   const opacityValue = useRef(new Animated.Value(0)).current;
   const selectedAddressId = useSelector(
@@ -41,7 +43,7 @@ const PlacingOrder = () => {
   );
   const [address, setAddress] = useState({
     address_to: "",
-    get_date: "2024-09-12",
+    get_date: "",
     comment: "",
   });
 
@@ -99,7 +101,6 @@ const PlacingOrder = () => {
         comment: address.comment,
         product: productsForOrder,
       };
-
       const response = await axios.post(url + "/order/create", dataToSend, {
         headers,
       });
@@ -184,10 +185,7 @@ const PlacingOrder = () => {
   return (
     <View style={stylesAll.background_block}>
       <Modal visible={openModal} transparent={true} animationType="none">
-        <Pressable
-          style={stylesAll.content_modal}
-          onPress={() => setOpenModal(false)}
-        >
+        <Pressable style={stylesAll.content_modal}>
           <Animated.View
             style={[
               stylesAll.modal_block_placing,
@@ -198,7 +196,10 @@ const PlacingOrder = () => {
             ]}
           >
             <Ionicons
-              onPress={() => setOpenModal(false) || router.push("/")}
+              onPress={() => {
+                setOpenModal(false);
+                router.push("/");
+              }}
               size={24}
               style={stylesAll.icon_close}
               name="close"
@@ -219,7 +220,10 @@ const PlacingOrder = () => {
             </View>
             <TouchableOpacity
               style={stylesAll.button}
-              onPress={() => setOpenModal(false) || router.push("/")}
+              onPress={() => {
+                setOpenModal(false);
+                router.push("/");
+              }}
             >
               <Text style={stylesAll.button_text}>Понятно</Text>
             </TouchableOpacity>
@@ -272,26 +276,43 @@ const PlacingOrder = () => {
           </View>
           <View>
             <Text style={stylesAll.label}>Время получения</Text>
-            <TouchableOpacity style={[stylesAll.input, styles.input_box]}>
+            <TouchableOpacity
+              style={[stylesAll.input, styles.input_box]}
+              onPress={() => {
+                setAddress((prevAddress) => ({
+                  ...prevAddress,
+                  get_date: "2024-09-12", // или другой дефолтный формат
+                }));
+                setShow(false);
+                setDate1(true);
+              }}
+            >
               <View
                 style={{ flexDirection: "row", alignItems: "center", gap: 12 }}
               >
-                <View style={stylesAll.cell_box}></View>
+                <View style={stylesAll.cell_box}>
+                  <View style={[date1 && stylesAll.active_cell_box]}></View>
+                </View>
                 <Text style={styles.placeholder_static}>Как можно быстрее</Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity
               style={[stylesAll.input, styles.input_box, { marginTop: 10 }]}
+              onPress={() => {
+                setDate1(false);
+                setShow(true);
+              }}
             >
-              <TouchableOpacity
-                onPress={() => setShow(true)}
+              <View
                 style={{ flexDirection: "row", alignItems: "center", gap: 12 }}
               >
-                <View style={stylesAll.cell_box}></View>
+                <View style={stylesAll.cell_box}>
+                  <View style={[show && stylesAll.active_cell_box]}></View>
+                </View>
                 <Text style={styles.placeholder_static}>
                   Выбрать дату и время
                 </Text>
-              </TouchableOpacity>
+              </View>
               <View style={stylesAll.input_block_all}>
                 {show && (
                   <View style={styles.input_box_date}>
@@ -318,6 +339,7 @@ const PlacingOrder = () => {
               </View>
             </TouchableOpacity>
           </View>
+
           <View>
             <Text style={stylesAll.label}>Комментарий к заказу( 0-2000)</Text>
             <TextInput

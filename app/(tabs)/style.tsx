@@ -161,6 +161,12 @@ export const stylesAll = StyleSheet.create({
     fontWeight: "500",
     color: "white",
   },
+  active_cell_box: {
+    width: 15,
+    height: 15,
+    backgroundColor: "#DC0200",
+    borderRadius: 50,
+  },
   phone_input_mask_block: {
     flexDirection: "row",
     alignItems: "center",

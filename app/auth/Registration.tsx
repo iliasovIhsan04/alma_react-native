@@ -60,7 +60,7 @@ const Registration = () => {
       ...userData,
       phone: phoneNumber,
     };
-    await AsyncStorage.setItem("phone", "+996" + userData.phone);
+    await AsyncStorage.setItem("phone", " +996 " + userData.phone);
 
     dispatch(registerStart());
     try {
