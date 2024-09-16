@@ -147,7 +147,7 @@ export const stylesAll = StyleSheet.create({
   },
   label: {
     fontSize: 12,
-    fontWeight: 500,
+    fontWeight: "500",
     color: "#191919",
     marginBottom: 5,
   },
@@ -158,7 +158,7 @@ export const stylesAll = StyleSheet.create({
   },
   buttonText: {
     fontSize: 16,
-    fontWeight: 500,
+    fontWeight: "500",
     color: "white",
   },
   phone_input_mask_block: {
@@ -198,6 +198,36 @@ export const stylesAll = StyleSheet.create({
     alignItems: "center",
     overflow: "hidden",
     position: "relative",
+  },
+  modal_block_placing: {
+    width: "90%",
+    backgroundColor: "#FFFFFF",
+    paddingHorizontal: 16,
+    paddingVertical: 30,
+    borderRadius: 14,
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 20,
+  },
+  promtion_title_placing: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: "#191919",
+  },
+  promtion_text_placing: {
+    fontSize: 14,
+    fontWeight: "400",
+    color: "#6B6B6B",
+    textAlign: "center",
+  },
+  icon_check: {
+    width: 40,
+    height: 40,
+    borderRadius: 50,
+    backgroundColor: "#DC0200",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   icon_close: {
     position: "absolute",

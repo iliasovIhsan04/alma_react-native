@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
   },
   profile_text: {
     fontSize: 20,
-    fontWeight: 700,
+    fontWeight: "700",
     color: "#fff",
   },
   area_block: {

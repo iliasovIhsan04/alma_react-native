@@ -79,7 +79,7 @@ const Registration = () => {
           [{ text: "OK" }]
         );
       } else if (response.data.response === true) {
-        await router.push(`/auth/activation`);
+        await router.push(`/auth/Activation`);
         Alert.alert("Успешно!", response.data.message, [{ text: "OK" }]);
       } else {
         setErrorActivation(response.data);
@@ -261,7 +261,7 @@ const Registration = () => {
             </TouchableOpacity>
             <Text
               style={styles.yes_text}
-              onPress={() => router.push("auth/login")}
+              onPress={() => router.push("auth/Login")}
             >
               Уже есть аккаунт? <Text style={styles.terms_red}> Войти</Text>
             </Text>

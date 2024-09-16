@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
   },
   price_text: {
     fontSize: 13,
-    fontWeight: 500,
+    fontWeight: "500",
     color: "#FFFFFF",
     marginBottom: 10,
   },
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
   },
   harry_net_text: {
     fontSize: 14,
-    fontWeight: 400,
+    fontWeight: "400",
     color: "#6B6B6B",
     lineHeight: 16,
   },

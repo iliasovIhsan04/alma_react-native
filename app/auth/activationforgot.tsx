@@ -48,7 +48,7 @@ const ForgotActivationCode = () => {
         });
         dispatch(registerSuccess(response.data));
         if (response.data.response === true) {
-          await router.push("auth/resetpassword");
+          await router.push("auth/ResetPassword");
           Alert.alert("Успешно!", response.data.message, [{ text: "OK" }]);
         }
         setLoading(false);

@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Animated,
   Image,
   StyleSheet,
   Text,
@@ -17,16 +18,21 @@ import { url } from "@/Api";
 import { useSelector } from "react-redux";
 import { RootState } from "@/Redux/reducer/store";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { Modal } from "react-native";
+import { Pressable } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 const PlacingOrder = () => {
   const [receiveInput, setReceiveInput] = useState(false);
   const [local, setLocal] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [cart, setCart] = useState<any[]>([]);
-  const [placingModal, setPlacingModal] = useState(false);
   const [totalPrice, setTotalPrice] = useState(0);
   const [plus, setPlus] = useState<any>({});
   const [show, setShow] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const scaleValue = useRef(new Animated.Value(0)).current;
+  const opacityValue = useRef(new Animated.Value(0)).current;
   const selectedAddressId = useSelector(
     (state: RootState) => state.selectedAddress.selectedAddress
   );
@@ -35,7 +41,7 @@ const PlacingOrder = () => {
   );
   const [address, setAddress] = useState({
     address_to: "",
-    get_date: "",
+    get_date: "2024-09-12",
     comment: "",
   });
 
@@ -84,11 +90,11 @@ const PlacingOrder = () => {
         {}
       );
       const productsForOrder = Object.keys(idCount).map((id) => ({
-        product: parseInt(id),
+        product_id: parseInt(id),
         count: idCount[id],
       }));
       const dataToSend = {
-        address_to: addressId ? addressId : null,
+        address_to: addressId ? addressId : address.address_to,
         get_date: address.get_date,
         comment: address.comment,
         product: productsForOrder,
@@ -99,15 +105,25 @@ const PlacingOrder = () => {
       });
 
       if (response.data.response === true) {
-        setIsLoading(false);
         await AsyncStorage.multiRemove([
-          "myData",
-          "updatedOldPrice",
-          "address",
+          "plus",
+          "plusOne",
           "shopCart",
-          "cart",
+          "cartsBasket",
+          "cartFeatured",
         ]);
-        setPlacingModal(true);
+
+        for (const el of parsedShopCart) {
+          await AsyncStorage.removeItem(`activePlus_${el.id}`);
+          await AsyncStorage.removeItem(`activeItemsBasket_${el.id}`);
+        }
+
+        for (const el of cart) {
+          await AsyncStorage.removeItem(`activeItemFeatured${el.id}`);
+        }
+        setOpenModal(true);
+      } else {
+        Alert.alert("Ошибка", "Не удалось создать заказ");
       }
     } catch (error) {
       console.error("Error during order placement:", error);
@@ -119,6 +135,7 @@ const PlacingOrder = () => {
       setIsLoading(false);
     }
   };
+
   const calculateTotalPrice = async () => {
     const shopCart = await AsyncStorage.getItem("shopCart");
     const parsedCart = shopCart ? JSON.parse(shopCart) : [];
@@ -135,8 +152,80 @@ const PlacingOrder = () => {
     calculateTotalPrice();
   }, [cart]);
 
+  useEffect(() => {
+    if (openModal) {
+      Animated.parallel([
+        Animated.spring(scaleValue, {
+          toValue: 1,
+          friction: 5,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacityValue, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else {
+      Animated.parallel([
+        Animated.timing(scaleValue, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacityValue, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [openModal]);
   return (
     <View style={stylesAll.background_block}>
+      <Modal visible={openModal} transparent={true} animationType="none">
+        <Pressable
+          style={stylesAll.content_modal}
+          onPress={() => setOpenModal(false)}
+        >
+          <Animated.View
+            style={[
+              stylesAll.modal_block_placing,
+              {
+                transform: [{ scale: scaleValue }],
+                opacity: opacityValue,
+              },
+            ]}
+          >
+            <Ionicons
+              onPress={() => setOpenModal(false) || router.push("/")}
+              size={24}
+              style={stylesAll.icon_close}
+              name="close"
+            />
+            <View style={stylesAll.icon_check}>
+              <Image
+                style={{ width: 20, height: 16 }}
+                source={require("../../assets/images/Icon_true.png")}
+              />
+            </View>
+            <View style={{ flexDirection: "column", gap: 12 }}>
+              <Text style={stylesAll.promtion_title_placing}>
+                Ваш заказ успешно оформлен!
+              </Text>
+              <Text style={stylesAll.promtion_text_placing}>
+                Наш менеджер скоро свяжется с вами
+              </Text>
+            </View>
+            <TouchableOpacity
+              style={stylesAll.button}
+              onPress={() => setOpenModal(false) || router.push("/")}
+            >
+              <Text style={stylesAll.button_text}>Понятно</Text>
+            </TouchableOpacity>
+          </Animated.View>
+        </Pressable>
+      </Modal>
       <View style={stylesAll.container}>
         <View style={stylesAll.header}>
           <TouchableOpacity
@@ -220,7 +309,7 @@ const PlacingOrder = () => {
                         setShow(false);
                         setAddress((prevAddress) => ({
                           ...prevAddress,
-                          get_date: currentDate.toISOString(),
+                          get_date: currentDate.toISOString().split("T")[0],
                         }));
                       }}
                     />

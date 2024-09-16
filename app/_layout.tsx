@@ -50,7 +50,7 @@ export default function RootLayout() {
         <Stack.Screen name="navigate/PurchaseHistory" />
         <Stack.Screen name="navigate/FeaturedProducts" />
         <Stack.Screen name="navigate/MyDetails" />
-        <Stack.Screen name="details/:cat" />
+        <Stack.Screen name="details/[cat]" />
         <Stack.Screen name="navigate/HarryBuyDetails" />
         <Stack.Screen name="navigate/PromotionDetails" />
         <Stack.Screen name="navigate/EmptyAddress" />
@@ -59,9 +59,9 @@ export default function RootLayout() {
         <Stack.Screen name="details/PromotionId/:id" />
         <Stack.Screen name="details/ProductId/:id" />
         <Stack.Screen name="navigate/Notifications" />
-        <Stack.Screen name="navigate/BasketProducts" />
+        <Stack.Screen name="navigate/BasketPage" />
         <Stack.Screen name="navigate/PlacingOrder" />
-        <Stack.Screen name="auth/registration" />
+        <Stack.Screen name="auth/Registration" />
         <Stack.Screen name="auth/forgotpassword" />
         <Stack.Screen name="auth/resetpassword" />
         <Stack.Screen name="auth/login" />

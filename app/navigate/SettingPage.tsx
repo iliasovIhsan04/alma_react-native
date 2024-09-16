@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
   },
   setting_notifications_text: {
     fontSize: 14,
-    fontWeight: 400,
+    fontWeight: "400",
     color: "#6B6B6B",
     lineHeight: 16,
   },

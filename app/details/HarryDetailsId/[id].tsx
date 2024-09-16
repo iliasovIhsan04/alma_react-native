@@ -116,12 +116,12 @@ const HarryBuyDetailsId = () => {
 const styles = StyleSheet.create({
   harry_name_text_red: {
     fontSize: 18,
-    fontWeight: 500,
+    fontWeight: '500',
     color: "000",
   },
   harry_date_text: {
     fontSize: 18,
-    fontWeight: 500,
+    fontWeight: '500',
     color: "rgb(220, 2, 0)",
   },
   data_right_rotate: {

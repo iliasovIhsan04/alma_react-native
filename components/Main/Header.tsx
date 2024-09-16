@@ -5,13 +5,22 @@ import { Image, Pressable, StyleSheet, View } from "react-native";
 
 const Header = () => {
   return (
-    <View style={styles.header}>
+    <View style={[styles.header, stylesAll.header_nav]}>
       <Pressable onPress={() => router.push("/navigate/Notifications")}>
-        <Image style={stylesAll.icons} source={require("../../assets/images/notifications.png")}/>
+        <Image
+          style={stylesAll.icons}
+          source={require("../../assets/images/notifications.png")}
+        />
       </Pressable>
-      <Image style={stylesAll.logotip} source={require("../../assets/images/logotipCenter.png")} />
+      <Image
+        style={stylesAll.logotip}
+        source={require("../../assets/images/logotipCenter.png")}
+      />
       <Pressable onPress={() => router.push("/navigate/BasketPage")}>
-        <Image style={stylesAll.icons} source={require("../../assets/images/cart_gray.png")} />
+        <Image
+          style={stylesAll.icons}
+          source={require("../../assets/images/cart_gray.png")}
+        />
       </Pressable>
     </View>
   );

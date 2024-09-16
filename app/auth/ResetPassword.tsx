@@ -75,7 +75,7 @@ const ResetPassword = () => {
 
       if (response.data.response === true) {
         Alert.alert("Успешно!", response.data.message);
-        router.push("auth/login");
+        router.push("auth/Login");
       } else {
         Alert.alert("Ошибка", response.data.message || "Произошла ошибка");
         setErrorActivation(response.data);

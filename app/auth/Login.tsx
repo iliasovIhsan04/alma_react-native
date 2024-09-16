@@ -161,7 +161,7 @@ const Login = () => {
             </TouchableOpacity>
             <Text
               style={styles.yes_text}
-              onPress={() => router.push("auth/registration")}
+              onPress={() => router.push("auth/Registration")}
             >
               Еще нет аккаунта?{" "}
               <Text style={styles.terms_red}>Зарегистрироваться</Text>

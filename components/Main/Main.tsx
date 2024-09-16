@@ -98,22 +98,21 @@ export default function Main() {
           </Animated.View>
         </Pressable>
       </Modal>
-      <View style={{ marginBottom: 30 }}>
-        <Header />
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-        >
+      <Header />
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            colors={["#DC0200"]}
+            tintColor={"#DC0200"}
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
+      >
+        <View style={{ marginBottom: 110 }}>
           <BonusCart />
-          <TouchableOpacity
-            style={stylesAll.button}
-            onPress={() => router.push("/auth/Registration")}
-          >
-            <Text>Войти</Text>
-          </TouchableOpacity>
           <View style={styles.apple_check_price}>
             <TouchableOpacity
               style={styles.apple_box}
@@ -134,8 +133,8 @@ export default function Main() {
           </View>
           <HurryUpToBuy />
           <Promotion />
-        </ScrollView>
-      </View>
+        </View>
+      </ScrollView>
     </>
   );
 }
