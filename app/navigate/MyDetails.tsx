@@ -282,7 +282,6 @@ const MyDetails = () => {
                   mode="date"
                   onChange={(event, selectedDate) => {
                     const currentDate = selectedDate || info.birthday;
-                    setShow(false);
                     handleInputChange("birthday", currentDate);
                   }}
                 />

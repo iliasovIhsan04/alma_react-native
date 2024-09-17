@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import InstaStory from "react-native-insta-story";
 
 const data = [
@@ -7,14 +7,12 @@ const data = [
     user_id: 1,
     user_image:
       "https://pbs.twimg.com/profile_images/1222140802475773952/61OmyINj.jpg",
-    user_name: "Ahmet Çağlar Durmuş",
+    user_name: "Ihsan",
     stories: [
       {
         story_id: 1,
         story_image:
           "https://image.freepik.com/free-vector/universe-mobile-wallpaper-with-planets_79603-600.jpg",
-        swipeText: "Custom swipe text for this story",
-        onPress: () => console.log("story 1 swiped"),
       },
       {
         story_id: 2,
@@ -33,15 +31,11 @@ const data = [
         story_id: 1,
         story_image:
           "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjORKvjcbMRGYPR3QIs3MofoWkD4wHzRd_eg&usqp=CAU",
-        swipeText: "Custom swipe text for this story",
-        onPress: () => console.log("story 1 swiped"),
       },
       {
         story_id: 2,
         story_image:
           "https://files.oyebesmartest.com/uploads/preview/vivo-u20-mobile-wallpaper-full-hd-(1)qm6qyz9v60.jpg",
-        swipeText: "Custom swipe text for this story",
-        onPress: () => console.log("story 2 swiped"),
       },
     ],
   },
@@ -78,10 +72,6 @@ const StoryComponent = () => {
     }
   }, [seenStories]);
 
-  const shareStory = () => {
-    console.log("Share Story");
-  };
-
   return (
     <InstaStory
       data={data}
@@ -90,20 +80,9 @@ const StoryComponent = () => {
       onClose={handleSeenStories}
       onStorySeen={updateSeenStories}
       renderCloseComponent={({ onPress }) => (
-        <View style={styles.closeComponent}>
-          <TouchableOpacity onPress={shareStory} style={styles.button}>
-            <Text style={styles.buttonText}>Share</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={onPress} style={styles.button}>
-            <Text style={styles.buttonText}>X</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-      renderTextComponent={({ item, profileName }) => (
-        <View style={styles.textComponent}>
-          <Text style={styles.profileName}>{profileName}</Text>
-          <Text style={styles.swipeText}>{item.swipeText}</Text>
-        </View>
+        <TouchableOpacity style={styles.button} onPress={onPress}>
+          <Text style={styles.buttonText}>X</Text>
+        </TouchableOpacity>
       )}
       style={styles.storyContainer}
     />
@@ -111,21 +90,16 @@ const StoryComponent = () => {
 };
 
 const styles = StyleSheet.create({
-  closeComponent: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    padding: 10,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    width: Dimensions.get("window").width,
-  },
   storyContainer: {
-    marginTop: 30,
+    marginTop: 10,
   },
   button: {
-    padding: 10,
-    backgroundColor: "#007bff",
-    borderRadius: 5,
-    marginHorizontal: 5,
+    borderRadius: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    backgroundColor: "rgba(0,0,0,0.5)",
   },
   buttonText: {
     color: "white",
