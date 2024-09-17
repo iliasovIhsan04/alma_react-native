@@ -2,6 +2,7 @@
   "expo": {
     "name": "alma-market-native",
     "slug": "alma-market-native",
+    "icon": "./assets/logo.png",
     "extra": {
       "eas": {
         "projectId": "adc18ebc-6ce3-4a56-89e4-e82f14099aa3"

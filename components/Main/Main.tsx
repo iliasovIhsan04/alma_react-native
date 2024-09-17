@@ -21,6 +21,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { AppDispatch } from "@/Redux/reducer/store";
 import { useDispatch } from "react-redux";
 import { fetchUserInfo } from "@/Redux/reducer/UserInfo";
+import StoryComponent from "./StorisBlock";
 
 export default function Main() {
   const dispatch: AppDispatch = useDispatch();
@@ -98,7 +99,9 @@ export default function Main() {
           </Animated.View>
         </Pressable>
       </Modal>
+
       <Header />
+
       <ScrollView
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
@@ -109,8 +112,10 @@ export default function Main() {
             refreshing={refreshing}
             onRefresh={onRefresh}
           />
+          
         }
       >
+      <StoryComponent />
         <View style={{ marginBottom: 110 }}>
           <BonusCart />
           <View style={styles.apple_check_price}>

@@ -317,7 +317,7 @@ const PlacingOrder = () => {
                 {show && (
                   <View style={styles.input_box_date}>
                     <DateTimePicker
-                      style={styles.date_picker}
+                      style={[styles.date_picker]}
                       testID="dateTimePicker"
                       value={
                         address.get_date
@@ -325,9 +325,9 @@ const PlacingOrder = () => {
                           : new Date()
                       }
                       mode="datetime"
+                      display="default"
                       onChange={(event, selectedDate) => {
                         const currentDate = selectedDate || new Date();
-                        setShow(false);
                         setAddress((prevAddress) => ({
                           ...prevAddress,
                           get_date: currentDate.toISOString().split("T")[0],
@@ -339,9 +339,10 @@ const PlacingOrder = () => {
               </View>
             </TouchableOpacity>
           </View>
-
           <View>
-            <Text style={stylesAll.label}>Комментарий к заказу( 0-2000)</Text>
+            <Text style={[stylesAll.label, show ? { marginTop: 30 } : {}]}>
+              Комментарий к заказу( 0-2000)
+            </Text>
             <TextInput
               style={[stylesAll.input, styles.input_box_textarea]}
               placeholder="Напишите комментарий"
@@ -445,14 +446,14 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   input_box_date: {
+    width: "100%",
     flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginTop: 20,
+    marginLeft: -200,
   },
   date_picker: {
     height: 45,
-    marginLeft: 0,
+    marginLeft: -135,
+    marginTop: 60,
   },
   btn_placing: {
     backgroundColor: "#6B6B6B",
