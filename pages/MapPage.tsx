@@ -97,9 +97,15 @@ export default function MapPage() {
       (section) => section.id === targetId
     );
     if (sectionIndex !== -1) {
-      scrollViewRef.current.scrollTo({
-        x: sectionIndex * screenWidth,
-        animated: true,
+      Animated.timing(scrollX, {
+        toValue: sectionIndex * screenWidth,
+        duration: 300, // продолжительность анимации
+        useNativeDriver: false,
+      }).start(() => {
+        scrollViewRef.current.scrollTo({
+          x: sectionIndex * screenWidth,
+          animated: false,
+        });
       });
     }
   };
@@ -116,18 +122,19 @@ export default function MapPage() {
               activeSection === section.id && styles.activeNavItem,
             ]}
           >
-            <Text
-              style={[
-                styles.navText,
-                activeSection === section.id && styles.activeNavText,
-              ]}
-            >
-              {section.title}
-            </Text>
+            <View style={styles.map_header}>
+              <Text
+                style={[
+                  styles.navText,
+                  activeSection === section.id && styles.activeNavText,
+                ]}
+              >
+                {section.title}
+              </Text>
+            </View>
           </TouchableOpacity>
         ))}
       </View>
-
       <View style={styles.container}>
         <Animated.ScrollView
           ref={scrollViewRef}
@@ -153,27 +160,26 @@ export default function MapPage() {
                         <TouchableOpacity
                           key={location.id}
                           onPress={() => handleLocationPress(location)}
+                          style={styles.section_map_block}
                         >
-                          <View style={styles.sectionItemsa}>
-                            <View style={styles.mapItem}>
-                              <Image
-                                style={styles.maps}
-                                source={require("./../assets/images/maps.png")}
-                              />
-                              <Text style={styles.navTextAdres}>
-                                {location.address}
-                              </Text>
-                            </View>
-                            <View style={styles.mapItem}>
-                              <Image
-                                style={styles.maps}
-                                source={require("./../assets/images/timer.png")}
-                              />
-                              <Text style={styles.timerText}>
-                                График работы:{" "}
-                                <Text style={styles.span}>{location.time}</Text>
-                              </Text>
-                            </View>
+                          <View style={styles.mapItem}>
+                            <Image
+                              style={styles.maps}
+                              source={require("./../assets/images/maps.png")}
+                            />
+                            <Text style={styles.navTextAdres}>
+                              {location.address}
+                            </Text>
+                          </View>
+                          <View style={styles.mapItem}>
+                            <Image
+                              style={styles.maps}
+                              source={require("./../assets/images/timer.png")}
+                            />
+                            <Text style={styles.timerText}>
+                              График работы:{" "}
+                              <Text style={styles.span}>{location.time}</Text>
+                            </Text>
                           </View>
                         </TouchableOpacity>
                       ))
@@ -251,22 +257,25 @@ const styles = StyleSheet.create({
   },
   mapItem: {
     flexDirection: "row",
+    alignItems: "center",
     gap: 10,
-    marginBottom: 11,
   },
   timerText: {
     color: "#6B6B6B",
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: "400",
   },
-  sectionItemsa: {
+  section_map_block: {
     backgroundColor: "#F5F7FA",
-    padding: 14,
-    borderRadius: 20,
-    marginBottom: 20,
+    padding: 16,
+    borderRadius: 14,
+    flexDirection: "column",
+    gap: 8,
   },
   sectionMaps: {
-    marginTop: 100,
+    marginTop: 110,
+    flexDirection: "column",
+    gap: 10,
   },
   nav: {
     position: "absolute",
@@ -288,7 +297,7 @@ const styles = StyleSheet.create({
     height: 22,
   },
   span: {
-    fontSize: 16,
+    fontSize: 14,
     color: "#68B936",
     fontWeight: "500",
   },
@@ -297,7 +306,6 @@ const styles = StyleSheet.create({
     paddingLeft: 50,
     paddingRight: 50,
     paddingBottom: 10,
-    borderRadius: 5,
   },
   navText: {
     color: "#000",
@@ -305,15 +313,14 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   navTextAdres: {
-    color: "#000",
-    fontWeight: "500",
-    fontSize: 18,
+    color: "#191919",
+    fontWeight: "700",
+    fontSize: 16,
     width: "88%",
   },
   activeNavItem: {
     borderBottomWidth: 3,
     borderBottomColor: "#DC0200",
-    borderRadius: 0,
   },
   activeNavText: {
     color: "#000",
