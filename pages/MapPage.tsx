@@ -8,11 +8,25 @@ import {
   Dimensions,
   Image,
   Linking,
+  ScrollView,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import axios from "axios";
 import { stylesAll } from "@/app/(tabs)/style";
+
+type LocationType = {
+  id: string;
+  address: string;
+  lat: number;
+  lon: number;
+  time: string;
+};
+
+type CoordinatesType = {
+  latitude: number;
+  longitude: number;
+};
 
 const sections = [
   { id: "section1", title: "Список" },
@@ -22,26 +36,30 @@ const sections = [
 const screenWidth = Dimensions.get("window").width;
 
 export default function MapPage() {
-  const scrollViewRef = useRef();
-  const [activeSection, setActiveSection] = useState(null);
+  const scrollViewRef = useRef<ScrollView>(null);
+  const [activeSection, setActiveSection] = useState<string | null>(null);
   const scrollX = useRef(new Animated.Value(0)).current;
-  const [selectedLocation, setSelectedLocation] = useState(null);
-  const [currentCoordinates, setCurrentCoordinates] = useState({
-    latitude: 42.8746,
-    longitude: 74.5698,
-  });
-  const [locations, setLocations] = useState([]);
+  const [selectedLocation, setSelectedLocation] = useState<LocationType | null>(
+    null
+  );
+  const [currentCoordinates, setCurrentCoordinates] = useState<CoordinatesType>(
+    {
+      latitude: 42.8746,
+      longitude: 74.5698,
+    }
+  );
+  const [locations, setLocations] = useState<LocationType[]>([]);
 
-  const get2GISURL = (latitude, longitude) => {
+  const get2GISURL = (latitude: number, longitude: number) => {
     return `https://2gis.kz/almaty/geo/${longitude},${latitude}`;
   };
 
-  const handleMarkerPress = (latitude, longitude) => {
+  const handleMarkerPress = (latitude: number, longitude: number) => {
     const url = get2GISURL(latitude, longitude);
     Linking.openURL(url);
   };
 
-  const handleLocationPress = (location) => {
+  const handleLocationPress = (location: LocationType) => {
     setSelectedLocation(location);
     smoothScroll("section2");
     handleMarkerPress(location.lat, location.lon);
@@ -69,7 +87,7 @@ export default function MapPage() {
 
   useEffect(() => {
     axios
-      .get("https://alma-market.online/map/")
+      .get<LocationType[]>("https://alma-market.online/map/")
       .then((response) => {
         setLocations(response.data);
         console.log(response.data);
@@ -92,23 +110,25 @@ export default function MapPage() {
     };
   }, [scrollX]);
 
-  const smoothScroll = (targetId) => {
+  const smoothScroll = (targetId: string) => {
     const sectionIndex = sections.findIndex(
       (section) => section.id === targetId
     );
     if (sectionIndex !== -1) {
       Animated.timing(scrollX, {
         toValue: sectionIndex * screenWidth,
-        duration: 300, // продолжительность анимации
+        duration: 300,
         useNativeDriver: false,
       }).start(() => {
-        scrollViewRef.current.scrollTo({
+        scrollViewRef.current?.scrollTo({
           x: sectionIndex * screenWidth,
           animated: false,
         });
       });
     }
   };
+
+  const indicatorWidth = screenWidth / sections.length;
 
   return (
     <View style={styles.container}>
@@ -117,24 +137,35 @@ export default function MapPage() {
           <TouchableOpacity
             key={section.id}
             onPress={() => smoothScroll(section.id)}
-            style={[
-              styles.navItem,
-              activeSection === section.id && styles.activeNavItem,
-            ]}
+            style={styles.navItem}
           >
-            <View style={styles.map_header}>
-              <Text
-                style={[
-                  styles.navText,
-                  activeSection === section.id && styles.activeNavText,
-                ]}
-              >
-                {section.title}
-              </Text>
-            </View>
+            <Text
+              style={[
+                styles.navText,
+                activeSection === section.id && styles.activeNavText,
+              ]}
+            >
+              {section.title}
+            </Text>
           </TouchableOpacity>
         ))}
+        <Animated.View
+          style={[
+            styles.indicator,
+            {
+              transform: [
+                {
+                  translateX: scrollX.interpolate({
+                    inputRange: [0, screenWidth],
+                    outputRange: [0, indicatorWidth],
+                  }),
+                },
+              ],
+            },
+          ]}
+        />
       </View>
+
       <View style={styles.container}>
         <Animated.ScrollView
           ref={scrollViewRef}
@@ -216,7 +247,7 @@ export default function MapPage() {
                           latitude: location.lat,
                           longitude: location.lon,
                         }}
-                         pinColor="blue"
+                        pinColor="blue"
                         title={location.address}
                         onPress={() =>
                           handleMarkerPress(location.lat, location.lon)
@@ -252,43 +283,6 @@ export default function MapPage() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
-  mapItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-  },
-  timerText: {
-    color: "#6B6B6B",
-    fontSize: 12,
-    fontWeight: "400",
-  },
-  section_map_block: {
-    backgroundColor: "#F5F7FA",
-    padding: 16,
-    borderRadius: 14,
-    flexDirection: "column",
-    gap: 8,
-  },
-  sectionMaps: {
-    marginTop: 110,
-    flexDirection: "column",
-    gap: 10,
-  },
-  nav: {
-    position: "absolute",
-    paddingTop: 30,
-    left: 0,
-    right: 0,
-    zIndex: 10,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    backgroundColor: "#FFFFFF",
-    paddingHorizontal: 20,
-  },
   maps: {
     width: 30,
     height: 30,
@@ -329,5 +323,54 @@ const styles = StyleSheet.create({
   map: {
     width: screenWidth,
     height: "100%",
+  },
+  mapItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  timerText: {
+    color: "#6B6B6B",
+    fontSize: 12,
+    fontWeight: "400",
+  },
+  section_map_block: {
+    backgroundColor: "#F5F7FA",
+    padding: 16,
+    borderRadius: 14,
+    flexDirection: "column",
+    gap: 8,
+  },
+  sectionMaps: {
+    marginTop: 90,
+    flexDirection: "column",
+    gap: 10,
+  },
+  nav: {
+    position: "absolute",
+    paddingTop: 30,
+    left: 0,
+    right: 0,
+    zIndex: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    backgroundColor: "#FFFFFF",
+    paddingHorizontal: 20,
+    width: "100%",
+  },
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
+  indicator: {
+    position: "absolute",
+    bottom: 0,
+    height: 3,
+    backgroundColor: "#DC0200",
+    left: 20,
+    right: 20,
+    width: "50%",
+    paddingRight: 20,
+    marginRight: 20,
   },
 });

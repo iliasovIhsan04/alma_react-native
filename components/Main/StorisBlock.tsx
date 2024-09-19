@@ -60,7 +60,6 @@ const StoryComponent = () => {
 
         const storiesData = await response.json();
         console.log("Fetched data:", storiesData);
-
         const transformedStories: User[] = storiesData.map((user: any) => ({
           user_id: user.id ?? "",
           user_image: user.img ?? "",
@@ -96,25 +95,20 @@ const StoryComponent = () => {
       console.error("User or story data is missing");
       return;
     }
-
-    const user_name = user.user_name ?? "Unknown User";
-    const story_image = story.story_image ?? "No URL provided";
-    const duration = story.duration ?? "Default duration";
-
-    console.log(`User ${user_name} started story with ID ${story.story_id}`);
-    console.log(`Story image URL: ${story_image}`);
-    console.log(`Story duration: ${duration}`);
+    console.log(
+      `User ${user.user_name} started story with ID ${story.story_id}`
+    );
+    console.log(`Story image URL: ${story.story_image}`);
+    console.log(`Story duration: ${story.duration}`);
   };
 
   const renderContent = () => {
     if (loading) {
-      return <ActivityIndicator size="large" color="#0000ff" />;
+      return <ActivityIndicator size="large" color="#DC0200" />;
     }
-
     if (error) {
       return <Text>{error}</Text>;
     }
-
     if (fetchedStories.length > 0) {
       const filteredStories = fetchedStories
         .map((user) => ({
@@ -122,6 +116,7 @@ const StoryComponent = () => {
           stories: user.stories.filter((story) => story.story_image),
         }))
         .filter((user) => user.stories.length > 0);
+
       if (filteredStories.length > 0) {
         return (
           <InstaStory
@@ -129,7 +124,12 @@ const StoryComponent = () => {
             data={filteredStories}
             duration={10}
             onStart={(data) => {
-              handleStoryStart(data?.user, data?.story);
+              console.log("On Start Data:", data);
+              if (data?.user && data?.story) {
+                handleStoryStart(data.user, data.story);
+              } else {
+                console.error("Story start data is incomplete.");
+              }
             }}
             onStorySeen={updateSeenStories}
             renderCloseComponent={({ onPress }) => (
@@ -143,7 +143,6 @@ const StoryComponent = () => {
         return <Text>No valid stories available</Text>;
       }
     }
-    return <Text>No stories available</Text>;
   };
 
   return <View style={styles.storyContainer}>{renderContent()}</View>;
@@ -154,9 +153,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   button: {
-    backgroundColor: "#6B6B6B",
-    padding: 10,
-    borderRadius: 5,
+    backgroundColor: "rgba(107, 107, 107, 0.5)",
+
+    borderRadius: 50,
+    width: 40,
+    height: 40,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   buttonText: {
     color: "white",

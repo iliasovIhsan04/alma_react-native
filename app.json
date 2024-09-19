@@ -9,7 +9,8 @@
       }
     },
     "android": {
-      "package": "com.ihsan.almamarketnative"
-    }
+      "package": "com.ihsan04.almamarketnative"
+    },
+    "scheme": "almaMarketNative"
   }
 }

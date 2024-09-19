@@ -15,7 +15,6 @@ import BonusCart from "./BonusCart";
 import Header from "./Header";
 import HurryUpToBuy from "./HurryUpToBuy";
 import Promotion from "./Promotion";
-import { router } from "expo-router";
 import { stylesAll } from "@/app/(tabs)/style";
 import { Ionicons } from "@expo/vector-icons";
 import { AppDispatch } from "@/Redux/reducer/store";

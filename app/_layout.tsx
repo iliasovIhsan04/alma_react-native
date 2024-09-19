@@ -3,12 +3,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Stack, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Provider } from "react-redux";
-import { ActivityIndicator, View } from "react-native";
 
 export default function RootLayout() {
   const [token, setToken] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true); // Для отслеживания состояния загрузки
-  const router = useRouter(); // Используем роутер для перенаправления
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   const getToken = async (): Promise<void> => {
     try {
@@ -26,18 +25,6 @@ export default function RootLayout() {
     getToken();
   }, []);
 
-  // useEffect(() => {
-  //   if (!loading && !token) {
-  //     router.replace("/auth/Registration");
-  //   }
-  // }, [loading, token]);
-  // if (loading) {
-  //   return (
-  //     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-  //       <ActivityIndicator size="large" color="#0000ff" />
-  //     </View>
-  //   );
-  // }
 
   return (
     <Provider store={store}>
@@ -54,17 +41,17 @@ export default function RootLayout() {
         <Stack.Screen name="navigate/PromotionDetails" />
         <Stack.Screen name="navigate/EmptyAddress" />
         <Stack.Screen name="navigate/NewAddress" />
-        <Stack.Screen name="details/HarryDetailsId/:id" />
-        <Stack.Screen name="details/PromotionId/:id" />
-        <Stack.Screen name="details/ProductId/:id" />
+        <Stack.Screen name="details/HarryDetailsId/[id]" />
+        <Stack.Screen name="details/PromotionId/[id]" />
+        <Stack.Screen name="details/ProductId/[id]" />
         <Stack.Screen name="navigate/Notifications" />
         <Stack.Screen name="navigate/BasketPage" />
         <Stack.Screen name="navigate/PlacingOrder" />
         <Stack.Screen name="auth/Registration" />
-        <Stack.Screen name="auth/forgotpassword" />
-        <Stack.Screen name="auth/resetpassword" />
-        <Stack.Screen name="auth/login" />
-        <Stack.Screen name="auth/activationforgot" />
+        <Stack.Screen name="auth/ForgotPassword" />
+        <Stack.Screen name="auth/ResetPassword" />
+        <Stack.Screen name="auth/Login" />
+        <Stack.Screen name="auth/ActivationForgot" />
       </Stack>
     </Provider>
   );
