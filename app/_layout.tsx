@@ -26,19 +26,18 @@ export default function RootLayout() {
     getToken();
   }, []);
 
-  useEffect(() => {
-    if (!loading && !token) {
-      router.replace("/auth/Registration");
-    }
-  }, [loading, token]);
-
-  if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="#0000ff" />
-      </View>
-    );
-  }
+  // useEffect(() => {
+  //   if (!loading && !token) {
+  //     router.replace("/auth/Registration");
+  //   }
+  // }, [loading, token]);
+  // if (loading) {
+  //   return (
+  //     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+  //       <ActivityIndicator size="large" color="#0000ff" />
+  //     </View>
+  //   );
+  // }
 
   return (
     <Provider store={store}>

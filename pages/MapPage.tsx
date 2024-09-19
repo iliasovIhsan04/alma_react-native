@@ -216,6 +216,7 @@ export default function MapPage() {
                           latitude: location.lat,
                           longitude: location.lon,
                         }}
+                         pinColor="blue"
                         title={location.address}
                         onPress={() =>
                           handleMarkerPress(location.lat, location.lon)

@@ -99,9 +99,7 @@ export default function Main() {
           </Animated.View>
         </Pressable>
       </Modal>
-
       <Header />
-
       <ScrollView
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
@@ -112,10 +110,9 @@ export default function Main() {
             refreshing={refreshing}
             onRefresh={onRefresh}
           />
-          
         }
       >
-      <StoryComponent />
+        <StoryComponent />
         <View style={{ marginBottom: 110 }}>
           <BonusCart />
           <View style={styles.apple_check_price}>
