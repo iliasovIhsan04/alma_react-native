@@ -64,6 +64,7 @@ const CatalogDetails: React.FC = ({}) => {
       await AsyncStorage.setItem("cartFeatured", JSON.stringify(updatedCart));
     }
   };
+
   const toggleFavorite = async (id: number) => {
     const itemExists = await AsyncStorage.getItem(`activeItemFeatured${id}`);
     let updatedFavorites = new Set(favoriteItems);
@@ -75,7 +76,6 @@ const CatalogDetails: React.FC = ({}) => {
       await AsyncStorage.setItem(`activeItemFeatured${id}`, `${id}`);
       updatedFavorites.add(id);
     }
-
     setFavoriteItems(updatedFavorites);
   };
 
@@ -137,7 +137,6 @@ const CatalogDetails: React.FC = ({}) => {
     await setOrdering(newOrder);
     fetchData(minPrice, maxPrice, newOrder);
   };
-
   const fetchCategoryData = async (dataID: number) => {
     try {
       const response = await axios.get(`${url}/product/list?cat=${dataID}`);
@@ -183,6 +182,7 @@ const CatalogDetails: React.FC = ({}) => {
 
   useEffect(() => {
     fetchSubCategories();
+    initializeData();
   }, [cat]);
 
   interface Product {

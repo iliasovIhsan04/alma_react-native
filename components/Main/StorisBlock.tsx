@@ -101,7 +101,7 @@ const StoryComponent = () => {
       console.error("Story start data is incomplete or invalid.");
     }
   };
-
+  
   const renderContent = () => {
     if (loading) {
       return <ActivityIndicator size="large" color="#DC0200" />;

@@ -45,48 +45,46 @@ const Productid = () => {
   const [data, setData] = useState<Product | null>(null);
   const [isInBasket, setIsInBasket] = useState<boolean>(false);
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [cart, setCart] = useState<Product[]>([]);
+  const [favoriteItems, setFavoriteItems] = useState<Set<number>>(new Set());
 
   useEffect(() => {
-    const checkIfInBasket = async () => {
-      try {
-        const activeItem = await AsyncStorage.getItem(
-          `activeItemsBasket_${id}`
-        );
-        setIsInBasket(!!activeItem);
-      } catch (error) {
-        console.error("Ошибка при проверке корзины:", error);
-      }
-    };
-    checkIfInBasket();
-  }, [id]);
-
-  useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchData = async () => {
       try {
         const response = await axios.get<Product>(
           `${url}/product/detail/${id}`
         );
         setData(response.data);
-      } catch (error) {
-        console.error("Ошибка при получении данных:", error);
-      }
-    };
-    fetchUserData();
-  }, [id]);
 
-  useEffect(() => {
-    const checkFavoriteStatus = async () => {
-      try {
+        const activeItem = await AsyncStorage.getItem(
+          `activeItemsBasket_${id}`
+        );
+        setIsInBasket(!!activeItem);
+
         const itemFeatured = await AsyncStorage.getItem(
           `activeItemFeatured${id}`
         );
         setIsFavorite(!!itemFeatured);
       } catch (error) {
-        console.error("Ошибка при чтении из AsyncStorage:", error);
+        console.error("Ошибка при получении данных:", error);
+      } finally {
+        setLoading(false);
       }
     };
-    checkFavoriteStatus();
+
+    fetchData();
   }, [id]);
+
+  const InitializeData = async () => {
+    const cartItemsString = await AsyncStorage.getItem("cartFeatured");
+    if (cartItemsString) {
+      setCart(JSON.parse(cartItemsString));
+    }
+  };
+  useEffect(() => {
+    InitializeData();
+  }, []);
 
   const toggleFavorite = async () => {
     try {
@@ -94,6 +92,7 @@ const Productid = () => {
         await AsyncStorage.removeItem(`activeItemFeatured${id}`);
       } else {
         await AsyncStorage.setItem(`activeItemFeatured${id}`, `${id}`);
+        saveToAsyncStorage(id); // Сохраняем в корзину при добавлении в избранное
       }
       setIsFavorite(!isFavorite);
     } catch (error) {
@@ -101,42 +100,48 @@ const Productid = () => {
     }
   };
 
-  const Basket = async (id: number, datas: Product) => {
-    setIsInBasket(true);
-    try {
-      const prevIDString = await AsyncStorage.getItem("plus");
-      const prevID = prevIDString !== null ? JSON.parse(prevIDString) : {};
-      const updatedPrevID = { ...prevID, [id]: 1 };
-      await AsyncStorage.setItem("plus", JSON.stringify(updatedPrevID));
-      await AsyncStorage.setItem("plusOne", JSON.stringify(updatedPrevID));
-      const prevShopCartString = await AsyncStorage.getItem("shopCart");
-      const prevShopCart =
-        prevShopCartString !== null ? JSON.parse(prevShopCartString) : [];
-      const updatedShopCart = [...prevShopCart, datas];
-      await AsyncStorage.setItem("shopCart", JSON.stringify(updatedShopCart));
-      const prevCartsString = await AsyncStorage.getItem("cartsBasket");
-      const prevCarts =
-        prevCartsString !== null ? JSON.parse(prevCartsString) : [];
-      const updatedCarts = [...prevCarts, datas];
-      await AsyncStorage.setItem("cartsBasket", JSON.stringify(updatedCarts));
-      await AsyncStorage.setItem(`activeItemsBasket_${id}`, JSON.stringify(id));
-      const activeItem = await AsyncStorage.getItem(`activeItemsBasket_${id}`);
-
-      if (activeItem) {
-        Alert.alert("Ваш товар успешно добавлен в корзину!");
-      } else {
-        Alert.alert("Ошибка", "Не удалось добавить товар в корзину");
-      }
-    } catch (error) {
-      Alert.alert("Ошибка", "Произошла ошибка при добавлении товара в корзину");
-      console.error(error);
+  const saveToAsyncStorage = async (id: number) => {
+    if (!data) return;
+  
+    const itemToAdd = data;
+    let updatedCart = [...cart];
+  
+    const itemIndex = updatedCart.findIndex((item) => item.id === itemToAdd.id);
+  
+    if (itemIndex === -1) {
+      // Добавляем товар в корзину
+      updatedCart.push(itemToAdd);
+      console.log("Товар добавлен в корзину:", itemToAdd.id);
+  
+      // Сохраняем товар в AsyncStorage по идентификатору
+      await AsyncStorage.setItem(`cartItem_${itemToAdd.id}`, JSON.stringify(itemToAdd));
+    } else {
+      // Удаляем товар из корзины
+      updatedCart.splice(itemIndex, 1);
+      console.log("Товар удален из корзины:", itemToAdd.id);
+      console.log("После удаления:", updatedCart);
+  
+      // Удаляем товар из AsyncStorage по идентификатору
+      await AsyncStorage.removeItem(`cartItem_${itemToAdd.id}`);
     }
+  
+    setCart(updatedCart);
   };
+  
+
+  if (loading) {
+    return (
+      <View style={stylesAll.loading}>
+        <ActivityIndicator color="red" size="small" />
+        <Text>Загрузка данных...</Text>
+      </View>
+    );
+  }
 
   if (!data) {
     return (
       <View style={stylesAll.loading}>
-        <ActivityIndicator color="red" size="small" />
+        <Text>Ошибка загрузки данных. Пожалуйста, попробуйте позже.</Text>
       </View>
     );
   }
@@ -216,7 +221,11 @@ const Productid = () => {
       {!isInBasket ? (
         <TouchableOpacity
           style={[stylesAll.button, styles.btn_product]}
-          onPress={() => Basket(data.id, data)}
+          onPress={() => {
+            saveToAsyncStorage(data.id);
+            setIsInBasket(true);
+            Alert.alert("Ваш товар успешно добавлен в корзину!");
+          }}
         >
           <Text style={stylesAll.button_text}>Добавить в корзину</Text>
         </TouchableOpacity>
