@@ -15,7 +15,7 @@ import BonusCart from "./BonusCart";
 import Header from "./Header";
 import HurryUpToBuy from "./HurryUpToBuy";
 import Promotion from "./Promotion";
-import { stylesAll } from "@/app/(tabs)/style";
+import { stylesAll } from "@/style";
 import { Ionicons } from "@expo/vector-icons";
 import { AppDispatch } from "@/Redux/reducer/store";
 import { useDispatch } from "react-redux";
@@ -112,7 +112,7 @@ export default function Main() {
         }
       >
         <StoryComponent />
-        <View style={{ marginBottom: 110 }}>
+        <View style={{ marginBottom: 125 }}>
           <BonusCart />
           <View style={styles.apple_check_price}>
             <TouchableOpacity

@@ -1,5 +1,5 @@
 import { url } from "@/Api";
-import { stylesAll } from "@/app/(tabs)/style";
+import { stylesAll } from "@/style";
 import axios from "axios";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -70,7 +70,7 @@ const Promotion = () => {
         {
           <View style={{ flexDirection: "row", gap: 10 }}>
             {data.map((el) => (
-              <Pressable 
+              <Pressable
                 key={el.id}
                 style={styles.promotion_box}
                 onPress={() => router.push(`/details/PromotionId/${el.id}`)}

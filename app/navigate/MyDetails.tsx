@@ -13,7 +13,7 @@ import {
 import { Dropdown } from "react-native-element-dropdown";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { stylesAll } from "../(tabs)/style";
+import { stylesAll } from "../../style";
 import { router } from "expo-router";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserInfo } from "@/Redux/reducer/UserInfo";

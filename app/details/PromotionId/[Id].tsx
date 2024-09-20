@@ -1,5 +1,5 @@
 import { url } from "@/Api";
-import { stylesAll } from "@/app/(tabs)/style";
+import { stylesAll } from "@/style";
 import axios from "axios";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -28,7 +28,7 @@ const PromotionId = () => {
       const fetchUserData = async () => {
         try {
           const response = await axios.get<PromotionIdInter>(
-            `${url}/card/one${id}`
+            `${url}/card/${id}`
           );
           setHarryId(response.data);
         } catch (error) {

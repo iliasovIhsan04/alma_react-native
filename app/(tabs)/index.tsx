@@ -1,6 +1,6 @@
 import Main from "@/components/Main/Main";
 import { StyleSheet, View, Text } from "react-native";
-import { stylesAll } from "./style";
+import { stylesAll } from "../../style";
 
 export default function HomeScreen() {
   return (

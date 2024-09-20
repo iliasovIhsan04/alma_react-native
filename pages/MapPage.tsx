@@ -13,7 +13,7 @@ import {
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import axios from "axios";
-import { stylesAll } from "@/app/(tabs)/style";
+import { stylesAll } from "@/style";
 
 type LocationType = {
   id: string;
@@ -369,8 +369,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#DC0200",
     left: 20,
     right: 20,
-    width: "50%",
-    paddingRight: 20,
-    marginRight: 20,
+    width: "45%",
   },
 });

@@ -13,7 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 
-import { stylesAll } from "../(tabs)/style";
+import { stylesAll } from "../../style";
 import {
   registerFailure,
   registerStart,

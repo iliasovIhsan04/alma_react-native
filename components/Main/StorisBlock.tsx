@@ -91,15 +91,15 @@ const StoryComponent = () => {
   }, []);
 
   const handleStoryStart = (user?: User, story?: Story) => {
-    if (!user || !story) {
-      console.error("User or story data is missing");
-      return;
+    if (user && story && story.story_image) {
+      console.log(
+        `User ${user.user_name} started story with ID ${story.story_id}`
+      );
+      console.log(`Story image URL: ${story.story_image}`);
+      console.log(`Story duration: ${story.duration}`);
+    } else {
+      console.error("Story start data is incomplete or invalid.");
     }
-    console.log(
-      `User ${user.user_name} started story with ID ${story.story_id}`
-    );
-    console.log(`Story image URL: ${story.story_image}`);
-    console.log(`Story duration: ${story.duration}`);
   };
 
   const renderContent = () => {
@@ -124,11 +124,10 @@ const StoryComponent = () => {
             data={filteredStories}
             duration={10}
             onStart={(data) => {
-              console.log("On Start Data:", data);
               if (data?.user && data?.story) {
                 handleStoryStart(data.user, data.story);
               } else {
-                console.error("Story start data is incomplete.");
+                console.error("Story start data is incomplete or invalid.");
               }
             }}
             onStorySeen={updateSeenStories}
@@ -154,7 +153,6 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: "rgba(107, 107, 107, 0.5)",
-
     borderRadius: 50,
     width: 40,
     height: 40,

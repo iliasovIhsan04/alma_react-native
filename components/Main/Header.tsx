@@ -1,4 +1,4 @@
-import { stylesAll } from "@/app/(tabs)/style";
+import { stylesAll } from "@/style";
 import { router } from "expo-router";
 import React from "react";
 import { Image, Pressable, StyleSheet, View } from "react-native";

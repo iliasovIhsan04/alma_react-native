@@ -8,7 +8,7 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
-import { stylesAll } from "../(tabs)/style";
+import { stylesAll } from "../../style";
 import { router } from "expo-router";
 import OTPTextInput from "react-native-otp-textinput";
 import AsyncStorage from "@react-native-async-storage/async-storage";

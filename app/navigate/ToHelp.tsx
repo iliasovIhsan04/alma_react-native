@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { stylesAll } from "../(tabs)/style";
+import { stylesAll } from "../../style";
 import { router } from "expo-router";
 
 const ToHelp = () => {

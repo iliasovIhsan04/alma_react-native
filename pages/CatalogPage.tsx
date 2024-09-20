@@ -1,4 +1,4 @@
-import { stylesAll } from "@/app/(tabs)/style";
+import { stylesAll } from "@/style";
 import axios from "axios";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";

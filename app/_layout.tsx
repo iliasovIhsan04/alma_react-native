@@ -25,7 +25,6 @@ export default function RootLayout() {
     getToken();
   }, []);
 
-
   return (
     <Provider store={store}>
       <Stack screenOptions={{ headerShown: false }}>

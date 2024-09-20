@@ -1,4 +1,4 @@
-import { stylesAll } from "@/app/(tabs)/style";
+import { stylesAll } from "@/style";
 import { router } from "expo-router";
 import React from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
@@ -6,8 +6,6 @@ import { Image, Text, TouchableOpacity, View } from "react-native";
 const PurchaseHistory = () => {
   const [history, setHistory] = React.useState<any[]>([]);
   const [isLoading, setIsLoading] = React.useState(false);
-
-  
 
   return (
     <View style={stylesAll.background_block}>

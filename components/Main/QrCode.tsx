@@ -1,4 +1,4 @@
-import { stylesAll } from "@/app/(tabs)/style";
+import { stylesAll } from "@/style";
 import { AppDispatch, RootState } from "@/Redux/reducer/store";
 import { fetchUserInfo } from "@/Redux/reducer/UserInfo";
 import AsyncStorage from "@react-native-async-storage/async-storage";

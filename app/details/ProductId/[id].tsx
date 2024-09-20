@@ -1,6 +1,6 @@
 import { useRoute } from "@react-navigation/native";
 import { url } from "@/Api";
-import { stylesAll } from "@/app/(tabs)/style";
+import { stylesAll } from "@/style";
 import axios from "axios";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Alert,
   Image,
+  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -40,9 +41,10 @@ interface Product {
 
 const Productid = () => {
   const route = useRoute();
-  const [data, setData] = useState<Product | null>(null);
   const { id } = route.params as { id: number };
+  const [data, setData] = useState<Product | null>(null);
   const [isInBasket, setIsInBasket] = useState<boolean>(false);
+  const [isFavorite, setIsFavorite] = useState<boolean>(false);
 
   useEffect(() => {
     const checkIfInBasket = async () => {
@@ -51,7 +53,6 @@ const Productid = () => {
           `activeItemsBasket_${id}`
         );
         setIsInBasket(!!activeItem);
-        console.log(`Item ${id} is in basket:`, !!activeItem);
       } catch (error) {
         console.error("Ошибка при проверке корзины:", error);
       }
@@ -72,6 +73,33 @@ const Productid = () => {
     };
     fetchUserData();
   }, [id]);
+
+  useEffect(() => {
+    const checkFavoriteStatus = async () => {
+      try {
+        const itemFeatured = await AsyncStorage.getItem(
+          `activeItemFeatured${id}`
+        );
+        setIsFavorite(!!itemFeatured);
+      } catch (error) {
+        console.error("Ошибка при чтении из AsyncStorage:", error);
+      }
+    };
+    checkFavoriteStatus();
+  }, [id]);
+
+  const toggleFavorite = async () => {
+    try {
+      if (isFavorite) {
+        await AsyncStorage.removeItem(`activeItemFeatured${id}`);
+      } else {
+        await AsyncStorage.setItem(`activeItemFeatured${id}`, `${id}`);
+      }
+      setIsFavorite(!isFavorite);
+    } catch (error) {
+      console.error("Ошибка при обновлении AsyncStorage:", error);
+    }
+  };
 
   const Basket = async (id: number, datas: Product) => {
     setIsInBasket(true);
@@ -127,12 +155,16 @@ const Productid = () => {
             />
           </TouchableOpacity>
           <Text style={stylesAll.header_name}></Text>
-          <View style={stylesAll.header_back_btn}>
+          <Pressable onPress={toggleFavorite}>
             <Image
-              style={stylesAll.icons}
-              source={require("../../../assets/images/heart_card.png")}
+              style={styles.heart_img}
+              source={
+                isFavorite
+                  ? require("../../../assets/images/heart_card_new.png")
+                  : require("../../../assets/images/heart_card.png")
+              }
             />
-          </View>
+          </Pressable>
         </View>
       </View>
       <View>
@@ -181,7 +213,6 @@ const Productid = () => {
           </View>
         </View>
       </View>
-
       {!isInBasket ? (
         <TouchableOpacity
           style={[stylesAll.button, styles.btn_product]}
@@ -202,6 +233,10 @@ const Productid = () => {
 };
 
 const styles = StyleSheet.create({
+  heart_img: {
+    width: 24,
+    height: 24,
+  },
   btn_product: {
     position: "absolute",
     width: "90%",

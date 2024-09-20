@@ -21,7 +21,7 @@ import { router } from "expo-router";
 import axios from "axios";
 import { url } from "@/Api";
 import OTPTextInput from "react-native-otp-textinput";
-import { stylesAll } from "../(tabs)/style";
+import { stylesAll } from "../../style";
 
 interface ActivationCodeProps {}
 

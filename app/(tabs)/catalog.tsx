@@ -6,7 +6,7 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import { stylesAll } from "./style";
+import { stylesAll } from "../../style";
 
 export default function CatalogScreen() {
   return (
@@ -24,7 +24,7 @@ export default function CatalogScreen() {
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
         >
-          <View style={{ marginBottom: 115 }}>
+          <View style={{ marginBottom: 125 }}>
             <CatalogPage />
           </View>
         </ScrollView>
