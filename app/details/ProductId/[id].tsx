@@ -1,6 +1,3 @@
-import { useRoute } from "@react-navigation/native";
-import { url } from "@/Api";
-import { stylesAll } from "@/style";
 import axios from "axios";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -16,6 +13,9 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Images from "./Images";
+import { url } from "@/Api";
+import { useRoute } from "@react-navigation/native";
+import { stylesAll } from "@/style";
 
 interface Product {
   id: number;
@@ -44,107 +44,131 @@ const Productid = () => {
   const { id } = route.params as { id: number };
   const [data, setData] = useState<Product | null>(null);
   const [isInBasket, setIsInBasket] = useState<boolean>(false);
-  const [isFavorite, setIsFavorite] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [cart, setCart] = useState<Product[]>([]);
   const [favoriteItems, setFavoriteItems] = useState<Set<number>>(new Set());
+  const [cart, setCart] = useState<Product[]>([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get<Product>(
-          `${url}/product/detail/${id}`
-        );
-        setData(response.data);
+    const initializeData = async () => {
+      const cartItems = await AsyncStorage.getItem("cartFeatured");
+      if (cartItems) {
+        setCart(JSON.parse(cartItems));
+      }
+      const favoriteItemsKeys = await AsyncStorage.getAllKeys();
+      const favoriteIds = favoriteItemsKeys
+        .filter((key) => key.startsWith("activeItemFeatured"))
+        .map((key) => parseInt(key.replace("activeItemFeatured", "")));
+      setFavoriteItems(new Set(favoriteIds));
+    };
 
+    initializeData();
+  }, []);
+
+  useEffect(() => {
+    const checkFavoritesAndBasket = async () => {
+      try {
         const activeItem = await AsyncStorage.getItem(
           `activeItemsBasket_${id}`
         );
         setIsInBasket(!!activeItem);
 
-        const itemFeatured = await AsyncStorage.getItem(
+        const itemExists = await AsyncStorage.getItem(
           `activeItemFeatured${id}`
         );
-        setIsFavorite(!!itemFeatured);
+        setFavoriteItems((prev) => {
+          const updatedFavorites = new Set(prev);
+          if (itemExists) {
+            updatedFavorites.add(id);
+          } else {
+            updatedFavorites.delete(id);
+          }
+          return updatedFavorites;
+        });
       } catch (error) {
-        console.error("Ошибка при получении данных:", error);
-      } finally {
-        setLoading(false);
+        console.error("Ошибка при проверке избранного или корзины:", error);
       }
     };
 
-    fetchData();
+    checkFavoritesAndBasket();
   }, [id]);
 
-  const InitializeData = async () => {
-    const cartItemsString = await AsyncStorage.getItem("cartFeatured");
-    if (cartItemsString) {
-      setCart(JSON.parse(cartItemsString));
-    }
-  };
   useEffect(() => {
-    InitializeData();
-  }, []);
-
-  const toggleFavorite = async () => {
-    try {
-      if (isFavorite) {
-        await AsyncStorage.removeItem(`activeItemFeatured${id}`);
-      } else {
-        await AsyncStorage.setItem(`activeItemFeatured${id}`, `${id}`);
-        saveToAsyncStorage(id); // Сохраняем в корзину при добавлении в избранное
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get<Product>(
+          `${url}/product/detail/${id}`
+        );
+        setData(response.data);
+      } catch (error) {
+        console.error("Ошибка при получении данных:", error);
       }
-      setIsFavorite(!isFavorite);
+    };
+    fetchUserData();
+  }, [id]);
+
+  const Basket = async (id: number, datas: Product) => {
+    setIsInBasket(true);
+    try {
+      const prevIDString = await AsyncStorage.getItem("plus");
+      const prevID = prevIDString !== null ? JSON.parse(prevIDString) : {};
+      const updatedPrevID = { ...prevID, [id]: 1 };
+      await AsyncStorage.setItem("plus", JSON.stringify(updatedPrevID));
+      await AsyncStorage.setItem("plusOne", JSON.stringify(updatedPrevID));
+      const prevShopCartString = await AsyncStorage.getItem("shopCart");
+      const prevShopCart =
+        prevShopCartString !== null ? JSON.parse(prevShopCartString) : [];
+      const updatedShopCart = [...prevShopCart, datas];
+      await AsyncStorage.setItem("shopCart", JSON.stringify(updatedShopCart));
+      const prevCartsString = await AsyncStorage.getItem("cartsBasket");
+      const prevCarts =
+        prevCartsString !== null ? JSON.parse(prevCartsString) : [];
+      const updatedCarts = [...prevCarts, datas];
+      await AsyncStorage.setItem("cartsBasket", JSON.stringify(updatedCarts));
+      await AsyncStorage.setItem(`activeItemsBasket_${id}`, JSON.stringify(id));
+      const activeItem = await AsyncStorage.getItem(`activeItemsBasket_${id}`);
+
+      if (activeItem) {
+        Alert.alert("Ваш товар успешно добавлен в корзину!");
+      } else {
+        Alert.alert("Ошибка", "Не удалось добавить товар в корзину");
+      }
     } catch (error) {
-      console.error("Ошибка при обновлении AsyncStorage:", error);
+      Alert.alert("Ошибка", "Произошла ошибка при добавлении товара в корзину");
+      console.error(error);
     }
   };
-
-  const saveToAsyncStorage = async (id: number) => {
-    if (!data) return;
-  
-    const itemToAdd = data;
-    let updatedCart = [...cart];
-  
-    const itemIndex = updatedCart.findIndex((item) => item.id === itemToAdd.id);
-  
-    if (itemIndex === -1) {
-      // Добавляем товар в корзину
-      updatedCart.push(itemToAdd);
-      console.log("Товар добавлен в корзину:", itemToAdd.id);
-  
-      // Сохраняем товар в AsyncStorage по идентификатору
-      await AsyncStorage.setItem(`cartItem_${itemToAdd.id}`, JSON.stringify(itemToAdd));
-    } else {
-      // Удаляем товар из корзины
-      updatedCart.splice(itemIndex, 1);
-      console.log("Товар удален из корзины:", itemToAdd.id);
-      console.log("После удаления:", updatedCart);
-  
-      // Удаляем товар из AsyncStorage по идентификатору
-      await AsyncStorage.removeItem(`cartItem_${itemToAdd.id}`);
-    }
-  
-    setCart(updatedCart);
-  };
-  
-
-  if (loading) {
-    return (
-      <View style={stylesAll.loading}>
-        <ActivityIndicator color="red" size="small" />
-        <Text>Загрузка данных...</Text>
-      </View>
-    );
-  }
 
   if (!data) {
     return (
       <View style={stylesAll.loading}>
-        <Text>Ошибка загрузки данных. Пожалуйста, попробуйте позже.</Text>
+        <ActivityIndicator color="red" size="small" />
       </View>
     );
   }
+
+  const saveToAsyncStorage = async (id: number) => {
+    if (!data) return;
+
+    const updatedCart = cart.some((item) => item.id === data.id)
+      ? cart.filter((item) => item.id !== data.id)
+      : [...cart, data];
+
+    setCart(updatedCart);
+    await AsyncStorage.setItem("cartFeatured", JSON.stringify(updatedCart));
+  };
+
+  const toggleFavorite = async (id: number) => {
+    const itemExists = await AsyncStorage.getItem(`activeItemFeatured${id}`);
+    const updatedFavorites = new Set(favoriteItems);
+    if (itemExists) {
+      await AsyncStorage.removeItem(`activeItemFeatured${id}`);
+      updatedFavorites.delete(id);
+    } else {
+      await AsyncStorage.setItem(`activeItemFeatured${id}`, `${id}`);
+      updatedFavorites.add(id);
+    }
+
+    setFavoriteItems(updatedFavorites);
+  };
 
   return (
     <View style={stylesAll.background_block}>
@@ -160,54 +184,38 @@ const Productid = () => {
             />
           </TouchableOpacity>
           <Text style={stylesAll.header_name}></Text>
-          <Pressable onPress={toggleFavorite}>
+          <Pressable
+            onPress={() => {
+              toggleFavorite(id);
+              saveToAsyncStorage(id);
+            }}
+            style={styles.heart_img_box}
+          >
             <Image
               style={styles.heart_img}
               source={
-                isFavorite
+                favoriteItems.has(id)
                   ? require("../../../assets/images/heart_card_new.png")
                   : require("../../../assets/images/heart_card.png")
               }
             />
           </Pressable>
         </View>
-      </View>
-      <View>
-        <Images data={data.img} />
-      </View>
-      <View style={stylesAll.container}>
         <View style={styles.product_block}>
+          <Images data={data.img} />
           <Text style={styles.product_title}>{data.title}</Text>
           <View style={{ flexDirection: "column", gap: 5, marginTop: 16 }}>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
+            <View style={styles.row}>
               <Text style={styles.product_name}>Артикул:</Text>
               <Text style={styles.product_code}>{data.code}</Text>
             </View>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
+            <View style={styles.row}>
               <Text style={styles.product_name}>1 {data.price_for}</Text>
               <Text style={[styles.product_old_price, styles.price]}>
                 {data.price}
               </Text>
             </View>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
+            <View style={styles.row}>
               <Text style={styles.product_name}>По карте</Text>
               <Text style={styles.product_old_price}>{data.old_price}</Text>
             </View>
@@ -218,34 +226,23 @@ const Productid = () => {
           </View>
         </View>
       </View>
-      {!isInBasket ? (
-        <TouchableOpacity
-          style={[stylesAll.button, styles.btn_product]}
-          onPress={() => {
-            saveToAsyncStorage(data.id);
-            setIsInBasket(true);
-            Alert.alert("Ваш товар успешно добавлен в корзину!");
-          }}
-        >
-          <Text style={stylesAll.button_text}>Добавить в корзину</Text>
-        </TouchableOpacity>
-      ) : (
-        <TouchableOpacity
-          style={[stylesAll.button, styles.btn_product]}
-          onPress={() => router.push(`navigate/BasketPage`)}
-        >
-          <Text style={stylesAll.button_text}>В корзине</Text>
-        </TouchableOpacity>
-      )}
+      <TouchableOpacity
+        style={[stylesAll.button, styles.btn_product]}
+        onPress={() =>
+          isInBasket
+            ? router.push(`navigate/BasketPage`)
+            : Basket(data.id, data)
+        }
+      >
+        <Text style={stylesAll.button_text}>
+          {isInBasket ? "В корзине" : "Добавить в корзину"}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  heart_img: {
-    width: 24,
-    height: 24,
-  },
   btn_product: {
     position: "absolute",
     width: "90%",
@@ -285,15 +282,22 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#191919",
   },
-  product_img_box: {
-    height: 300,
-    backgroundColor: "#E8E8E8",
-    marginBottom: 20,
-  },
   product_name: {
     fontSize: 14,
     fontWeight: "500",
     color: "#6B6B6B",
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  heart_img_box: {
+    alignItems: "center",
+  },
+  heart_img: {
+    width: 24,
+    height: 24,
   },
 });
 

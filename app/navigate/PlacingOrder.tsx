@@ -83,24 +83,19 @@ const PlacingOrder = () => {
     try {
       const shopCart = await AsyncStorage.getItem("shopCart");
       const parsedShopCart = shopCart ? JSON.parse(shopCart) : [];
-      const cartIds = parsedShopCart.map((el: any) => el.id);
-      const idCount = cartIds.reduce(
-        (acc: { [key: string]: number }, id: number) => {
-          acc[id] = acc[id] ? acc[id] + 1 : 1;
-          return acc;
-        },
-        {}
-      );
-      const productsForOrder = Object.keys(idCount).map((id) => ({
-        product_id: parseInt(id),
-        count: idCount[id],
+
+      const productsForOrder = parsedShopCart.map((el) => ({
+        product_id: el.id,
+        count: plus[el.id] || 0,
       }));
+
       const dataToSend = {
         address_to: addressId ? addressId : address.address_to,
         get_date: address.get_date,
         comment: address.comment,
-        product: productsForOrder,
+        product: productsForOrder.filter((item) => item.count > 0),
       };
+
       const response = await axios.post(url + "/order/create", dataToSend, {
         headers,
       });
@@ -281,7 +276,7 @@ const PlacingOrder = () => {
               onPress={() => {
                 setAddress((prevAddress) => ({
                   ...prevAddress,
-                  get_date: "2024-09-12", // или другой дефолтный формат
+                  get_date: "2024-09-12", 
                 }));
                 setShow(false);
                 setDate1(true);
