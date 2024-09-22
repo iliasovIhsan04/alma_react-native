@@ -1,4 +1,4 @@
-import ProfilePage from "@/pages/ProfilePage";
+import ProfilePage from "@/Redux/pages/ProfilePage";
 import React from "react";
 import { Text, View } from "react-native";
 

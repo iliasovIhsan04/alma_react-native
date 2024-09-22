@@ -10,10 +10,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { AppDispatch, RootState } from "../Redux/reducer/store";
+import { AppDispatch, RootState } from "../reducer/store";
 import { useDispatch, useSelector } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { fetchUserInfo } from "../Redux/reducer/UserInfo";
+import { fetchUserInfo } from "../reducer/UserInfo";
 import ModalDown from "@/Modal";
 
 const ProfilePage = () => {
