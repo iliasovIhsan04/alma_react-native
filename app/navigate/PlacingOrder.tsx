@@ -21,7 +21,6 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { Modal } from "react-native";
 import { Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { Line } from "react-native-svg";
 
 const PlacingOrder = () => {
   const [local, setLocal] = useState<string | null>(null);
@@ -276,7 +275,7 @@ const PlacingOrder = () => {
               onPress={() => {
                 setAddress((prevAddress) => ({
                   ...prevAddress,
-                  get_date: "2024-09-12", 
+                  get_date: "2024-09-12",
                 }));
                 setShow(false);
                 setDate1(true);

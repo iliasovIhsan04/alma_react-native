@@ -4,6 +4,34 @@ export const stylesAll = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
   },
+  itemName: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#191919",
+  },
+  itemSum: {
+    fontWeight: "bold",
+    color: "#191919",
+  },
+  itemAddress: {
+    fontSize: 14,
+    fontWeight: "400",
+    color: "#191919",
+  },
+  itemFooter: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  bonus: {
+    color: "#68B936",
+    fontSize: 14,
+    fontWeight: "700",
+  },
+  date_text: {
+    fontSize: 12,
+    fontWeight: "500",
+    color: "#AAAAAA",
+  },
   cell_box: {
     width: 24,
     height: 24,

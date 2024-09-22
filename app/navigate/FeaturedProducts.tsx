@@ -3,6 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Image,
   Pressable,
   ScrollView,
@@ -32,6 +33,7 @@ interface Product {
 const FeaturedProducts = () => {
   const [cart, setCart] = useState<Product[]>([]);
   const [favoriteItems, setFavoriteItems] = useState<number[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchCartAndFavorites = async () => {
@@ -42,6 +44,8 @@ const FeaturedProducts = () => {
         if (favoritesData) setFavoriteItems(JSON.parse(favoritesData));
       } catch (error) {
         console.error("Failed to load cart or favorites:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -50,6 +54,7 @@ const FeaturedProducts = () => {
 
   const deleteItem = async (id: number) => {
     try {
+      setLoading(true);
       const cartData = await AsyncStorage.getItem("cartFeatured");
       const cart = JSON.parse(cartData) || [];
       const newCart = cart.filter((el: Product) => el.id !== id);
@@ -58,23 +63,10 @@ const FeaturedProducts = () => {
       setCart(newCart);
     } catch (error) {
       console.error("Failed to delete item:", error);
+    } finally {
+      setLoading(false);
     }
   };
-
-  useEffect(() => {
-    const checkCart = async () => {
-      try {
-        const cartData = await AsyncStorage.getItem("cartFeatured");
-        if (!cartData || JSON.parse(cartData).length === 0) {
-          await AsyncStorage.removeItem("cartFeatured");
-        }
-      } catch (error) {
-        console.error("Failed to check cart:", error);
-      }
-    };
-
-    checkCart();
-  }, [cart]);
 
   return (
     <View style={stylesAll.container}>
@@ -91,7 +83,11 @@ const FeaturedProducts = () => {
         <Text style={stylesAll.header_name}>Избранные товары</Text>
         <View style={stylesAll.header_back_btn}></View>
       </View>
-      {cart.length > 0 ? (
+      {loading ? (
+        <View style={stylesAll.loading_catalog_page}>
+          <ActivityIndicator size="small" color="#DC0200" />
+        </View>
+      ) : cart.length > 0 ? (
         <ScrollView
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}

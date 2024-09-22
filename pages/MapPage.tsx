@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   sectionMaps: {
-    marginTop: 90,
+    marginTop: 100,
     flexDirection: "column",
     gap: 10,
   },
