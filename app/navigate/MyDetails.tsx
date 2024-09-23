@@ -301,6 +301,7 @@ const MyDetails = () => {
                   },
                 ]}
               >
+                <View>Ihsan</View>
                 <Text style={stylesAll.label}>
                   {selectedDate
                     ? selectedDate.toLocaleDateString()
