@@ -1,4 +1,3 @@
-import CatalogPage from "@/Redux/pages/CatalogPage";
 import {
   StyleSheet,
   ScrollView,
@@ -7,6 +6,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { stylesAll } from "../../style";
+import CatalogPage from "@/pages/CatalogPage";
 
 export default function CatalogScreen() {
   return (

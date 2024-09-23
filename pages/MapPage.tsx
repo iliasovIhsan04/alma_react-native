@@ -196,7 +196,7 @@ export default function MapPage() {
                           <View style={styles.mapItem}>
                             <Image
                               style={styles.maps}
-                              source={require("./../assets/images/maps.png")}
+                              source={require("../assets/images/maps.png")}
                             />
                             <Text style={styles.navTextAdres}>
                               {location.address}

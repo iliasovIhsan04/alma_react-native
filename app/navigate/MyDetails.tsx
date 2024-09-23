@@ -19,7 +19,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchUserInfo } from "@/Redux/reducer/UserInfo";
 import { AppDispatch, RootState } from "@/Redux/reducer/store";
 import { url } from "@/Api";
-import DateTimePicker from "@react-native-community/datetimepicker";
+// import DateTimePicker from "@react-native-community/datetimepicker";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 interface DropdownItem {
   label: string;
@@ -64,7 +65,22 @@ const MyDetails = () => {
   const [languageValue, setLanguageValue] = useState<string | null>(null);
   const [marriedValue, setMarriedValue] = useState<string | null>(null);
   const [cityValue, setCityValue] = useState<string | null>(null);
-  const [show, setShow] = useState(false);
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
+    handleInputChange("birthday", date);
+    hideDatePicker();
+  };
 
   const [info, setInfo] = useState({
     phone: "",
@@ -272,21 +288,33 @@ const MyDetails = () => {
                 editable={false}
               />
             </View>
-            <TouchableOpacity style={styles.input_block}>
+            <View style={styles.input_block}>
               <Text style={stylesAll.label}>Дата рождения</Text>
-              <View style={[styles.input_box_date]}>
-                <DateTimePicker
-                  style={styles.date_picker}
-                  testID="dateTimePicker"
-                  value={info.birthday}
-                  mode="date"
-                  onChange={(event, selectedDate) => {
-                    const currentDate = selectedDate || info.birthday;
-                    handleInputChange("birthday", currentDate);
-                  }}
-                />
-              </View>
-            </TouchableOpacity>
+              <TouchableOpacity
+                onPress={showDatePicker}
+                style={[
+                  stylesAll.input,
+                  styles.input_box,
+                  {
+                    flexDirection: "row",
+                    alignItems: "center",
+                  },
+                ]}
+              >
+                <Text style={stylesAll.label}>
+                  {selectedDate
+                    ? selectedDate.toLocaleDateString()
+                    : "Выберите дату рождения"}
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <DateTimePickerModal
+              isVisible={isDatePickerVisible}
+              mode="date"
+              onConfirm={handleDateChange}
+              onCancel={hideDatePicker}
+              date={selectedDate}
+            />
             <View style={styles.input_block}>
               <Text style={stylesAll.label}>Пол</Text>
               <Dropdown

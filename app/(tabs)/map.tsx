@@ -1,4 +1,4 @@
-import MapPage from "@/Redux/pages/MapPage";
+import MapPage from "@/pages/MapPage";
 import React from "react";
 import { View } from "react-native";
 
