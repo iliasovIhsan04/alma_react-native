@@ -226,7 +226,6 @@ const MyDetails = () => {
       console.error("Failed to save switch state to AsyncStorage:", error);
     }
   };
-
   return (
     <View style={[stylesAll.background_block]}>
       <View
@@ -301,7 +300,6 @@ const MyDetails = () => {
                   },
                 ]}
               >
-                <View>Ihsan</View>
                 <Text style={stylesAll.label}>
                   {selectedDate
                     ? selectedDate.toLocaleDateString()
