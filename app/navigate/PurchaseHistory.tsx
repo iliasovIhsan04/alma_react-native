@@ -22,7 +22,8 @@ const PurchaseHistory = () => {
   const [dateFrom, setDateFrom] = useState<string>("");
   const [dateTo, setDateTo] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
-  const [isDatePickerVisible, setDatePickerVisibility] = useState<boolean>(false);
+  const [isDatePickerVisible, setDatePickerVisibility] =
+    useState<boolean>(false);
   const [isSelectingFromDate, setIsSelectingFromDate] = useState<boolean>(true);
 
   useEffect(() => {
@@ -31,9 +32,10 @@ const PurchaseHistory = () => {
       const token = await AsyncStorage.getItem("tokenActivation");
       if (token) {
         const headers = { Authorization: `Token ${token}` };
-        const urlWithDates = dateFrom && dateTo
-          ? `${url}/order/list/?date_from=${dateFrom}&date_to=${dateTo}`
-          : `${url}/order/list/`;
+        const urlWithDates =
+          dateFrom && dateTo
+            ? `${url}/order/list/?date_from=${dateFrom}&date_to=${dateTo}`
+            : `${url}/order/list/`;
 
         try {
           const response = await axios.get(urlWithDates, { headers });
@@ -145,7 +147,6 @@ const PurchaseHistory = () => {
                     />
                   </Pressable>
                 </View>
-
                 {filteredOrders.map((order, index) => (
                   <View key={index}>
                     <Text style={styles.dateTextInput}>{order.date}</Text>
@@ -153,13 +154,19 @@ const PurchaseHistory = () => {
                       <TouchableOpacity
                         style={styles.historyItem}
                         key={id}
-                        onPress={() => router.push(`/details/PurchaseId/${item.id}`)}
+                        onPress={() =>
+                          router.push(`/details/PurchaseId/${item.id}`)
+                        }
                       >
                         <View style={styles.itemInfo}>
-                          <Text style={stylesAll.itemName}>Покупка на сумму</Text>
+                          <Text style={stylesAll.itemName}>
+                            Покупка на сумму
+                          </Text>
                           <Text style={stylesAll.itemSum}>{item.sum}</Text>
                         </View>
-                        <Text style={stylesAll.itemAddress}>{item.address}</Text>
+                        <Text style={stylesAll.itemAddress}>
+                          {item.address}
+                        </Text>
                         <View style={stylesAll.itemFooter}>
                           <Text style={stylesAll.date_text}>
                             {item.date} {item.time}

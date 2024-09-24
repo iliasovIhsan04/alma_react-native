@@ -107,12 +107,10 @@ const PlacingOrder = () => {
           "cartsBasket",
           "cartFeatured",
         ]);
-
         for (const el of parsedShopCart) {
           await AsyncStorage.removeItem(`activePlus_${el.id}`);
           await AsyncStorage.removeItem(`activeItemsBasket_${el.id}`);
         }
-
         for (const el of cart) {
           await AsyncStorage.removeItem(`activeItemFeatured${el.id}`);
         }
@@ -122,10 +120,10 @@ const PlacingOrder = () => {
       }
     } catch (error) {
       console.error("Error during order placement:", error);
-      if (!address.address_to) {
-        Alert.alert("Ошибка", "Добавьте адрес прежде чем заказать!");
-      } else if (!address.get_date) {
+      if (!address.get_date) {
         Alert.alert("Ошибка", "Выберите время получения");
+      } else if (!address.address_to) {
+        Alert.alert("Ошибка", "Добавьте адрес прежде чем заказать!");
       }
       setIsLoading(false);
     }
@@ -455,7 +453,7 @@ const styles = StyleSheet.create({
     marginLeft: -10,
   },
   btn_placing: {
-    backgroundColor: "#6B6B6B",
+    backgroundColor: "#DC0200",
     marginTop: 15,
   },
   total_text: {

@@ -71,6 +71,9 @@ export const stylesAll = StyleSheet.create({
   loading_catalog: {
     width: "100%",
     height: 400,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   loading_catalog_page: {
     width: "100%",
@@ -78,6 +81,11 @@ export const stylesAll = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+  },
+  barrcode_page_text: {
+    color: "#DC0200",
+    fontSize: 24,
+    fontWeight: "600",
   },
   header_nav: {
     backgroundColor: "white",

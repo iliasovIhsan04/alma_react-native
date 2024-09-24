@@ -287,10 +287,6 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
   },
-  timer: {
-    width: 22,
-    height: 22,
-  },
   span: {
     fontSize: 14,
     color: "#68B936",

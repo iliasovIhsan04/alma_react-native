@@ -185,6 +185,13 @@ const CatalogDetails: React.FC = ({}) => {
     initializeData();
   }, [cat]);
 
+  if (loading) {
+    return (
+      <View style={stylesAll.loading}>
+        <ActivityIndicator color="red" size="small" />
+      </View>
+    );
+  }
   interface Product {
     id: number;
     title: string;
@@ -271,66 +278,66 @@ const CatalogDetails: React.FC = ({}) => {
                 style={styles.modal_content_sort_item}
                 onPress={() => handleOrdering("")}
               >
-                <TouchableOpacity style={stylesAll.cell_box}>
+                <View style={stylesAll.cell_box}>
                   <View
                     style={ordering === "" && styles.active_cell_box}
                   ></View>
-                </TouchableOpacity>
+                </View>
                 <Text style={stylesAll.cell_text}>По умолчанию</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.modal_content_sort_item}
                 onPress={() => handleOrdering("-sales")}
               >
-                <TouchableOpacity style={stylesAll.cell_box}>
+                <View style={stylesAll.cell_box}>
                   <View
                     style={ordering === "-sales" && styles.active_cell_box}
                   ></View>
-                </TouchableOpacity>
+                </View>
                 <Text style={stylesAll.cell_text}>Сначала популярные</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.modal_content_sort_item}
                 onPress={() => handleOrdering("price")}
               >
-                <TouchableOpacity style={stylesAll.cell_box}>
+                <View style={stylesAll.cell_box}>
                   <View
                     style={ordering === "price" && styles.active_cell_box}
                   ></View>
-                </TouchableOpacity>
+                </View>
                 <Text style={stylesAll.cell_text}>Сначала дешевые</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.modal_content_sort_item}
                 onPress={() => handleOrdering("-price")}
               >
-                <TouchableOpacity style={stylesAll.cell_box}>
+                <View style={stylesAll.cell_box}>
                   <View
                     style={ordering === "-price" && styles.active_cell_box}
                   ></View>
-                </TouchableOpacity>
+                </View>
                 <Text style={stylesAll.cell_text}>Сначала дорогие</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.modal_content_sort_item}
                 onPress={() => handleOrdering("title")}
               >
-                <TouchableOpacity style={stylesAll.cell_box}>
+                <View style={stylesAll.cell_box}>
                   <View
                     style={ordering === "title" && styles.active_cell_box}
                   ></View>
-                </TouchableOpacity>
+                </View>
                 <Text style={stylesAll.cell_text}>По алфавиту от А до Я</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.modal_content_sort_item}
                 onPress={() => handleOrdering("-title")}
               >
-                <TouchableOpacity style={stylesAll.cell_box}>
+                <View style={stylesAll.cell_box}>
                   <View
                     style={ordering === "-title" && styles.active_cell_box}
                   ></View>
-                </TouchableOpacity>
+                </View>
                 <Text style={stylesAll.cell_text}>По алфавиту от Я до А</Text>
               </TouchableOpacity>
             </View>
@@ -415,12 +422,10 @@ const CatalogDetails: React.FC = ({}) => {
           </TouchableOpacity>
         </View>
       </View>
-      {loading ? (
-        <ActivityIndicator
-          style={stylesAll.loading_catalog}
-          color="red"
-          size="small"
-        />
+      {data.length === 0 ? (
+        <View style={stylesAll.loading_catalog}>
+          <Text style={stylesAll.barrcode_page_text}>Нет товара!</Text>
+        </View>
       ) : (
         <View style={styles.catalog_block_all}>
           {data

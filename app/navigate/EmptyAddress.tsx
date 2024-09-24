@@ -99,6 +99,7 @@ const EmptyAddress = () => {
             <View style={{ marginTop: 20 }}>
               {data.map((item) => (
                 <TouchableOpacity
+                  onPress={() => handleActive(item.id, item.street)}
                   key={item.id}
                   style={[stylesAll.input, styles.input_box, { marginTop: 10 }]}
                 >
@@ -109,16 +110,13 @@ const EmptyAddress = () => {
                       gap: 12,
                     }}
                   >
-                    <TouchableOpacity
-                      onPress={() => handleActive(item.id, item.street)}
-                      style={stylesAll.cell_box}
-                    >
+                    <View style={stylesAll.cell_box}>
                       <View>
                         {addressId === item.id && (
                           <View style={styles.line}></View>
                         )}
                       </View>
-                    </TouchableOpacity>
+                    </View>
                     <Text style={styles.placeholder_static} numberOfLines={1}>
                       {item.street} {item.number} {item.building}{" "}
                       {item.apartment} {item.floor}

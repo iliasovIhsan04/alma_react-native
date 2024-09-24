@@ -16,6 +16,8 @@ interface PromotionIdInter {
   id: number;
   title: string;
   img: string;
+  dateto: string;
+  text: string;
 }
 
 const PromotionId = () => {
@@ -63,20 +65,58 @@ const PromotionId = () => {
           <Text style={stylesAll.header_name}>Акции</Text>
           <View style={stylesAll.header_back_btn}></View>
         </View>
-        <View style={styles.promotion_img_box}>
-          <Image style={stylesAll.image_all} source={{ uri: harryId.img }} />
+        <View style={styles.promotion_block}>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <Text style={styles.prom_text}>Акции</Text>
+            <Text style={styles.prom_dateto}>{harryId.dateto}</Text>
+          </View>
+          <View style={styles.promotion_img_box}>
+            <Image style={stylesAll.image_all} source={{ uri: harryId.img }} />
+          </View>
+          <Text style={styles.prom_title}>{harryId.title}</Text>
+          <Text style={styles.prom_text_all}>{harryId.text}</Text>
         </View>
-        <Text>{harryId.title}</Text>
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  promotion_block: {
+    flexDirection: "column",
+    gap: 14,
+  },
+  prom_text_all: {
+    fontSize: 14,
+    fontWeight: "400",
+    lineHeight: 20,
+    color: "#191919",
+  },
+  prom_title: {
+    fontSize: 22,
+    color: "#191919",
+    fontWeight: "700",
+  },
+  prom_dateto: {
+    fontSize: 18,
+    fontWeight: "500",
+    color: "#DC0200",
+  },
+  prom_text: {
+    fontSize: 18,
+    fontWeight: "500",
+    color: "#191919",
+  },
   promotion_img_box: {
     width: "100%",
-    height: 390,
-    borderRadius: 24,
+    height: 360,
+    borderRadius: 14,
     overflow: "hidden",
   },
 });

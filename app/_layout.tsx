@@ -40,10 +40,11 @@ export default function RootLayout() {
         <Stack.Screen name="navigate/PromotionDetails" />
         <Stack.Screen name="navigate/EmptyAddress" />
         <Stack.Screen name="navigate/NewAddress" />
+        <Stack.Screen name="navigate/ProductGiven" />
         <Stack.Screen name="details/HarryDetailsId/[id]" />
-        <Stack.Screen name="details/PromotionId/[id]" />
         <Stack.Screen name="details/ProductId/[id]" />
         <Stack.Screen name="details/PurchaseId/[id]" />
+        <Stack.Screen name="details/BarrCodeId/[id]" />
         <Stack.Screen name="navigate/Notifications" />
         <Stack.Screen name="navigate/BasketPage" />
         <Stack.Screen name="navigate/PlacingOrder" />

@@ -21,6 +21,7 @@ import { AppDispatch } from "@/Redux/reducer/store";
 import { useDispatch } from "react-redux";
 import { fetchUserInfo } from "@/Redux/reducer/UserInfo";
 import StoryComponent from "./StorisBlock";
+import { router } from "expo-router";
 
 export default function Main() {
   const dispatch: AppDispatch = useDispatch();
@@ -124,7 +125,10 @@ export default function Main() {
                 source={require("../../assets/images/alma_go.png")}
               />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.check_price_box}>
+            <TouchableOpacity
+              style={styles.check_price_box}
+              onPress={() => router.push("/navigate/ProductGiven")}
+            >
               <Image
                 style={{ width: 24, height: 24 }}
                 source={require("../../assets/images/scanning.png")}
