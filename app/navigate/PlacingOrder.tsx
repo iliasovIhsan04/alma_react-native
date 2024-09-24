@@ -290,51 +290,54 @@ const PlacingOrder = () => {
                 <Text style={styles.placeholder_static}>Как можно быстрее</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={[stylesAll.input, styles.input_box, { marginTop: 10 }]}
-              onPress={() => {
-                setDate1(false);
-                setShow(true);
-              }}
-            >
-              <View
-                style={{ flexDirection: "row", alignItems: "center", gap: 12 }}
+            <Pressable style={styles.input_date_box}>
+              <TouchableOpacity
+                style={[stylesAll.input, styles.input_box, { marginTop: 10 }]}
+                onPress={() => {
+                  setDate1(false);
+                  setShow(true);
+                }}
               >
-                <View style={stylesAll.cell_box}>
-                  <View style={[show && stylesAll.active_cell_box]}></View>
-                </View>
-                <Text style={styles.placeholder_static}>
-                  Выбрать дату и время
-                </Text>
-              </View>
-              <View style={stylesAll.input_block_all}>
-                {show && (
-                  <View style={styles.input_box_date}>
-                    <DateTimePicker
-                      style={[styles.date_picker]}
-                      testID="dateTimePicker"
-                      value={
-                        address.get_date
-                          ? new Date(address.get_date)
-                          : new Date()
-                      }
-                      mode="datetime"
-                      display="default"
-                      onChange={(event, selectedDate) => {
-                        const currentDate = selectedDate || new Date();
-                        setAddress((prevAddress) => ({
-                          ...prevAddress,
-                          get_date: currentDate.toISOString().split("T")[0],
-                        }));
-                      }}
-                    />
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 12,
+                  }}
+                >
+                  <View style={stylesAll.cell_box}>
+                    <View style={[show && stylesAll.active_cell_box]}></View>
                   </View>
-                )}
-              </View>
-            </TouchableOpacity>
+                  <Text style={styles.placeholder_static}>
+                    Выбрать дату и время
+                  </Text>
+                </View>
+              </TouchableOpacity>
+              {show && (
+                <View style={styles.input_box_date}>
+                  <DateTimePicker
+                    minimumDate={new Date()}
+                    style={[styles.date_picker]}
+                    testID="dateTimePicker"
+                    value={
+                      address.get_date ? new Date(address.get_date) : new Date()
+                    }
+                    mode="datetime"
+                    display="default"
+                    onChange={(event, selectedDate) => {
+                      const currentDate = selectedDate || new Date();
+                      setAddress((prevAddress) => ({
+                        ...prevAddress,
+                        get_date: currentDate.toISOString().split("T")[0],
+                      }));
+                    }}
+                  />
+                </View>
+              )}
+            </Pressable>
           </View>
           <View>
-            <Text style={[stylesAll.label, show ? { marginTop: 30 } : {}]}>
+            <Text style={[stylesAll.label, show ? { marginTop: 0 } : {}]}>
               Комментарий к заказу( 0-2000)
             </Text>
             <TextInput
@@ -422,6 +425,7 @@ const PlacingOrder = () => {
 };
 
 const styles = StyleSheet.create({
+  input_date_box: {},
   placeholder_static: {
     fontSize: 16,
     fontWeight: "400",
@@ -442,12 +446,13 @@ const styles = StyleSheet.create({
   input_box_date: {
     width: "100%",
     flexDirection: "row",
-    marginLeft: -200,
+    marginLeft: 0,
   },
   date_picker: {
     height: 45,
-    marginLeft: -135,
-    marginTop: 60,
+    marginTop: 10,
+    tintColor: "red",
+    marginLeft: -10,
   },
   btn_placing: {
     backgroundColor: "#6B6B6B",

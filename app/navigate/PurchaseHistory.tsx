@@ -4,9 +4,9 @@ import {
   ScrollView,
   View,
   Text,
-  TouchableOpacity,
   Image,
-  TextInput,
+  TouchableOpacity,
+  Pressable,
   StyleSheet,
 } from "react-native";
 import axios from "axios";
@@ -14,67 +14,76 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { url } from "@/Api";
 import { stylesAll } from "@/style";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const PurchaseHistory = () => {
-  const [order, setOrder] = useState<any[]>([]);
-  const [dateTo, setDateTo] = useState("");
-  const [dateFrom, setDateFrom] = useState("");
-  const [local, setLocal] = useState(null);
-  const [loading, setLoading] = useState(true); // Управление загрузкой
+  const [orders, setOrders] = useState<any[]>([]);
+  const [filteredOrders, setFilteredOrders] = useState<any[]>([]);
+  const [dateFrom, setDateFrom] = useState<string>("");
+  const [dateTo, setDateTo] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
+  const [isDatePickerVisible, setDatePickerVisibility] = useState<boolean>(false);
+  const [isSelectingFromDate, setIsSelectingFromDate] = useState<boolean>(true);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       const token = await AsyncStorage.getItem("tokenActivation");
-      setLocal(token);
-      const headers = {
-        Authorization: `Token ${token}`,
-      };
-      const urlWithDates =
-        dateFrom && dateTo
+      if (token) {
+        const headers = { Authorization: `Token ${token}` };
+        const urlWithDates = dateFrom && dateTo
           ? `${url}/order/list/?date_from=${dateFrom}&date_to=${dateTo}`
           : `${url}/order/list/`;
 
-      try {
-        const response = await axios.get(urlWithDates, { headers });
-        setOrder(response.data);
-      } catch (error) {
-        console.error("Ошибка при загрузке данных:", error);
-      } finally {
+        try {
+          const response = await axios.get(urlWithDates, { headers });
+          setOrders(response.data);
+          setFilteredOrders(response.data);
+        } catch (error) {
+          console.error("Ошибка при загрузке данных:", error);
+        } finally {
+          setLoading(false);
+        }
+      } else {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
-
-  useEffect(() => {
-    if (dateFrom && dateTo) {
-      const fetchDataWithDates = async () => {
-        setLoading(true);
-        const token = await AsyncStorage.getItem("tokenActivation");
-        const headers = {
-          Authorization: `Token ${token}`,
-        };
-
-        try {
-          const response = await axios.get(
-            `${url}/order/list/?date_from=${dateFrom}&date_to=${dateTo}`,
-            { headers }
-          );
-          setOrder(response.data);
-        } catch (error) {
-          console.error("Ошибка при загрузке данных с датами:", error);
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      fetchDataWithDates();
-    }
   }, [dateFrom, dateTo]);
 
-  const hasOrders = order.length > 0 && order[0]?.key === true;
+  useEffect(() => {
+    const filterOrders = () => {
+      if (!dateFrom && !dateTo) {
+        setFilteredOrders(orders);
+        return;
+      }
+
+      const fromDate = new Date(dateFrom);
+      const toDate = new Date(dateTo);
+      const filtered = orders.filter((order) => {
+        const orderDate = new Date(order.date);
+        return orderDate >= fromDate && orderDate <= toDate;
+      });
+      setFilteredOrders(filtered);
+    };
+
+    filterOrders();
+  }, [orders, dateFrom, dateTo]);
+
+  const handleConfirm = (date: Date) => {
+    const isoDate = date.toISOString().split("T")[0];
+    if (isSelectingFromDate) {
+      setDateFrom(isoDate);
+    } else {
+      setDateTo(isoDate);
+    }
+    hideDatePicker();
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
 
   return (
     <View style={stylesAll.background_block}>
@@ -92,55 +101,68 @@ const PurchaseHistory = () => {
           <Text style={stylesAll.header_name}>История покупок</Text>
           <View style={stylesAll.header_back_btn}></View>
         </View>
+
         {loading ? (
           <View style={stylesAll.loading_catalog_page}>
             <ActivityIndicator size="small" color="#DC0200" />
           </View>
         ) : (
           <ScrollView showsVerticalScrollIndicator={false}>
-            {hasOrders ? (
+            {filteredOrders.length > 0 ? (
               <View style={styles.history_block}>
                 <View style={styles.oclock_block}>
-                  <View style={styles.oclock_box}>
+                  <Pressable
+                    style={styles.oclock_box}
+                    onPress={() => {
+                      setIsSelectingFromDate(true);
+                      setDatePickerVisibility(true);
+                    }}
+                  >
                     <Text>От:</Text>
-                    <TextInput
-                      style={styles.dateInput}
-                      value={dateFrom}
-                      onChangeText={setDateFrom}
-                      placeholder="Выберите дату"
+                    <Text style={stylesAll.label}>
+                      {dateFrom || "Выберите дату"}
+                    </Text>
+                    <Image
+                      style={styles.calendar}
+                      source={require("../../assets/images/calendar_days.png")}
                     />
-                  </View>
-                  <View style={styles.oclock_box}>
+                  </Pressable>
+
+                  <Pressable
+                    style={styles.oclock_box}
+                    onPress={() => {
+                      setIsSelectingFromDate(false);
+                      setDatePickerVisibility(true);
+                    }}
+                  >
                     <Text>До:</Text>
-                    <TextInput
-                      style={styles.dateInput}
-                      value={dateTo}
-                      onChangeText={setDateTo}
-                      placeholder="Выберите дату"
+                    <Text style={stylesAll.label}>
+                      {dateTo || "Выберите дату"}
+                    </Text>
+                    <Image
+                      style={styles.calendar}
+                      source={require("../../assets/images/calendar_days.png")}
                     />
-                  </View>
+                  </Pressable>
                 </View>
-                {order.map((elem, index) => (
+
+                {filteredOrders.map((order, index) => (
                   <View key={index}>
-                    <Text style={styles.dateTextInput}>{elem.date}</Text>
-                    {elem.data.map((el, id) => (
+                    <Text style={styles.dateTextInput}>{order.date}</Text>
+                    {order.data.map((item, id) => (
                       <TouchableOpacity
                         style={styles.historyItem}
                         key={id}
-                        onPress={() =>
-                          router.push(`/details/PurchaseId/${el.id}`)
-                        }
+                        onPress={() => router.push(`/details/PurchaseId/${item.id}`)}
                       >
                         <View style={styles.itemInfo}>
-                          <Text style={stylesAll.itemName}>
-                            Покупка на сумму
-                          </Text>
-                          <Text style={stylesAll.itemSum}>{el.sum}</Text>
+                          <Text style={stylesAll.itemName}>Покупка на сумму</Text>
+                          <Text style={stylesAll.itemSum}>{item.sum}</Text>
                         </View>
-                        <Text style={stylesAll.itemAddress}>{el.address}</Text>
+                        <Text style={stylesAll.itemAddress}>{item.address}</Text>
                         <View style={stylesAll.itemFooter}>
                           <Text style={stylesAll.date_text}>
-                            {el.date} {el.time}
+                            {item.date} {item.time}
                           </Text>
                           <Text style={stylesAll.bonus}>+13 баллов</Text>
                         </View>
@@ -150,46 +172,29 @@ const PurchaseHistory = () => {
                 ))}
               </View>
             ) : (
-              <>
-                {loading ? (
-                  <View style={stylesAll.loading_catalog_page}>
-                    <ActivityIndicator size="small" color="#DC0200" />
-                  </View>
-                ) : (
-                  <View style={stylesAll.purchase_history}>
-                    <View style={stylesAll.history_image_box}>
-                      <Image
-                        style={stylesAll.image_all}
-                        source={require("../../assets/images/historyImage.png")}
-                      />
-                    </View>
-                    <Text style={stylesAll.history_text_one}>
-                      Вы не сделали ни одной покупки, но это поправимо...
-                    </Text>
-                    <Text style={stylesAll.history_text_two}>
-                      Добавьте в корзину всё, что душе угодно, а мы доставим
-                      заказ от 150 сом
-                    </Text>
-                    <TouchableOpacity
-                      style={stylesAll.button}
-                      onPress={() => router.push("/(tabs)/catalog")}
-                    >
-                      <Text style={stylesAll.button_text}>
-                        Перейти в каталог
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                )}
-              </>
+              <View style={stylesAll.purchase_history}>
+                <Text>Нет заказов</Text>
+              </View>
             )}
           </ScrollView>
         )}
       </View>
+      <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="date"
+        onConfirm={handleConfirm}
+        onCancel={hideDatePicker}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  calendar: {
+    width: 24,
+    height: 24,
+    marginRight: 10,
+  },
   history_block: {
     marginBottom: 150,
   },
@@ -209,13 +214,6 @@ const styles = StyleSheet.create({
     height: 45,
     borderRadius: 10,
     marginTop: 10,
-  },
-  dateInput: {
-    width: "70%",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
-    padding: 5,
   },
   dateTextInput: {
     fontSize: 14,
@@ -238,8 +236,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
-
-
 });
 
 export default PurchaseHistory;
