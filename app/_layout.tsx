@@ -51,6 +51,7 @@ export default function RootLayout() {
         <Stack.Screen name="auth/ForgotPassword" />
         <Stack.Screen name="auth/ResetPassword" />
         <Stack.Screen name="auth/Login" />
+        <Stack.Screen name="auth/Activation" />
         <Stack.Screen name="auth/ActivationForgot" />
       </Stack>
     </Provider>

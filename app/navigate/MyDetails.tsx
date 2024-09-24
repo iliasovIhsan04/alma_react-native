@@ -19,7 +19,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchUserInfo } from "@/Redux/reducer/UserInfo";
 import { AppDispatch, RootState } from "@/Redux/reducer/store";
 import { url } from "@/Api";
-// import DateTimePicker from "@react-native-community/datetimepicker";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 interface DropdownItem {
@@ -67,20 +66,6 @@ const MyDetails = () => {
   const [cityValue, setCityValue] = useState<string | null>(null);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
-
-  const showDatePicker = () => {
-    setDatePickerVisibility(true);
-  };
-
-  const hideDatePicker = () => {
-    setDatePickerVisibility(false);
-  };
-
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
-    handleInputChange("birthday", date);
-    hideDatePicker();
-  };
 
   const [info, setInfo] = useState({
     phone: "",
@@ -181,7 +166,7 @@ const MyDetails = () => {
         setLoading(false);
         if (response.data.response === true) {
           setIsModified(false);
-          Alert.alert("Успешно изменён!", "success");
+          Alert.alert("Успешно изменён!");
         } else {
           Alert.alert("Ошибка", "Не удалось сохранить изменения.");
         }
@@ -225,6 +210,46 @@ const MyDetails = () => {
     } catch (error) {
       console.error("Failed to save switch state to AsyncStorage:", error);
     }
+  };
+
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+  const saveDateToStorage = async (date: Date) => {
+    try {
+      await AsyncStorage.setItem("selectedDate", date.toISOString());
+      setSelectedDate(date);
+    } catch (error) {
+      console.error("Error saving date:", error);
+    }
+  };
+
+  const loadDateFromStorage = async () => {
+    try {
+      const savedDate = await AsyncStorage.getItem("selectedDate");
+      if (savedDate) {
+        const date = new Date(savedDate);
+        setSelectedDate(date);
+      }
+    } catch (error) {
+      console.error("Error loading date:", error);
+    }
+  };
+
+  useEffect(() => {
+    loadDateFromStorage();
+  }, []);
+
+  const handleDateChange = (date: Date) => {
+    saveDateToStorage(date);
+    setInfo((prev) => ({ ...prev, birthday: date }));
+    setIsModified(true);
+    hideDatePicker();
   };
   return (
     <View style={[stylesAll.background_block]}>
@@ -294,6 +319,7 @@ const MyDetails = () => {
                 style={[
                   stylesAll.input,
                   styles.input_box,
+                  styles.input_date,
                   {
                     flexDirection: "row",
                     alignItems: "center",
@@ -305,6 +331,10 @@ const MyDetails = () => {
                     ? selectedDate.toLocaleDateString()
                     : "Выберите дату рождения"}
                 </Text>
+                <Image
+                  style={styles.more_date}
+                  source={require("../../assets/images/more_bottom.png")}
+                />
               </TouchableOpacity>
             </View>
             <DateTimePickerModal
@@ -312,8 +342,9 @@ const MyDetails = () => {
               mode="date"
               onConfirm={handleDateChange}
               onCancel={hideDatePicker}
-              date={selectedDate}
+              date={selectedDate || new Date()}
             />
+
             <View style={styles.input_block}>
               <Text style={stylesAll.label}>Пол</Text>
               <Dropdown
@@ -439,6 +470,16 @@ const MyDetails = () => {
 };
 
 const styles = StyleSheet.create({
+  input_date: {
+    position: "relative",
+  },
+  more_date: {
+    width: 18,
+    height: 18,
+    position: "absolute",
+    right: 10,
+  },
+
   my_btn: {
     height: 45,
     backgroundColor: "#6B6B6B",

@@ -79,7 +79,7 @@ const Registration = () => {
           [{ text: "OK" }]
         );
       } else if (response.data.response === true) {
-        await router.push(`/auth/Activation`);
+        await router.push(`auth/Activation`);
         Alert.alert("Успешно!", response.data.message, [{ text: "OK" }]);
       } else {
         setErrorActivation(response.data);
