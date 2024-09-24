@@ -18,7 +18,6 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const PurchaseHistory = () => {
   const [orders, setOrders] = useState<any[]>([]);
-  const [filteredOrders, setFilteredOrders] = useState<any[]>([]);
   const [dateFrom, setDateFrom] = useState<string>("");
   const [dateTo, setDateTo] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
@@ -26,60 +25,33 @@ const PurchaseHistory = () => {
     useState<boolean>(false);
   const [isSelectingFromDate, setIsSelectingFromDate] = useState<boolean>(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      const token = await AsyncStorage.getItem("tokenActivation");
-      if (token) {
-        const headers = { Authorization: `Token ${token}` };
-        const urlWithDates =
-          dateFrom && dateTo
-            ? `${url}/order/list/?date_from=${dateFrom}&date_to=${dateTo}`
-            : `${url}/order/list/`;
+  const fetchData = async () => {
+    setLoading(true);
+    const token = await AsyncStorage.getItem("tokenActivation");
+    if (token) {
+      const headers = { Authorization: `Token ${token}` };
+      const urlWithDates =
+        dateFrom && dateTo
+          ? `${url}/order/list/?date_from=${dateFrom}&date_to=${dateTo}`
+          : `${url}/order/list/`;
 
-        try {
-          const response = await axios.get(urlWithDates, { headers });
-          setOrders(response.data);
-          setFilteredOrders(response.data);
-        } catch (error) {
-          console.error("Ошибка при загрузке данных:", error);
-        } finally {
-          setLoading(false);
-        }
-      } else {
-        setLoading(false);
+      try {
+        const response = await axios.get(urlWithDates, { headers });
+        setOrders(response.data);
+      } catch (error) {
+        console.error("Ошибка при загрузке данных:", error);
       }
-    };
+    }
+    setLoading(false);
+  };
 
+  useEffect(() => {
     fetchData();
   }, [dateFrom, dateTo]);
 
-  useEffect(() => {
-    const filterOrders = () => {
-      if (!dateFrom && !dateTo) {
-        setFilteredOrders(orders);
-        return;
-      }
-
-      const fromDate = new Date(dateFrom);
-      const toDate = new Date(dateTo);
-      const filtered = orders.filter((order) => {
-        const orderDate = new Date(order.date);
-        return orderDate >= fromDate && orderDate <= toDate;
-      });
-      setFilteredOrders(filtered);
-    };
-
-    filterOrders();
-  }, [orders, dateFrom, dateTo]);
-
   const handleConfirm = (date: Date) => {
     const isoDate = date.toISOString().split("T")[0];
-    if (isSelectingFromDate) {
-      setDateFrom(isoDate);
-    } else {
-      setDateTo(isoDate);
-    }
+    isSelectingFromDate ? setDateFrom(isoDate) : setDateTo(isoDate);
     hideDatePicker();
   };
 
@@ -110,44 +82,59 @@ const PurchaseHistory = () => {
           </View>
         ) : (
           <ScrollView showsVerticalScrollIndicator={false}>
-            {filteredOrders.length > 0 ? (
-              <View style={styles.history_block}>
-                <View style={styles.oclock_block}>
-                  <Pressable
-                    style={styles.oclock_box}
-                    onPress={() => {
-                      setIsSelectingFromDate(true);
-                      setDatePickerVisibility(true);
-                    }}
-                  >
-                    <Text>От:</Text>
-                    <Text style={stylesAll.label}>
-                      {dateFrom || "Выберите дату"}
+            <View style={styles.history_block}>
+              <View style={styles.oclock_block}>
+                <Pressable
+                  style={styles.oclock_box}
+                  onPress={() => {
+                    setIsSelectingFromDate(true);
+                    setDatePickerVisibility(true);
+                  }}
+                >
+                  <View style={styles.dataCalender}>
+                    <Text style={styles.from_text}>От:</Text>
+                    <Text
+                      style={[
+                        styles.add_calender_text,
+                        !dateFrom && styles.placeholderText,
+                      ]}
+                    >
+                      {dateFrom || "Дата"}
                     </Text>
-                    <Image
-                      style={styles.calendar}
-                      source={require("../../assets/images/calendar_days.png")}
-                    />
-                  </Pressable>
+                  </View>
+                  <Image
+                    style={styles.calendar}
+                    source={require("../../assets/images/calendar_days.png")}
+                  />
+                </Pressable>
 
-                  <Pressable
-                    style={styles.oclock_box}
-                    onPress={() => {
-                      setIsSelectingFromDate(false);
-                      setDatePickerVisibility(true);
-                    }}
-                  >
-                    <Text>До:</Text>
-                    <Text style={stylesAll.label}>
-                      {dateTo || "Выберите дату"}
+                <Pressable
+                  style={styles.oclock_box}
+                  onPress={() => {
+                    setIsSelectingFromDate(false);
+                    setDatePickerVisibility(true);
+                  }}
+                >
+                  <View style={styles.dataCalender}>
+                    <Text style={styles.from_text}>До:</Text>
+                    <Text
+                      style={[
+                        styles.add_calender_text,
+                        !dateTo && styles.placeholderText,
+                      ]}
+                    >
+                      {dateTo || "Дата"}
                     </Text>
-                    <Image
-                      style={styles.calendar}
-                      source={require("../../assets/images/calendar_days.png")}
-                    />
-                  </Pressable>
-                </View>
-                {filteredOrders.map((order, index) => (
+                  </View>
+                  <Image
+                    style={styles.calendar}
+                    source={require("../../assets/images/calendar_days.png")}
+                  />
+                </Pressable>
+              </View>
+
+              {orders.length > 0 ? (
+                orders.map((order, index) => (
                   <View key={index}>
                     <Text style={styles.dateTextInput}>{order.date}</Text>
                     {order.data.map((item, id) => (
@@ -165,7 +152,7 @@ const PurchaseHistory = () => {
                           <Text style={stylesAll.itemSum}>{item.sum}</Text>
                         </View>
                         <Text style={stylesAll.itemAddress}>
-                          {item.address}
+                          {item.address_from || "Адрес не указан"}
                         </Text>
                         <View style={stylesAll.itemFooter}>
                           <Text style={stylesAll.date_text}>
@@ -176,13 +163,13 @@ const PurchaseHistory = () => {
                       </TouchableOpacity>
                     ))}
                   </View>
-                ))}
-              </View>
-            ) : (
-              <View style={stylesAll.purchase_history}>
-                <Text>Нет заказов</Text>
-              </View>
-            )}
+                ))
+              ) : (
+                <View style={styles.purchase_history_text}>
+                  <Text style={styles.history_text}>Нет заказов!</Text>
+                </View>
+              )}
+            </View>
           </ScrollView>
         )}
       </View>
@@ -197,19 +184,51 @@ const PurchaseHistory = () => {
 };
 
 const styles = StyleSheet.create({
+  history_text: {
+    fontSize: 18,
+    fontWeight: "500",
+    color: "#DC0200",
+  },
+
+  purchase_history_text: {
+    width: "100%",
+    height: 600,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
   calendar: {
     width: 24,
     height: 24,
-    marginRight: 10,
+  },
+  from_text: {
+    fontSize: 14,
+    color: "#6B6B6B",
+    fontWeight: "600",
   },
   history_block: {
     marginBottom: 150,
+  },
+  placeholderText: {
+    fontSize: 14,
+    marginTop: 2,
+  },
+  add_calender_text: {
+    fontSize: 12,
+    color: "#191919",
+    fontWeight: "400",
+  },
+  dataCalender: {
+    flexDirection: "row",
+    gap: 3,
+    alignItems: "center",
   },
   oclock_block: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     flexWrap: "wrap",
+    gap: 10,
   },
   oclock_box: {
     flexDirection: "row",

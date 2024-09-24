@@ -2,6 +2,8 @@ import store from "@/Redux/reducer/store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Stack, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
+import { ActivityIndicator } from "react-native";
+import { View } from "react-native";
 import { Provider } from "react-redux";
 
 export default function RootLayout() {
@@ -24,6 +26,20 @@ export default function RootLayout() {
   useEffect(() => {
     getToken();
   }, []);
+
+  useEffect(() => {
+    if (!loading && !token) {
+      router.replace("/auth/Registration");
+    }
+  }, [loading, token]);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#DC0200" />
+      </View>
+    );
+  }
 
   return (
     <Provider store={store}>

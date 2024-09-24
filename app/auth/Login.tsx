@@ -74,7 +74,7 @@ const Login = () => {
         <View style={stylesAll.header}>
           <TouchableOpacity
             style={stylesAll.header_back_btn}
-            onPress={() => router.back()}
+            onPress={() => router.push("/auth/Registration")}
           >
             <Image
               style={{ width: 24, height: 24 }}
