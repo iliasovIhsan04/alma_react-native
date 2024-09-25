@@ -65,7 +65,6 @@ const Login = () => {
       setIsLoading(false);
     }
   };
-
   const handlePassword = () => setVisible(!visible);
 
   return (
