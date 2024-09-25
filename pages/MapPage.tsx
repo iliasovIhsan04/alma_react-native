@@ -53,35 +53,41 @@ export default function MapPage() {
   const get2GISURL = (latitude: number, longitude: number) => {
     return `https://2gis.kz/almaty/geo/${longitude},${latitude}`;
   };
-
   const handleMarkerPress = (latitude: number, longitude: number) => {
     const url = get2GISURL(latitude, longitude);
     Linking.openURL(url);
   };
-
   const handleLocationPress = (location: LocationType) => {
     setSelectedLocation(location);
     smoothScroll("section2");
     handleMarkerPress(location.lat, location.lon);
   };
-
   useEffect(() => {
     (async () => {
-      let { status } = await Location.requestPermissionsAsync();
-      if (status !== "granted") {
-        console.log("Permission to access location was denied");
-        return;
-      }
+      try {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        console.log("Permission status:", status);
 
-      let location = await Location.getCurrentPositionAsync({
-        enableHighAccuracy: true,
-        timeout: 15000,
-        maximumAge: 10000,
-      });
-      setCurrentCoordinates({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      });
+        if (status !== "granted") {
+          console.log("Permission to access location was denied");
+          return;
+        }
+
+        let location = await Location.getCurrentPositionAsync({
+          enableHighAccuracy: true,
+          timeout: 15000,
+          maximumAge: 10000,
+        });
+
+        console.log("Location data:", location);
+
+        setCurrentCoordinates({
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        });
+      } catch (error) {
+        console.error("Error retrieving location", error);
+      }
     })();
   }, []);
 
@@ -104,7 +110,6 @@ export default function MapPage() {
         }
       });
     });
-
     return () => {
       scrollX.removeListener(listener);
     };

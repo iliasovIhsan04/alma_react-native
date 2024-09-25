@@ -19,7 +19,6 @@ const QrCode = () => {
       setToken(null);
     }
   };
-
   useEffect(() => {
     const loadUserInfo = async () => {
       await getToken();
@@ -27,13 +26,12 @@ const QrCode = () => {
         dispatch(fetchUserInfo());
       }
     };
-
     loadUserInfo();
   }, [dispatch, token]);
 
   const data = useSelector((state: RootState) => state.users);
   const user = data?.user;
-
+  
   return (
     <View style={stylesAll.background_block}>
       <View style={stylesAll.container}>
@@ -41,7 +39,12 @@ const QrCode = () => {
           <TouchableOpacity
             style={stylesAll.header_back_btn}
           ></TouchableOpacity>
-          <Text style={[stylesAll.header_name, { textAlign: "center" }]}>
+          <Text
+            style={[
+              stylesAll.header_name,
+              { textAlign: "center", flexDirection: "column" },
+            ]}
+          >
             Ваша карта «Алма»
             <Text style={styles.qr_code_id}>{user?.bonus_id}</Text>
           </Text>

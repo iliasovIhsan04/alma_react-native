@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
+  Image,
 } from "react-native";
 import InstaStory from "react-native-insta-story";
 
@@ -101,7 +102,7 @@ const StoryComponent = () => {
       console.error("Story start data is incomplete or invalid.");
     }
   };
-  
+
   const renderContent = () => {
     if (loading) {
       return <ActivityIndicator size="large" color="#DC0200" />;
@@ -133,7 +134,10 @@ const StoryComponent = () => {
             onStorySeen={updateSeenStories}
             renderCloseComponent={({ onPress }) => (
               <TouchableOpacity style={styles.button} onPress={onPress}>
-                <Text style={styles.buttonText}>X</Text>
+                <Image
+                  style={styles.buttonText}
+                  source={require("../../assets/images/close.png")}
+                />
               </TouchableOpacity>
             )}
           />
@@ -152,17 +156,19 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   button: {
-    backgroundColor: "rgba(107, 107, 107, 0.5)",
+    backgroundColor: "rgba(107, 107, 107, 0.3)",
     borderRadius: 50,
     width: 40,
     height: 40,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+    marginTop: 10,
+    marginRight: -10,
   },
   buttonText: {
-    color: "white",
-    fontSize: 18,
+    width: 24,
+    height: 24,
   },
 });
 
