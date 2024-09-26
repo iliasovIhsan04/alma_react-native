@@ -41,7 +41,6 @@ const Images: React.FC<ImagesProps> = ({ data }) => {
   const viewabilityConfig = useRef({
     itemVisiblePercentThreshold: 50,
   }).current;
-
   const onViewableItemsChanged = useRef(
     ({ viewableItems }: { viewableItems: Array<ViewToken> }) => {
       if (viewableItems.length > 0) {
@@ -64,7 +63,6 @@ const Images: React.FC<ImagesProps> = ({ data }) => {
       )}
     </View>
   );
-
   return (
     <View style={styles.container}>
       <FlatList
