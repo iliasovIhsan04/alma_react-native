@@ -4,31 +4,18 @@
     "appVersionSource": "remote"
   },
   "build": {
-    "production-aab": {
-      "distribution": "store",
-      "android": {
-        "gradleCommand": ":app:assembleRelease",
-        "releaseChannel": "production",
-        "env": {
-          "EXPO_ANDROID_KEYSTORE": "your-keystore-path",
-          "EXPO_ANDROID_KEYSTORE_ALIAS": "your-alias",
-          "EXPO_ANDROID_KEYSTORE_PASSWORD": "your-keystore-password",
-          "EXPO_ANDROID_KEY_ALIAS_PASSWORD": "your-key-alias-password"
-        }
-      }
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
     },
-    "production-apk": {
-      "distribution": "store",
-      "android": {
-        "gradleCommand": ":app:assembleRelease",
-        "releaseChannel": "production",
-        "env": {
-          "EXPO_ANDROID_KEYSTORE": "your-keystore-path",
-          "EXPO_ANDROID_KEYSTORE_ALIAS": "your-alias",
-          "EXPO_ANDROID_KEYSTORE_PASSWORD": "your-keystore-password",
-          "EXPO_ANDROID_KEY_ALIAS_PASSWORD": "your-key-alias-password"
-        }
-      }
+    "preview": {
+      "distribution": "internal"
+    },
+    "production": {
+      "autoIncrement": true
     }
+  },
+  "submit": {
+    "production": {}
   }
 }
