@@ -38,7 +38,6 @@ const ProfilePage = () => {
         dispatch(fetchUserInfo());
       }
     };
-
     loadUserInfo();
   }, [dispatch, token]);
 
@@ -47,7 +46,7 @@ const ProfilePage = () => {
       await AsyncStorage.removeItem("tokenActivation");
       await AsyncStorage.removeItem("token_block");
       setToken(null);
-      router.push("navigate/ToComeIn");
+      router.push("auth/Login");
     } catch (error) {
       console.error("Error deleting token:", error);
     }
