@@ -47,7 +47,7 @@ const ProfilePage = () => {
       await AsyncStorage.removeItem("tokenActivation");
       await AsyncStorage.removeItem("token_block");
       setToken(null);
-      router.push("/auth/Login");
+      router.push("navigate/ToComeIn");
     } catch (error) {
       console.error("Error deleting token:", error);
     }

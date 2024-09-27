@@ -29,7 +29,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (!loading && !token) {
-      router.replace("/auth/Registration");
+      router.replace("/navigate/OnBoarding");
     }
   }, [loading, token]);
 
@@ -57,6 +57,7 @@ export default function RootLayout() {
         <Stack.Screen name="navigate/EmptyAddress" />
         <Stack.Screen name="navigate/NewAddress" />
         <Stack.Screen name="navigate/ProductGiven" />
+        <Stack.Screen name="navigate/OnBoarding" />
         <Stack.Screen name="details/HarryDetailsId/[id]" />
         <Stack.Screen name="details/ProductId/[id]" />
         <Stack.Screen name="details/PurchaseId/[id]" />

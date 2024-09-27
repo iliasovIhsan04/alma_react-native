@@ -5,7 +5,7 @@ import { View } from "react-native";
 const Map = () => {
   return (
     <View style={{ flex: 1 }}>
-      <MapPage />
+      {/* <MapPage /> */}
     </View>
   );
 };
