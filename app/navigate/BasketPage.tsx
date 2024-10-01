@@ -41,7 +41,6 @@ const BasketProducts = () => {
       setShopCart(JSON.parse(storedShopCart));
       setPlus(JSON.parse(storedPlus));
     };
-
     fetchBasketData();
   }, []);
 
@@ -71,7 +70,6 @@ const BasketProducts = () => {
       console.error("Ошибка добавления элемента:", error);
     }
   };
-
   const handleMinus = async (id: number) => {
     try {
       const currentPlus = { ...plus };
@@ -124,7 +122,6 @@ const BasketProducts = () => {
       console.error("Ошибка удаления элемента:", error);
     }
   };
-
   const PriceCalculation = async () => {
     try {
       const shopCartString = await AsyncStorage.getItem("shopCart");
@@ -134,13 +131,11 @@ const BasketProducts = () => {
         (acc: number, item: BasketProduct) => acc + item.price,
         0
       );
-
       let total = 0;
       shopCart.forEach((item: BasketProduct) => {
         const itemCount = plus[item.id] || 0;
         total += item.price * itemCount;
       });
-
       setCount(total);
     } catch (error) {
       console.error("Ошибка вычисления цены:", error);

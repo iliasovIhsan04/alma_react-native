@@ -125,7 +125,6 @@ const Productid = () => {
       await AsyncStorage.setItem("cartsBasket", JSON.stringify(updatedCarts));
       await AsyncStorage.setItem(`activeItemsBasket_${id}`, JSON.stringify(id));
       const activeItem = await AsyncStorage.getItem(`activeItemsBasket_${id}`);
-
       if (activeItem) {
         Alert.alert("Ваш товар успешно добавлен в корзину!");
       } else {
@@ -144,7 +143,6 @@ const Productid = () => {
       </View>
     );
   }
-
   const saveToAsyncStorage = async (id: number) => {
     if (!data) return;
 
@@ -155,7 +153,6 @@ const Productid = () => {
     setCart(updatedCart);
     await AsyncStorage.setItem("cartFeatured", JSON.stringify(updatedCart));
   };
-
   const toggleFavorite = async (id: number) => {
     const itemExists = await AsyncStorage.getItem(`activeItemFeatured${id}`);
     const updatedFavorites = new Set(favoriteItems);
@@ -166,7 +163,6 @@ const Productid = () => {
       await AsyncStorage.setItem(`activeItemFeatured${id}`, `${id}`);
       updatedFavorites.add(id);
     }
-
     setFavoriteItems(updatedFavorites);
   };
 

@@ -22,14 +22,13 @@ export default function RootLayout() {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     getToken();
   }, []);
 
   useEffect(() => {
     if (!loading && !token) {
-      router.replace("/navigate/OnBoarding");
+      router.replace("/auth/Login");
     }
   }, [loading, token]);
 
