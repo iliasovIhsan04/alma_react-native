@@ -29,7 +29,6 @@ interface Tab {
 interface CatalogDetailsParams {
   cat: string;
 }
-
 const CatalogDetails: React.FC = ({}) => {
   const [tabs, setTabs] = useState<Tab[]>([]);
   const [data, setData] = useState<Product[]>([]);
@@ -146,6 +145,7 @@ const CatalogDetails: React.FC = ({}) => {
       console.error("Ошибка при получении данных:", error);
     }
   };
+
   const handleCategorySelection = () => {
     setSubCat(0);
     setSelectedIndex(-1);

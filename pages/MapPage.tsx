@@ -4,16 +4,15 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Animated,
   Dimensions,
   Image,
   Linking,
   ScrollView,
+  Animated,
 } from "react-native";
-import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import axios from "axios";
-import { stylesAll } from "@/style";
+import { WebView } from "react-native-webview";
 
 type LocationType = {
   id: string;
@@ -34,6 +33,7 @@ const sections = [
 ];
 
 const screenWidth = Dimensions.get("window").width;
+const indicatorWidth = screenWidth / sections.length;
 
 export default function MapPage() {
   const scrollViewRef = useRef<ScrollView>(null);
@@ -42,45 +42,48 @@ export default function MapPage() {
   const [selectedLocation, setSelectedLocation] = useState<LocationType | null>(
     null
   );
-  const [currentCoordinates, setCurrentCoordinates] = useState<CoordinatesType>(
-    {
-      latitude: 42.8746,
-      longitude: 74.5698,
-    }
-  );
+  const [currentCoordinates, setCurrentCoordinates] = useState<CoordinatesType>({
+    latitude: 42.8746,
+    longitude: 74.5698,
+  });
+
   const [locations, setLocations] = useState<LocationType[]>([]);
 
-  const get2GISURL = (latitude: number, longitude: number) => {
-    return `https://2gis.kz/almaty/geo/${longitude},${latitude}`;
+  const getYandexMapURL = (locations: LocationType[]) => {
+    if (!locations || locations.length === 0) {
+      return "https://yandex.com/maps/?ll=0,0&z=2";
+    }
+    const coordinates = locations
+      .map((loc) => `${loc.lon},${loc.lat}`)
+      .join("~");
+    
+    return `https://yandex.com/maps/?ll=${locations[0].lon},${locations[0].lat}&z=12&pt=${coordinates}&l=map`;
   };
+
   const handleMarkerPress = (latitude: number, longitude: number) => {
-    const url = get2GISURL(latitude, longitude);
+    const url = getYandexMapURL([{ lat: latitude, lon: longitude }]);
     Linking.openURL(url);
   };
+
   const handleLocationPress = (location: LocationType) => {
     setSelectedLocation(location);
     smoothScroll("section2");
     handleMarkerPress(location.lat, location.lon);
   };
+
   useEffect(() => {
     (async () => {
       try {
         let { status } = await Location.requestForegroundPermissionsAsync();
-        console.log("Permission status:", status);
-
         if (status !== "granted") {
           console.log("Permission to access location was denied");
           return;
         }
-
         let location = await Location.getCurrentPositionAsync({
           enableHighAccuracy: true,
           timeout: 15000,
           maximumAge: 10000,
         });
-
-        console.log("Location data:", location);
-
         setCurrentCoordinates({
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
@@ -96,7 +99,6 @@ export default function MapPage() {
       .get<LocationType[]>("https://alma-market.online/map/")
       .then((response) => {
         setLocations(response.data);
-        console.log(response.data);
       })
       .catch((error) => console.error(error));
   }, []);
@@ -133,8 +135,6 @@ export default function MapPage() {
     }
   };
 
-  const indicatorWidth = screenWidth / sections.length;
-
   return (
     <View style={styles.container}>
       <View style={styles.nav}>
@@ -170,124 +170,88 @@ export default function MapPage() {
           ]}
         />
       </View>
-
-      <View style={styles.container}>
-        <Animated.ScrollView
-          ref={scrollViewRef}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-            { useNativeDriver: false }
-          )}
-          scrollEventThrottle={16}
-        >
-          {sections.map((section) => (
-            <View
-              key={section.id}
-              style={[styles.container, { width: screenWidth }]}
-            >
-              {section.id === "section1" ? (
-                <View style={stylesAll.container}>
-                  <View style={styles.sectionMaps}>
-                    {locations.length > 0 ? (
-                      locations.map((location) => (
-                        <TouchableOpacity
-                          key={location.id}
-                          onPress={() => handleLocationPress(location)}
-                          style={styles.section_map_block}
-                        >
-                          <View style={styles.mapItem}>
-                            <Image
-                              style={styles.maps}
-                              source={require("../assets/images/maps.png")}
-                            />
-                            <Text style={styles.navTextAdres}>
-                              {location.address}
-                            </Text>
-                          </View>
-                          <View style={styles.mapItem}>
-                            <Image
-                              style={styles.maps}
-                              source={require("./../assets/images/timer.png")}
-                            />
-                            <Text style={styles.timerText}>
-                              График работы:{" "}
-                              <Text style={styles.span}>{location.time}</Text>
-                            </Text>
-                          </View>
-                        </TouchableOpacity>
-                      ))
-                    ) : (
-                      <Text>Нет доступных данных</Text>
-                    )}
-                  </View>
-                </View>
-              ) : (
-                <View style={styles.container}>
-                  <MapView
-                    style={styles.map}
-                    initialRegion={{
-                      latitude: currentCoordinates.latitude,
-                      longitude: currentCoordinates.longitude,
-                      latitudeDelta: 0.0922,
-                      longitudeDelta: 0.0421,
-                    }}
-                    region={
-                      selectedLocation
-                        ? {
-                            latitude: selectedLocation.lat,
-                            longitude: selectedLocation.lon,
-                            latitudeDelta: 0.0922,
-                            longitudeDelta: 0.0421,
-                          }
-                        : undefined
-                    }
-                  >
-                    {locations.map((location) => (
-                      <Marker
-                        key={location.id}
-                        coordinate={{
-                          latitude: location.lat,
-                          longitude: location.lon,
-                        }}
-                        pinColor="blue"
-                        title={location.address}
-                        onPress={() =>
-                          handleMarkerPress(location.lat, location.lon)
-                        }
-                      />
-                    ))}
-                    {selectedLocation && (
-                      <Marker
-                        coordinate={{
-                          latitude: selectedLocation.lat,
-                          longitude: selectedLocation.lon,
-                        }}
-                        pinColor="blue"
-                        title={selectedLocation.address}
-                        onPress={() =>
-                          handleMarkerPress(
-                            selectedLocation.lat,
-                            selectedLocation.lon
-                          )
-                        }
-                      />
-                    )}
-                  </MapView>
-                  <Text>Map</Text>
-                </View>
-              )}
-            </View>
-          ))}
-        </Animated.ScrollView>
-      </View>
+      <Animated.ScrollView
+        ref={scrollViewRef}
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+          { useNativeDriver: false }
+        )}
+        scrollEventThrottle={16}
+      >
+        {sections.map((section) => (
+          <View
+            key={section.id}
+            style={[styles.container, { width: screenWidth }]}
+          >
+            {section.id === "section1" ? (
+              <View style={styles.sectionMaps}>
+                {locations.length > 0 ? (
+                  locations.map((location) => (
+                    <TouchableOpacity
+                      key={location.id}
+                      onPress={() => handleLocationPress(location)}
+                      style={styles.section_map_block}
+                    >
+                      <View style={styles.mapItem}>
+                        <Image
+                          style={styles.maps}
+                          source={require("../assets/images/maps.png")}
+                        />
+                        <Text style={styles.navTextAdres}>
+                          {location.address}
+                        </Text>
+                      </View>
+                      <View style={styles.mapItem}>
+                        <Image
+                          style={styles.maps}
+                          source={require("../assets/images/timer.png")}
+                        />
+                        <Text style={styles.timerText}>
+                          График работы:{" "}
+                          <Text style={styles.span}>{location.time}</Text>
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  ))
+                ) : (
+                  <Text>Нет доступных данных</Text>
+                )}
+              </View>
+            ) : (
+              <View style={styles.container}>
+                <WebView
+                  source={{ uri: getYandexMapURL(locations) }}
+                  style={{ flex: 1 }}
+                  javaScriptEnabled={true}
+                  domStorageEnabled={true}
+                  onHttpError={(syntheticEvent) => {
+                    const { nativeEvent } = syntheticEvent;
+                    console.warn("HTTP error: ", nativeEvent);
+                  }}
+                  onError={(syntheticEvent) => {
+                    const { nativeEvent } = syntheticEvent;
+                    console.warn("WebView error: ", nativeEvent);
+                  }}
+                />
+              </View>
+            )}
+          </View>
+        ))}
+      </Animated.ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  homePanelContentViewCatalog: {
+    padding: 10,
+    backgroundColor: '#F5F7FA',
+    borderRadius: 12,
+    marginVertical: 10,
+  },
   maps: {
     width: 30,
     height: 30,
@@ -314,16 +278,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     width: "88%",
   },
-  activeNavItem: {
-    borderBottomWidth: 3,
-    borderBottomColor: "#DC0200",
-  },
   activeNavText: {
     color: "#000",
-  },
-  map: {
-    width: screenWidth,
-    height: "100%",
   },
   mapItem: {
     flexDirection: "row",
@@ -368,8 +324,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     height: 3,
     backgroundColor: "#DC0200",
-    left: 20,
-    right: 20,
-    width: "45%",
+    width: indicatorWidth,
   },
 });
