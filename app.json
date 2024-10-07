@@ -6,12 +6,7 @@
       }
     },
     "android": {
-      "package": "com.ihsan004.almamarketnative",
-      "icon": "./assets/logoApple.png"
-    },
-    "ios": {
-      "bundleIdentifier": "com.ihsan004.almamarketnative",
-      "icon": "./assets/logoApple.png"
+      "package": "com.ihsan004.almamarketnative"
     }
   }
 }

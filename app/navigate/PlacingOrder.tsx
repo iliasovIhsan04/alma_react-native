@@ -31,7 +31,6 @@ const PlacingOrder = () => {
   const [show, setShow] = useState(false);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [date1, setDate1] = useState<any>();
-  const [date2, setDate2] = useState();
   const scaleValue = useRef(new Animated.Value(0)).current;
   const opacityValue = useRef(new Animated.Value(0)).current;
   const selectedAddressId = useSelector(
@@ -45,7 +44,6 @@ const PlacingOrder = () => {
     get_date: "",
     comment: "",
   });
-
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -59,7 +57,6 @@ const PlacingOrder = () => {
     };
     loadData();
   }, []);
-
   useEffect(() => {
     const fetchTotalPrice = async () => {
       try {
@@ -72,7 +69,6 @@ const PlacingOrder = () => {
     };
     fetchTotalPrice();
   }, []);
-
   const headers = {
     Authorization: `Token ${local}`,
   };
@@ -87,7 +83,6 @@ const PlacingOrder = () => {
         product_id: el.id,
         count: plus[el.id] || 0,
       }));
-
       const dataToSend = {
         address_to: addressId ? addressId : address.address_to,
         get_date: address.get_date,
@@ -98,7 +93,6 @@ const PlacingOrder = () => {
       const response = await axios.post(url + "/order/create", dataToSend, {
         headers,
       });
-
       if (response.data.response === true) {
         await AsyncStorage.multiRemove([
           "plus",
@@ -273,7 +267,7 @@ const PlacingOrder = () => {
               onPress={() => {
                 setAddress((prevAddress) => ({
                   ...prevAddress,
-                  get_date: "2024-09-12",
+                  get_date: null,
                 }));
                 setShow(false);
                 setDate1(true);

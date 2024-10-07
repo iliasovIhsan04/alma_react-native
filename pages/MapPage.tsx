@@ -13,6 +13,7 @@ import {
 import * as Location from "expo-location";
 import axios from "axios";
 import { WebView } from "react-native-webview";
+import { stylesAll } from "@/style";
 
 type LocationType = {
   id: string;
@@ -39,29 +40,23 @@ export default function MapPage() {
   const scrollViewRef = useRef<ScrollView>(null);
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const scrollX = useRef(new Animated.Value(0)).current;
+  const [currentCoordinates, setCurrentCoordinates] = useState<CoordinatesType>(
+    {
+      latitude: 42.8746,
+      longitude: 74.5698,
+    }
+  );
+  const [locations, setLocations] = useState<LocationType[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<LocationType | null>(
     null
   );
-  const [currentCoordinates, setCurrentCoordinates] = useState<CoordinatesType>({
-    latitude: 42.8746,
-    longitude: 74.5698,
-  });
 
-  const [locations, setLocations] = useState<LocationType[]>([]);
-
-  const getYandexMapURL = (locations: LocationType[]) => {
-    if (!locations || locations.length === 0) {
-      return "https://yandex.com/maps/?ll=0,0&z=2";
-    }
-    const coordinates = locations
-      .map((loc) => `${loc.lon},${loc.lat}`)
-      .join("~");
-    
-    return `https://yandex.com/maps/?ll=${locations[0].lon},${locations[0].lat}&z=12&pt=${coordinates}&l=map`;
+  const get2GISURL = (latitude: number, longitude: number) => {
+    return `https://2gis.kg/bishkek/geo/${longitude},${latitude}`;
   };
 
   const handleMarkerPress = (latitude: number, longitude: number) => {
-    const url = getYandexMapURL([{ lat: latitude, lon: longitude }]);
+    const url = get2GISURL(latitude, longitude);
     Linking.openURL(url);
   };
 
@@ -93,7 +88,6 @@ export default function MapPage() {
       }
     })();
   }, []);
-
   useEffect(() => {
     axios
       .get<LocationType[]>("https://alma-market.online/map/")
@@ -103,40 +97,81 @@ export default function MapPage() {
       .catch((error) => console.error(error));
   }, []);
 
-  useEffect(() => {
-    const listener = scrollX.addListener(({ value }) => {
-      sections.forEach((section, index) => {
-        const sectionOffset = index * screenWidth;
-        if (value >= sectionOffset && value < sectionOffset + screenWidth) {
-          setActiveSection(section.id);
-        }
-      });
-    });
-    return () => {
-      scrollX.removeListener(listener);
-    };
-  }, [scrollX]);
-
-  const smoothScroll = (targetId: string) => {
+  const smoothScroll = (sectionId: string) => {
     const sectionIndex = sections.findIndex(
-      (section) => section.id === targetId
+      (section) => section.id === sectionId
     );
-    if (sectionIndex !== -1) {
-      Animated.timing(scrollX, {
-        toValue: sectionIndex * screenWidth,
-        duration: 300,
-        useNativeDriver: false,
-      }).start(() => {
-        scrollViewRef.current?.scrollTo({
-          x: sectionIndex * screenWidth,
-          animated: false,
-        });
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollTo({
+        x: sectionIndex * screenWidth,
+        animated: true,
       });
+      setActiveSection(sectionId);
     }
   };
+  const htmlContent = `
+  <!DOCTYPE html>
+  <html lang="ru">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Яндекс Карта</title>
+      <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU&apikey=YOUR_API_KEY" type="text/javascript"></script>
+      <style>
+          #map {
+              width: 100%;
+              height: 100vh;
+              position: absolute; 
+              top: 0;
+              left: 0;
+          }
+          html, body {
+              height: 100%; 
+              margin: 0;
+              padding: 0;
+              overflow: hidden; 
+          }
+      </style>
+  </head>
+  <body>
+      <div id="map"></div>
+      <script>
+          ymaps.ready(function() {
+              var myMap = new ymaps.Map("map", {
+                  center: [${currentCoordinates.latitude}, ${
+    currentCoordinates.longitude
+  }],
+                  zoom: 12,
+                  controls: []
+              });
+              const locations = ${JSON.stringify(locations)};
+  
+              locations.forEach(function(location) {
+                  var myPlacemark = new ymaps.Placemark([location.lat, location.lon], {
+                      hintContent: location.address,
+                      balloonContent: location.address
+                  });
+                  myMap.geoObjects.add(myPlacemark);
+              });
+              const selectedCoords = ${JSON.stringify(selectedLocation)};
+              if (selectedCoords) {
+                  const startCoords = [${currentCoordinates.latitude}, ${
+    currentCoordinates.longitude
+  }];
+                  const endCoords = [selectedCoords.lat, selectedCoords.lon];
+                  myMap.geoObjects.add(new ymaps.LineString([startCoords, endCoords], {
+                      strokeWidth: 4,
+                      strokeColor: "#FF0000"
+                  }));
+              }
+          });
+      </script>
+  </body>
+  </html>
+`;
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container_flex}>
       <View style={styles.nav}>
         {sections.map((section) => (
           <TouchableOpacity
@@ -184,46 +219,49 @@ export default function MapPage() {
         {sections.map((section) => (
           <View
             key={section.id}
-            style={[styles.container, { width: screenWidth }]}
+            style={[styles.container_flex, { width: screenWidth }]}
           >
             {section.id === "section1" ? (
-              <View style={styles.sectionMaps}>
-                {locations.length > 0 ? (
-                  locations.map((location) => (
-                    <TouchableOpacity
-                      key={location.id}
-                      onPress={() => handleLocationPress(location)}
-                      style={styles.section_map_block}
-                    >
-                      <View style={styles.mapItem}>
-                        <Image
-                          style={styles.maps}
-                          source={require("../assets/images/maps.png")}
-                        />
-                        <Text style={styles.navTextAdres}>
-                          {location.address}
-                        </Text>
-                      </View>
-                      <View style={styles.mapItem}>
-                        <Image
-                          style={styles.maps}
-                          source={require("../assets/images/timer.png")}
-                        />
-                        <Text style={styles.timerText}>
-                          График работы:{" "}
-                          <Text style={styles.span}>{location.time}</Text>
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  ))
-                ) : (
-                  <Text>Нет доступных данных</Text>
-                )}
+              <View style={stylesAll.container}>
+                <View style={styles.sectionMaps}>
+                  {locations.length > 0 ? (
+                    locations.map((location) => (
+                      <TouchableOpacity
+                        key={location.id}
+                        onPress={() => handleLocationPress(location)}
+                        style={styles.section_map_block}
+                      >
+                        <View style={styles.mapItem}>
+                          <Image
+                            style={styles.maps}
+                            source={require("../assets/images/maps.png")}
+                          />
+                          <Text style={styles.navTextAdres}>
+                            {location.address}
+                          </Text>
+                        </View>
+                        <View style={styles.mapItem}>
+                          <Image
+                            style={styles.maps}
+                            source={require("../assets/images/timer.png")}
+                          />
+                          <Text style={styles.timerText}>
+                            График работы:{" "}
+                            <Text style={styles.span}>{location.time}</Text>
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                    ))
+                  ) : (
+                    <Text>Нет доступных данных</Text>
+                  )}
+                </View>
               </View>
             ) : (
-              <View style={styles.container}>
+              <View style={styles.container_flex}>
                 <WebView
-                  source={{ uri: getYandexMapURL(locations) }}
+                  originWhitelist={["*"]}
+                  source={{ html: htmlContent }}
                   style={{ flex: 1 }}
                   javaScriptEnabled={true}
                   domStorageEnabled={true}
@@ -248,7 +286,7 @@ export default function MapPage() {
 const styles = StyleSheet.create({
   homePanelContentViewCatalog: {
     padding: 10,
-    backgroundColor: '#F5F7FA',
+    backgroundColor: "#F5F7FA",
     borderRadius: 12,
     marginVertical: 10,
   },
@@ -315,7 +353,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     width: "100%",
   },
-  container: {
+  container_flex: {
     flex: 1,
     backgroundColor: "#fff",
   },
@@ -324,6 +362,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     height: 3,
     backgroundColor: "#DC0200",
-    width: indicatorWidth,
+    width: "45%",
+    marginLeft: 17,
   },
 });
