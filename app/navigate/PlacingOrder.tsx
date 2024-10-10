@@ -28,9 +28,9 @@ const PlacingOrder = () => {
   const [cart, setCart] = useState<any[]>([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [plus, setPlus] = useState<any>({});
-  const [show, setShow] = useState(false);
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [date1, setDate1] = useState<any>();
+  const [date1, setDate1] = useState<boolean>(false);
+  const [show, setShow] = useState<boolean>(false);
   const scaleValue = useRef(new Animated.Value(0)).current;
   const opacityValue = useRef(new Animated.Value(0)).current;
   const selectedAddressId = useSelector(
@@ -265,12 +265,14 @@ const PlacingOrder = () => {
             <TouchableOpacity
               style={[stylesAll.input, styles.input_box]}
               onPress={() => {
-                setAddress((prevAddress) => ({
-                  ...prevAddress,
-                  get_date: null,
-                }));
-                setShow(false);
-                setDate1(true);
+                if (!date1) {
+                  setAddress((prevAddress) => ({
+                    ...prevAddress,
+                    get_date: null,
+                  }));
+                  setShow(false);
+                  setDate1(true);
+                }
               }}
             >
               <View
@@ -282,6 +284,7 @@ const PlacingOrder = () => {
                 <Text style={styles.placeholder_static}>Как можно быстрее</Text>
               </View>
             </TouchableOpacity>
+
             <Pressable style={styles.input_date_box}>
               <TouchableOpacity
                 style={[stylesAll.input, styles.input_box, { marginTop: 10 }]}

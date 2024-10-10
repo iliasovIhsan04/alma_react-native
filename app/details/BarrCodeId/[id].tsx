@@ -54,7 +54,7 @@ const BarrCodeId = () => {
         });
     }
   }, [id]);
-
+  
   return (
     <View style={stylesAll.background_block}>
       <View style={stylesAll.container}>
@@ -71,59 +71,64 @@ const BarrCodeId = () => {
           <Text style={stylesAll.header_name}>Товар</Text>
           <View style={stylesAll.header_back_btn}></View>
         </View>
-        {loading ? (
-          <View style={stylesAll.loading_catalog_page}>
-            <ActivityIndicator size="small" color="#DC0200" />
-          </View>
-        ) : (
-          <View>
-            {data?.status === true ? (
-              <View style={styles.product_block}>
-                <Images data={data.img} />
-                <Text style={styles.product_title}>{data.title}</Text>
-                <View
-                  style={{ flexDirection: "column", gap: 5, marginTop: 16 }}
-                >
-                  <View style={styles.row}>
-                    <Text style={styles.product_name}>Артикул:</Text>
-                    <Text style={styles.product_code}>{data.code}</Text>
-                  </View>
-                  <View style={styles.row}>
-                    <Text style={styles.product_name}>1 {data.price_for}</Text>
-                    <Text style={[styles.product_old_price, styles.price]}>
-                      {data.price}
-                    </Text>
-                  </View>
-                  <View style={styles.row}>
-                    <Text style={styles.product_name}>По карте</Text>
-                    <Text style={styles.product_old_price}>
-                      {data.old_price}
-                    </Text>
-                  </View>
-                </View>
-                <View
-                  style={{ flexDirection: "column", gap: 10, marginTop: 30 }}
-                >
-                  <Text style={styles.description_name}>Описание:</Text>
-                  <Text style={styles.description_text}>
-                    {data.description}
-                  </Text>
-                </View>
-              </View>
-            ) : (
-              <View style={stylesAll.loading_catalog_page}>
-                <Text style={stylesAll.barrcode_page_text}>Товар не найден!</Text>
-              </View>
-            )}
-          </View>
-        )}
       </View>
+      {loading ? (
+        <View style={stylesAll.loading_catalog_page}>
+          <ActivityIndicator size="small" color="#DC0200" />
+        </View>
+      ) : (
+        <View>
+          {data?.status === true ? (
+            <>
+              <Images data={data.img} />
+              <View style={stylesAll.container}>
+                <View style={styles.product_block}>
+                  <Text style={styles.product_title}>{data.title}</Text>
+                  <View
+                    style={{ flexDirection: "column", gap: 5, marginTop: 16 }}
+                  >
+                    <View style={styles.row}>
+                      <Text style={styles.product_name}>Артикул:</Text>
+                      <Text style={styles.product_code}>{data.code}</Text>
+                    </View>
+                    <View style={styles.row}>
+                      <Text style={styles.product_name}>
+                        1 {data.price_for}
+                      </Text>
+                      <Text style={[styles.product_old_price, styles.price]}>
+                        {data.price}
+                      </Text>
+                    </View>
+                    <View style={styles.row}>
+                      <Text style={styles.product_name}>По карте</Text>
+                      <Text style={styles.product_old_price}>
+                        {data.old_price}
+                      </Text>
+                    </View>
+                  </View>
+                  <View
+                    style={{ flexDirection: "column", gap: 10, marginTop: 30 }}
+                  >
+                    <Text style={styles.description_name}>Описание:</Text>
+                    <Text style={styles.description_text}>
+                      {data.description}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            </>
+          ) : (
+            <View style={stylesAll.loading_catalog_page}>
+              <Text style={stylesAll.barrcode_page_text}>Товар не найден!</Text>
+            </View>
+          )}
+        </View>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-
   btn_product: {
     position: "absolute",
     width: "90%",

@@ -190,6 +190,15 @@ export default function MapPage() {
           </TouchableOpacity>
         ))}
         <Animated.View
+          ref={scrollViewRef}
+          horizontal={false} 
+          scrollEnabled={false}
+          showsHorizontalScrollIndicator={false}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+            { useNativeDriver: false }
+          )}
+          scrollEventThrottle={16}
           style={[
             styles.indicator,
             {

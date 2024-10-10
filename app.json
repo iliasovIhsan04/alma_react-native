@@ -1,5 +1,8 @@
 {
   "expo": {
+    "name": "alma-market-native",
+    "slug": "alma-market-native",
+    "icon": "./assets/logoApple.png",
     "extra": {
       "eas": {
         "projectId": "385afab2-d7cf-4ac6-b757-fff81237fc52"
@@ -7,6 +10,10 @@
     },
     "android": {
       "package": "com.ihsan004.almamarketnative"
+    },
+    "scheme": "almaMarketNative",
+    "ios": {
+      "bundleIdentifier": "com.ihsan004.almamarketnative"
     }
   }
 }

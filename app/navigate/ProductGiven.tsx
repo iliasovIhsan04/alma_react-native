@@ -1,49 +1,65 @@
-import { url } from "@/Api";
-import { stylesAll } from "@/style";
-import axios from "axios";
-import { router } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
-  Image,
-  StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
-  ActivityIndicator,
+  StyleSheet,
+  Image,
+  Animated,
 } from "react-native";
-
-type Location = {
-  address: string;
-};
+import { BarCodeScanner } from "expo-barcode-scanner";
+import { router } from "expo-router";
+import { stylesAll } from "@/style";
 
 const ProductGiven = () => {
-  const [locations, setLocations] = useState<Location[]>([]);
-  const [barCodeInput, setBarCodeInput] = useState(false);
-  const [barrcode, setBarrCode] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [scanned, setScanned] = useState(false);
+  const [hasPermission, setHasPermission] = useState(null);
+  const [borderColor, setBorderColor] = useState("#7ED957");
+  const [scaleAnimation] = useState(new Animated.Value(1));
 
   useEffect(() => {
-    axios
-      .get(url + "/map")
-      .then((response) => {
-        setLocations(response.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-        setLoading(false);
-      });
+    (async () => {
+      const { status } = await BarCodeScanner.requestPermissionsAsync();
+      setHasPermission(status === "granted");
+    })();
   }, []);
 
-  const opendate = () => {
-    setBarCodeInput(true);
+  const handleBarCodeScanned = async ({ data }) => {
+    setScanned(true);
+    setBorderColor("#68B936");
+
+    Animated.sequence([
+      Animated.timing(scaleAnimation, {
+        toValue: 1.2,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scaleAnimation, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    const productExists = await checkProduct(data);
+    router.push(`/details/BarrCodeId/${data}`);
   };
 
+  const checkProduct = async (data) => {
+    return false;
+  };
+
+  if (hasPermission === null) {
+    return <Text>Запрашиваем доступ к камере...</Text>;
+  }
+  if (hasPermission === false) {
+    return <Text>Нет доступа к камере</Text>;
+  }
+
   return (
-    <View style={stylesAll.background_block}>
+    <>
       <View style={stylesAll.container}>
-        <View style={stylesAll.header}>
+        <View style={[stylesAll.header, styles.header_given]}>
           <TouchableOpacity
             style={stylesAll.header_back_btn}
             onPress={() => router.push("/")}
@@ -53,104 +69,101 @@ const ProductGiven = () => {
               source={require("../../assets/images/moreLeft.png")}
             />
           </TouchableOpacity>
-          <Text style={stylesAll.header_name}>Выберите адрес магазина</Text>
+          <Text style={stylesAll.header_name}>Сканировать</Text>
           <View style={stylesAll.header_back_btn}></View>
         </View>
-        {loading ? (
-          <View style={stylesAll.loading_catalog_page}>
-            <ActivityIndicator color="red" size="small" />
-          </View>
-        ) : (
-          <View style={styles.list_block}>
-            {locations.map((el, id) => (
-              <TouchableOpacity
-                key={id}
-                style={styles.list_item}
-                onPress={() => opendate()}
-              >
-                <View style={{ flexDirection: "row", gap: 4 }}>
-                  <Image
-                    style={{ width: 30, height: 30 }}
-                    source={require("../../assets/images/maps.png")}
-                  />
-                  <Text style={styles.address_text}>{el.address}</Text>
-                </View>
-                <View
-                  style={{ flexDirection: "row", alignItems: "center", gap: 4 }}
-                >
-                  <Image
-                    style={{ width: 30, height: 30 }}
-                    source={require("../../assets/images/timer.png")}
-                  />
-                  <Text style={styles.work_text}>
-                    График работы:
-                    <Text style={styles.around_the_block}>Круглосуточно</Text>
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            ))}
-            {barCodeInput && (
-              <View>
-                <TextInput
-                  style={[stylesAll.input, styles.input_box]}
-                  placeholder="Напишите номер товара"
-                  placeholderTextColor={"#6B6B6B"}
-                  keyboardType="numeric"
-                  value={barrcode}
-                  onChangeText={(text) => setBarrCode(text)}
-                />
-                <TouchableOpacity
-                  style={[stylesAll.button, styles.barrcode_btn]}
-                  onPress={() => router.push(`/details/BarrCodeId/${barrcode}`)}
-                >
-                  <Text style={stylesAll.button_text}> Поиск...</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          </View>
-        )}
       </View>
-    </View>
+      <View style={styles.scannerContainer}>
+        <BarCodeScanner
+          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+          style={StyleSheet.absoluteFillObject}
+        />
+        <View style={styles.overlay}>
+          <Animated.View
+            style={[
+              styles.scannerFrame,
+              {
+                borderColor,
+                transform: [{ scale: scaleAnimation }],
+              },
+            ]}
+          />
+        </View>
+        {scanned && (
+          <TouchableOpacity
+            style={styles.scanAgainButton}
+            onPress={() => setScanned(false)}
+          >
+            <Text style={styles.buttonText}>Сканировать снова</Text>
+          </TouchableOpacity>
+        )}
+        <View style={styles.instruction_block}>
+          <Text style={styles.instructionText}>
+            Наведите на штрих код товара
+          </Text>
+          <Text style={styles.subInstructionText}>
+            Мы найдем этот товар у нас
+          </Text>
+        </View>
+      </View>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
-  barrcode_btn: {
+  header_given: {
+    paddingBottom: 10,
+  },
+  instruction_block: {
+    marginTop: 280,
+  },
+  instructionText: {
+    color: "#FFF",
+    fontSize: 18,
+    textAlign: "center",
     marginTop: 20,
+    fontWeight: "700",
   },
-  input_box: {
-    backgroundColor: "#F5F7FA",
-  },
-  list_block: {
-    marginTop: 30,
-  },
-  list_item: {
-    width: "100%",
-    minHeight: 100,
-    backgroundColor: "#F5F7FA",
-    borderRadius: 14,
-    marginBottom: 10,
-    padding: 16,
-    flexDirection: "column",
-    justifyContent: "space-between",
-    gap: 8,
-  },
-  address_text: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#191919",
-    width: "90%",
-  },
-  work_text: {
+  subInstructionText: {
+    color: "#FFF",
     fontSize: 14,
+    textAlign: "center",
+    marginTop: 5,
     fontWeight: "400",
-    color: "#6B6B6B",
   },
-  around_the_block: {
+  scannerContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.85)",
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  scannerFrame: {
+    width: 250,
+    height: 200,
+    borderColor: "rgba(255, 255, 255, 0.6)",
+    borderWidth: 2,
+    borderRadius: 15,
+    position: "relative",
+    borderStyle: "dashed",
+  },
+  scanAgainButton: {
+    marginTop: 350,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    backgroundColor: "#68B936",
+    borderRadius: 10,
+    alignItems: "center",
+    position: "absolute",
+  },
+  buttonText: {
+    color: "#FFF",
     fontSize: 16,
-    fontWeight: "500",
-    color: "#68B936",
-    marginLeft: 5,
+    fontWeight: "bold",
   },
 });
 
