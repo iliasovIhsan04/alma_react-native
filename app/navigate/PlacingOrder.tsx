@@ -44,6 +44,7 @@ const PlacingOrder = () => {
     get_date: "",
     comment: "",
   });
+
   useEffect(() => {
     const loadData = async () => {
       try {
