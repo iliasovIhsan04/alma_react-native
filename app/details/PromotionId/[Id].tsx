@@ -40,7 +40,6 @@ const PromotionId = () => {
       fetchUserData();
     }
   }, [id]);
-
   if (!harryId) {
     return (
       <View style={stylesAll.loading}>
@@ -48,7 +47,9 @@ const PromotionId = () => {
       </View>
     );
   }
-
+  const cleanText = (text: string) => {
+    return text.replace(/<\/?[^>]+(>|$)/g, "");
+  };
   return (
     <View style={stylesAll.background_block}>
       <View style={stylesAll.container}>
@@ -79,8 +80,8 @@ const PromotionId = () => {
           <View style={styles.promotion_img_box}>
             <Image style={stylesAll.image_all} source={{ uri: harryId.img }} />
           </View>
-          <Text style={styles.prom_title}>{harryId.title}</Text>
-          <Text style={styles.prom_text_all}>{harryId.text}</Text>
+          <Text style={styles.prom_title}>{cleanText(harryId.title)}</Text>
+          <Text style={styles.prom_text_all}>{cleanText(harryId.text)}</Text>
         </View>
       </View>
     </View>

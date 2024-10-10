@@ -28,7 +28,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (!loading && !token) {
-      router.replace("/navigate/OnBoarding");
+      router.replace("/auth/Login");
     }
   }, [loading, token]);
 
@@ -39,7 +39,6 @@ export default function RootLayout() {
       </View>
     );
   }
-
   return (
     <Provider store={store}>
       <Stack screenOptions={{ headerShown: false }}>

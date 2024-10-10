@@ -22,14 +22,25 @@ import { useDispatch } from "react-redux";
 import { fetchUserInfo } from "@/Redux/reducer/UserInfo";
 import StoryComponent from "./StorisBlock";
 import { router } from "expo-router";
+import { useRoute } from "@react-navigation/native";
 
 export default function Main() {
   const dispatch: AppDispatch = useDispatch();
   const [openModal, setOpenModal] = useState(false);
-  const scaleValue = useRef(new Animated.Value(0)).current;
-  const opacityValue = useRef(new Animated.Value(0)).current;
+  const scaleValueModal1 = useRef(new Animated.Value(0)).current;
+  const opacityValueModal1 = useRef(new Animated.Value(0)).current;
+  const [modalRegistration, setModalRegistration] = useState(false);
+  const scaleValueModal2 = useRef(new Animated.Value(0)).current;
+  const opacityValueModal2 = useRef(new Animated.Value(0)).current;
 
   const [refreshing, setRefreshing] = useState(false);
+  const route = useRoute();
+  const { showModal } = route.params || {};
+  useEffect(() => {
+    if (showModal) {
+      setModalRegistration(true);
+    }
+  }, [showModal]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -43,12 +54,12 @@ export default function Main() {
   useEffect(() => {
     if (openModal) {
       Animated.parallel([
-        Animated.spring(scaleValue, {
+        Animated.spring(scaleValueModal1, {
           toValue: 1,
           friction: 5,
           useNativeDriver: true,
         }),
-        Animated.timing(opacityValue, {
+        Animated.timing(opacityValueModal1, {
           toValue: 1,
           duration: 300,
           useNativeDriver: true,
@@ -56,12 +67,12 @@ export default function Main() {
       ]).start();
     } else {
       Animated.parallel([
-        Animated.timing(scaleValue, {
+        Animated.timing(scaleValueModal1, {
           toValue: 0,
           duration: 300,
           useNativeDriver: true,
         }),
-        Animated.timing(opacityValue, {
+        Animated.timing(opacityValueModal1, {
           toValue: 0,
           duration: 300,
           useNativeDriver: true,
@@ -69,6 +80,36 @@ export default function Main() {
       ]).start();
     }
   }, [openModal]);
+
+  useEffect(() => {
+    if (modalRegistration) {
+      Animated.parallel([
+        Animated.spring(scaleValueModal2, {
+          toValue: 1,
+          friction: 5,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacityValueModal2, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else {
+      Animated.parallel([
+        Animated.timing(scaleValueModal2, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacityValueModal2, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [modalRegistration]);
 
   return (
     <>
@@ -81,8 +122,8 @@ export default function Main() {
             style={[
               stylesAll.modal_block,
               {
-                transform: [{ scale: scaleValue }],
-                opacity: opacityValue,
+                transform: [{ scale: scaleValueModal1 }],
+                opacity: opacityValueModal1,
               },
             ]}
           >
@@ -96,6 +137,52 @@ export default function Main() {
               style={styles.image_modal}
               source={require("../../assets/images/soonAlmaGoo.png")}
             />
+          </Animated.View>
+        </Pressable>
+      </Modal>
+      <Modal
+        visible={modalRegistration}
+        transparent={true}
+        animationType="none"
+      >
+        <Pressable
+          style={stylesAll.content_modal}
+          onPress={() => setModalRegistration(false)}
+        >
+          <Animated.View
+            style={[
+              stylesAll.modal_block_placing,
+              {
+                transform: [{ scale: scaleValueModal2 }],
+                opacity: opacityValueModal2,
+              },
+            ]}
+          >
+            <Ionicons
+              onPress={() => setModalRegistration(false)}
+              size={24}
+              style={stylesAll.icon_close}
+              name="close"
+            />
+            <View style={styles.modal_block_img}>
+              <Image
+                style={styles.image_modal}
+                source={require("../../assets/images/modal_img.png")}
+              />
+            </View>
+            <Text style={styles.modal_text_title}>
+              Ваша карта успешно создана!
+            </Text>
+            <Text style={styles.modal_text}>
+              Теперь вы можете экономить на покупках, получать скидки, подарки и
+              многое другое
+            </Text>
+            <TouchableOpacity
+              style={stylesAll.button}
+              onPress={() => setModalRegistration(false)}
+            >
+              <Text style={stylesAll.buttonText}> Понятно</Text>
+            </TouchableOpacity>
           </Animated.View>
         </Pressable>
       </Modal>
@@ -145,6 +232,22 @@ export default function Main() {
 }
 
 const styles = StyleSheet.create({
+  modal_text_title: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#191919",
+    textAlign: "center",
+  },
+  modal_text: {
+    fontSize: 14,
+    fontWeight: "400",
+    color: "#6B6B6B",
+    textAlign: "center",
+  },
+  modal_block_img: {
+    width: 170,
+    height: 140,
+  },
   image_modal: {
     width: "100%",
     height: "100%",

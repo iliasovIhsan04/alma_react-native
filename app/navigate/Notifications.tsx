@@ -43,6 +43,10 @@ const Notifications = () => {
     );
   }
 
+  const cleanText = (text: string) => {
+    return text.replace(/<\/?[^>]+(>|$)/g, "");
+  };
+
   return (
     <View style={stylesAll.background_block}>
       <View style={stylesAll.container}>
@@ -62,12 +66,9 @@ const Notifications = () => {
         <View style={{ flexDirection: "column", gap: 10 }}>
           {notifications.map((el, index) => (
             <View key={index} style={styles.notification_box}>
-              <Text style={styles.title}>{el.title}</Text>
+              <Text style={styles.title}>{cleanText(el.title)}</Text>
               <Text style={styles.description_text}>
-                {el.description} Lorem ipsum dolor sit amet consectetur
-                adipisicing elit. Adipisci a reprehenderit dicta cum? Dolore a
-                cupiditate, sit dignissimos nulla magnam aut error quasi optio,
-                iste possimus, dolores ad ex quaerat.
+                {cleanText(el.description)}
               </Text>
               <Text style={styles.date_text}>{el.date}</Text>
             </View>

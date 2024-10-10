@@ -19,7 +19,6 @@ interface PromotionDetailInter {
   title: string;
   img: string;
 }
-
 const PromotionDetails = () => {
   const [harry, setHarry] = useState<PromotionDetailInter[]>([]);
 
@@ -36,7 +35,6 @@ const PromotionDetails = () => {
     };
     fetchUserData();
   }, []);
-
   if (harry.length === 0) {
     return (
       <View style={stylesAll.loading}>
@@ -77,7 +75,10 @@ const PromotionDetails = () => {
                   />
                 </View>
                 <Text style={stylesAll.promtion_title}>{el.title}</Text>
-                <Pressable style={[stylesAll.btn_all, styles.prom_btn]}>
+                <Pressable
+                  style={[stylesAll.btn_all, styles.prom_btn]}
+                  onPress={() => router.push(`/details/PromotionId/${el.id}`)}
+                >
                   <Text style={styles.prom_btn_text}>Подробнее</Text>
                   <Image
                     style={{ width: 24, height: 24, tintColor: "#DC0200" }}

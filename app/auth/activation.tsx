@@ -28,6 +28,7 @@ interface ActivationCodeProps {}
 const ActivationCode: React.FC<ActivationCodeProps> = () => {
   const [code, setCode] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
   const dispatch = useDispatch();
 
   const handleCode = async () => {
@@ -60,8 +61,10 @@ const ActivationCode: React.FC<ActivationCodeProps> = () => {
             await AsyncStorage.setItem("tokenActivation", response.data.token);
           }
           if (response.data.response === true) {
-            Alert.alert("Успешно!", response.data.message);
-            router.push("/");
+            router.push({
+              pathname: "/",
+              params: { showModal: true },
+            });
           }
           if (response.data.code) {
             Alert.alert("Ошибка!", response.data.code + "!");
