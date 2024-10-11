@@ -14,9 +14,26 @@ import {
   View,
 } from "react-native";
 
+interface Product {
+  title: string;
+  cost: number;
+  count: number;
+  price_for: string;
+}
+
+interface Order {
+  sum: number;
+  address: string;
+  date: string;
+  time: string;
+  total_accrued: number;
+  total_written: number;
+  product: Product[];
+}
+
 const PurchaseId = () => {
   const { id } = useLocalSearchParams();
-  const [order, setOrder] = useState([]);
+  const [order, setOrder] = useState<Order | null>(null); // типизируем заказ
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -46,6 +63,14 @@ const PurchaseId = () => {
     return (
       <View style={stylesAll.loading}>
         <ActivityIndicator color="#DC0200" size="small" />
+      </View>
+    );
+  }
+
+  if (!order) {
+    return (
+      <View style={stylesAll.loading}>
+        <Text>Заказ не найден</Text>
       </View>
     );
   }
@@ -86,15 +111,25 @@ const PurchaseId = () => {
                 <Text style={stylesAll.date_text}>
                   {order.date} {order.time}
                 </Text>
-                <Text style={stylesAll.bonus}>+13 баллов</Text>
+                <Text
+                  style={[
+                    stylesAll.bonus,
+                    {
+                      color: order.total_accrued >= 0 ? "green" : "red",
+                    },
+                  ]}
+                >
+                  {order.total_accrued}
+                </Text>
               </View>
             </View>
             <Image
               style={{ height: 1, width: "100%" }}
               source={require("../../../assets/images/lineBonus.png")}
             />
-            {order.product.map((item: any) => (
+            {order.product.map((item) => (
               <View
+                key={item.title} 
                 style={{
                   flexDirection: "row",
                   justifyContent: "space-between",
@@ -131,7 +166,9 @@ const PurchaseId = () => {
                   />
                   <Text style={styles.bonus_text}>Баллов использовано:</Text>
                 </View>
-                <Text style={[styles.bonus_plus, { color: "#FE211F" }]}>0</Text>
+                <Text style={[styles.bonus_plus, { color: "#FE211F" }]}>
+                  -{order.total_written}
+                </Text>
               </View>
               <View
                 style={{
@@ -149,7 +186,7 @@ const PurchaseId = () => {
                   />
                   <Text style={styles.bonus_text}>Баллов начислено:</Text>
                 </View>
-                <Text style={styles.bonus_plus}>+13</Text>
+                <Text style={styles.bonus_plus}>+{order.total_accrued}</Text>
               </View>
             </View>
           </View>

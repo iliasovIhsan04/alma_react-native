@@ -19,13 +19,11 @@ interface PromotionIdInter {
   dateto: string;
   text: string;
 }
-
 const PromotionId = () => {
   const [harryId, setHarryId] = useState<PromotionIdInter | null>(null);
   const { id } = useLocalSearchParams();
 
   useEffect(() => {
-    console.log(id);
     if (id) {
       const fetchUserData = async () => {
         try {
@@ -40,6 +38,7 @@ const PromotionId = () => {
       fetchUserData();
     }
   }, [id]);
+
   if (!harryId) {
     return (
       <View style={stylesAll.loading}>
@@ -47,9 +46,11 @@ const PromotionId = () => {
       </View>
     );
   }
+
   const cleanText = (text: string) => {
     return text.replace(/<\/?[^>]+(>|$)/g, "");
   };
+
   return (
     <View style={stylesAll.background_block}>
       <View style={stylesAll.container}>

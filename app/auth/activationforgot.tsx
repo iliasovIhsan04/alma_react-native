@@ -71,7 +71,6 @@ const ForgotActivationCode = () => {
     }
     setLoading(false);
   };
-
   return (
     <View style={stylesAll.background_block}>
       <View style={stylesAll.container}>

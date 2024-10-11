@@ -73,7 +73,7 @@ const Promotion = () => {
               <Pressable
                 key={el.id}
                 style={styles.promotion_box}
-                onPress={() => router.push(`details/PromotionId/${el.id}`)}
+                onPress={() => router.push(`/details/PromotionId/${el.id}`)}
               >
                 <View style={styles.promotion_img_box}>
                   <Image

@@ -158,7 +158,17 @@ const PurchaseHistory = () => {
                           <Text style={stylesAll.date_text}>
                             {item.date} {item.time}
                           </Text>
-                          <Text style={stylesAll.bonus}>+13 баллов</Text>
+                          <Text
+                            style={[
+                              stylesAll.bonus,
+                              {
+                                color:
+                                  item.total_accrued >= 0 ? "green" : "red",
+                              },
+                            ]}
+                          >
+                            {item.total_accrued}
+                          </Text>
                         </View>
                       </TouchableOpacity>
                     ))}

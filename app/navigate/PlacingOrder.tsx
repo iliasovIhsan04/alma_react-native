@@ -86,7 +86,7 @@ const PlacingOrder = () => {
       }));
       const dataToSend = {
         address_to: addressId ? addressId : address.address_to,
-        get_date: address.get_date,
+        get_date: address.get_date || null,
         comment: address.comment,
         product: productsForOrder.filter((item) => item.count > 0),
       };
