@@ -33,7 +33,7 @@ interface Order {
 
 const PurchaseId = () => {
   const { id } = useLocalSearchParams();
-  const [order, setOrder] = useState<Order | null>(null); // типизируем заказ
+  const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -111,16 +111,12 @@ const PurchaseId = () => {
                 <Text style={stylesAll.date_text}>
                   {order.date} {order.time}
                 </Text>
-                <Text
-                  style={[
-                    stylesAll.bonus,
-                    {
-                      color: order.total_accrued >= 0 ? "green" : "red",
-                    },
-                  ]}
-                >
-                  {order.total_accrued}
-                </Text>
+                <View>
+                  <Text style={[stylesAll.bonus]}>{order.total_accrued}</Text>
+                  <Text style={[stylesAll.bonus, styles.bonus_minus]}>
+                    {order.total_written}
+                  </Text>
+                </View>
               </View>
             </View>
             <Image
@@ -129,7 +125,7 @@ const PurchaseId = () => {
             />
             {order.product.map((item) => (
               <View
-                key={item.title} 
+                key={item.title}
                 style={{
                   flexDirection: "row",
                   justifyContent: "space-between",
@@ -167,7 +163,7 @@ const PurchaseId = () => {
                   <Text style={styles.bonus_text}>Баллов использовано:</Text>
                 </View>
                 <Text style={[styles.bonus_plus, { color: "#FE211F" }]}>
-                  -{order.total_written}
+                  {order.total_written}
                 </Text>
               </View>
               <View
@@ -186,7 +182,7 @@ const PurchaseId = () => {
                   />
                   <Text style={styles.bonus_text}>Баллов начислено:</Text>
                 </View>
-                <Text style={styles.bonus_plus}>+{order.total_accrued}</Text>
+                <Text style={styles.bonus_plus}>{order.total_accrued}</Text>
               </View>
             </View>
           </View>
@@ -196,6 +192,9 @@ const PurchaseId = () => {
   );
 };
 const styles = StyleSheet.create({
+  bonus_minus: {
+    color: "red",
+  },
   bonus_plus: {
     fontSize: 14,
     fontWeight: "700",

@@ -58,7 +58,6 @@ const PurchaseHistory = () => {
   const hideDatePicker = () => {
     setDatePickerVisibility(false);
   };
-
   return (
     <View style={stylesAll.background_block}>
       <View style={stylesAll.container}>
@@ -75,7 +74,6 @@ const PurchaseHistory = () => {
           <Text style={stylesAll.header_name}>История покупок</Text>
           <View style={stylesAll.header_back_btn}></View>
         </View>
-
         {loading ? (
           <View style={stylesAll.loading_catalog_page}>
             <ActivityIndicator size="small" color="#DC0200" />
@@ -107,7 +105,6 @@ const PurchaseHistory = () => {
                     source={require("../../assets/images/calendar_days.png")}
                   />
                 </Pressable>
-
                 <Pressable
                   style={styles.oclock_box}
                   onPress={() => {
@@ -132,7 +129,6 @@ const PurchaseHistory = () => {
                   />
                 </Pressable>
               </View>
-
               {orders.length > 0 ? (
                 orders.map((order, index) => (
                   <View key={index}>
@@ -158,17 +154,14 @@ const PurchaseHistory = () => {
                           <Text style={stylesAll.date_text}>
                             {item.date} {item.time}
                           </Text>
-                          <Text
-                            style={[
-                              stylesAll.bonus,
-                              {
-                                color:
-                                  item.total_accrued >= 0 ? "green" : "red",
-                              },
-                            ]}
-                          >
-                            {item.total_accrued}
-                          </Text>
+                          <View>
+                            <Text style={[stylesAll.bonus]}>
+                              {item.total_accrued}
+                            </Text>
+                            <Text style={[stylesAll.bonus, styles.bonus_minus]}>
+                              {item.total_written}
+                            </Text>
+                          </View>
                         </View>
                       </TouchableOpacity>
                     ))}
@@ -194,6 +187,9 @@ const PurchaseHistory = () => {
 };
 
 const styles = StyleSheet.create({
+  bonus_minus: {
+    color: "red",
+  },
   history_text: {
     fontSize: 18,
     fontWeight: "500",
