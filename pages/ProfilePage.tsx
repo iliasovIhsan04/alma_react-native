@@ -123,9 +123,8 @@ const ProfilePage = () => {
               >
                 <View style={styles.area_box_red}>
                   <Image
-                    source={require("../assets/images/setting.png")}
+                    source={require("../assets/images/setting-twoo.png")}
                     style={{ width: 20, height: 20 }}
-                    tintColor={"white"}
                   />
                 </View>
                 <Text style={styles.profile_box_name}>Настройки</Text>
@@ -146,9 +145,8 @@ const ProfilePage = () => {
               >
                 <View style={styles.area_box_red}>
                   <Image
-                    source={require("../assets/images/heart_card.png")}
+                    source={require("../assets/images/heart_card1.png")}
                     style={{ width: 20, height: 20 }}
-                    tintColor={"white"}
                   />
                 </View>
                 <Text style={styles.profile_box_name}>Избранные товары</Text>
@@ -171,9 +169,8 @@ const ProfilePage = () => {
               >
                 <View style={styles.area_box_red}>
                   <Image
-                    source={require("../assets/images/history_icons.png")}
+                    source={require("../assets/images/order-history.png")}
                     style={{ width: 20, height: 20 }}
-                    tintColor={"white"}
                   />
                 </View>
                 <Text style={styles.profile_box_name}>История покупок</Text>
@@ -184,7 +181,6 @@ const ProfilePage = () => {
               />
             </TouchableOpacity>
           </View>
-
           <View style={styles.area_block}>
             <TouchableOpacity
               style={styles.area_box}
@@ -197,7 +193,6 @@ const ProfilePage = () => {
                   <Image
                     source={require("../assets/images/help.png")}
                     style={{ width: 20, height: 20 }}
-                    tintColor={"white"}
                   />
                 </View>
                 <Text style={styles.profile_box_name}>Помощь</Text>
@@ -222,7 +217,6 @@ const ProfilePage = () => {
                   <Image
                     source={require("../assets/images/info.png")}
                     style={{ width: 20, height: 20 }}
-                    tintColor={"white"}
                   />
                 </View>
                 <Text style={styles.profile_box_name}>О приложении</Text>
@@ -244,7 +238,6 @@ const ProfilePage = () => {
                 <Image
                   source={require("../assets/images/logout.png")}
                   style={{ width: 20, height: 20 }}
-                  tintColor={"white"}
                 />
               </View>
               <Text style={styles.profile_box_name}>Выйти</Text>

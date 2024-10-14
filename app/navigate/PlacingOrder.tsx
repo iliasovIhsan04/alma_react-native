@@ -17,10 +17,10 @@ import axios from "axios";
 import { url } from "@/Api";
 import { useSelector } from "react-redux";
 import { RootState } from "@/Redux/reducer/store";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import { Modal } from "react-native";
 import { Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const PlacingOrder = () => {
   const [local, setLocal] = useState<string | null>(null);
@@ -29,8 +29,9 @@ const PlacingOrder = () => {
   const [totalPrice, setTotalPrice] = useState(0);
   const [plus, setPlus] = useState<any>({});
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [date1, setDate1] = useState<boolean>(false);
+  const [date1, setDate1] = useState<boolean>(true);
   const [show, setShow] = useState<boolean>(false);
+  const [datePicker, setDatePicker] = useState<boolean>(false);
   const scaleValue = useRef(new Animated.Value(0)).current;
   const opacityValue = useRef(new Animated.Value(0)).current;
   const selectedAddressId = useSelector(
@@ -169,6 +170,7 @@ const PlacingOrder = () => {
       ]).start();
     }
   }, [openModal]);
+
   return (
     <View style={stylesAll.background_block}>
       <Modal visible={openModal} transparent={true} animationType="none">
@@ -231,7 +233,7 @@ const PlacingOrder = () => {
           <Text style={stylesAll.header_name}>Оформление заказа</Text>
           <View style={stylesAll.header_back_btn}></View>
         </View>
-        <View style={stylesAll.input_block_all}>
+        <View style={stylesAll.input_block_all}> 
           <View>
             <Text style={stylesAll.label}>Адрес доставки</Text>
             <TouchableOpacity
@@ -267,10 +269,6 @@ const PlacingOrder = () => {
               style={[stylesAll.input, styles.input_box]}
               onPress={() => {
                 if (!date1) {
-                  setAddress((prevAddress) => ({
-                    ...prevAddress,
-                    get_date: null,
-                  }));
                   setShow(false);
                   setDate1(true);
                 }
@@ -285,13 +283,14 @@ const PlacingOrder = () => {
                 <Text style={styles.placeholder_static}>Как можно быстрее</Text>
               </View>
             </TouchableOpacity>
-
-            <Pressable style={styles.input_date_box}>
+            <Pressable>
               <TouchableOpacity
                 style={[stylesAll.input, styles.input_box, { marginTop: 10 }]}
                 onPress={() => {
-                  setDate1(false);
-                  setShow(true);
+                  if (!show) {
+                    setShow(true);
+                    setDate1(false);
+                  }
                 }}
               >
                 <View
@@ -310,25 +309,36 @@ const PlacingOrder = () => {
                 </View>
               </TouchableOpacity>
               {show && (
-                <View style={styles.input_box_date}>
-                  <DateTimePicker
-                    minimumDate={new Date()}
-                    style={[styles.date_picker]}
-                    testID="dateTimePicker"
-                    value={
-                      address.get_date ? new Date(address.get_date) : new Date()
-                    }
-                    mode="datetime"
-                    display="default"
-                    onChange={(event, selectedDate) => {
-                      const currentDate = selectedDate || new Date();
-                      setAddress((prevAddress) => ({
-                        ...prevAddress,
-                        get_date: currentDate.toISOString().split("T")[0],
-                      }));
-                    }}
+                <Pressable
+                  style={styles.input_box_date}
+                  onPress={() => setDatePicker(true)}
+                >
+                  <Image
+                    style={styles.calendar}
+                    source={require("../../assets/images/calendar_days.png")}
                   />
-                </View>
+                  <Text style={[styles.placeholder_static, styles.date_text]}>
+                    {address.get_date
+                      ? new Date(address.get_date).toLocaleString()
+                      : new Date().toLocaleString()}
+                  </Text>
+                </Pressable>
+              )}
+
+              {datePicker && (
+                <DateTimePickerModal
+                  isVisible={datePicker}
+                  mode="datetime"
+                  onConfirm={(selectedDate) => {
+                    const currentDate = selectedDate || new Date();
+                    setAddress((prevAddress) => ({
+                      ...prevAddress,
+                      get_date: currentDate.toISOString(),
+                    }));
+                    setDatePicker(false);
+                  }}
+                  onCancel={() => setDatePicker(false)}
+                />
               )}
             </Pressable>
           </View>
@@ -421,7 +431,13 @@ const PlacingOrder = () => {
 };
 
 const styles = StyleSheet.create({
-  input_date_box: {},
+  calendar: {
+    width: 24,
+    height: 24,
+  },
+  date_text: {
+    marginLeft: 10,
+  },
   placeholder_static: {
     fontSize: 16,
     fontWeight: "400",
@@ -441,8 +457,13 @@ const styles = StyleSheet.create({
   },
   input_box_date: {
     width: "100%",
+    height: 45,
+    backgroundColor: "#F5F7FA",
+    borderRadius: 10,
+    marginTop: 10,
+    paddingHorizontal: 10,
     flexDirection: "row",
-    marginLeft: 0,
+    alignItems: "center",
   },
   date_picker: {
     height: 45,

@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     position: "absolute",
     top: 0,
-    right: 5,
+    right: 7,
   },
   list_img: {
     width: 41,
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
     width: "29%",
     height: 68,
     borderRadius: 50,
-    backgroundColor: "#DC0200",
+    backgroundColor: "#FE211F",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "flex-end",
