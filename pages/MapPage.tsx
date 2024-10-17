@@ -88,6 +88,7 @@ export default function MapPage() {
       }
     })();
   }, []);
+  
   useEffect(() => {
     axios
       .get<LocationType[]>("https://alma-market.online/map/")

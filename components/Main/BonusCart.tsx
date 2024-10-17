@@ -49,7 +49,17 @@ const BonusCart = () => {
             style={styles.bonus_block}
           >
             <View style={{ flexDirection: "column", marginLeft: 10 }}>
-              <Text style={styles.bonus_title}>Бонусная {"\n"} карта</Text>
+              <View style={{ flexDirection: "column" }}>
+                <Text
+                  style={[
+                    styles.bonus_title,
+                    { marginBottom: 0, lineHeight: 26 },
+                  ]}
+                >
+                  Бонусная
+                </Text>
+                <Text style={[styles.bonus_title]}>карта</Text>
+              </View>
               <View
                 style={{
                   flexDirection: "row",

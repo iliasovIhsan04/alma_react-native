@@ -120,34 +120,40 @@ const StoryComponent = () => {
 
       if (filteredStories.length > 0) {
         return (
-          <InstaStory
-            key={filteredStories.map((user) => user.user_id).join("-")}
-            data={filteredStories}
-            duration={10}
-            onStart={(data) => {
-              if (data?.user && data?.story) {
-                handleStoryStart(data.user, data.story);
-              } else {
-                console.error("Story start data is incomplete or invalid.");
-              }
-            }}
-            onStorySeen={updateSeenStories}
-            renderCloseComponent={({ onPress }) => (
-              <TouchableOpacity style={styles.button} onPress={onPress}>
-                <Image
-                  style={styles.buttonText}
-                  source={require("../../assets/images/close.png")}
-                />
-              </TouchableOpacity>
-            )}
-          />
+          <View style={styles.storis_block}>
+            <InstaStory
+              key={filteredStories.map((user) => user.user_id).join("-")}
+              data={filteredStories}
+              duration={10}
+              onStart={(data) => {
+                if (data?.user && data?.story) {
+                  handleStoryStart(data.user, data.story);
+                } else {
+                  console.error("Story start data is incomplete or invalid.");
+                }
+              }}
+              onStorySeen={updateSeenStories}
+              avatarImageStyle={{
+                width: 70,
+                height: 70,
+                borderRadius: 50,
+              }}
+              renderCloseComponent={({ onPress }) => (
+                <TouchableOpacity style={styles.button} onPress={onPress}>
+                  <Image
+                    style={styles.buttonText}
+                    source={require("../../assets/images/close.png")}
+                  />
+                </TouchableOpacity>
+              )}
+            />
+          </View>
         );
       } else {
         return <Text>No valid stories available</Text>;
       }
     }
   };
-
   return <View style={styles.storyContainer}>{renderContent()}</View>;
 };
 

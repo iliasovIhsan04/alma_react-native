@@ -117,9 +117,11 @@ const styles = StyleSheet.create({
     width: 0,
   },
   img: {
-    width: 300,
+    width: "80%",
     height: 260,
     borderRadius: 16,
+    objectFit: "cover",
+    overflow: "hidden",
   },
   dotsContainer: {
     flexDirection: "row",

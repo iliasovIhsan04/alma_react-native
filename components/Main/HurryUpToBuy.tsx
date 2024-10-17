@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
     width: "29%",
     height: 68,
     borderRadius: 50,
-    backgroundColor: "#FE211F",
+    backgroundColor: "#fe211f",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "flex-end",
