@@ -10,8 +10,11 @@ import {
   Text,
   StyleSheet,
   ActivityIndicator,
+  Alert,
+  Pressable,
 } from "react-native"; // Импортируем ActivityIndicator
 import Images from "../ProductId/Images";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface Product {
   id: number;
@@ -39,6 +42,9 @@ const BarrCodeId = () => {
   const [data, setData] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const { id } = useLocalSearchParams();
+  const [isInBasket, setIsInBasket] = useState<boolean>(false);
+  const [favoriteItems, setFavoriteItems] = useState<Set<number>>(new Set());
+  const [cart, setCart] = useState<Product[]>([]);
 
   useEffect(() => {
     if (id) {
@@ -54,7 +60,93 @@ const BarrCodeId = () => {
         });
     }
   }, [id]);
-  
+
+  useEffect(() => {
+    const initializeData = async () => {
+      const cartItems = await AsyncStorage.getItem("cartFeatured");
+      if (cartItems) {
+        setCart(JSON.parse(cartItems));
+      }
+      const favoriteItemsKeys = await AsyncStorage.getAllKeys();
+      const favoriteIds = favoriteItemsKeys
+        .filter((key) => key.startsWith("activeItemFeatured"))
+        .map((key) => parseInt(key.replace("activeItemFeatured", "")));
+      setFavoriteItems(new Set(favoriteIds));
+    };
+    initializeData();
+  }, []);
+
+  const checkFavoritesAndBasket = async () => {
+    try {
+      const activeItem = await AsyncStorage.getItem(`activeItemsBasket_${id}`);
+      setIsInBasket(!!activeItem); // Товар корзинада болсо
+      const itemExists = await AsyncStorage.getItem(`activeItemFeatured${id}`);
+      setFavoriteItems((prev) => {
+        const updatedFavorites = new Set(prev);
+        if (itemExists) {
+          updatedFavorites.add(id);
+        } else {
+          updatedFavorites.delete(id);
+        }
+        return updatedFavorites;
+      });
+    } catch (error) {
+      console.error("Ошибка при проверке избранного или корзины:", error);
+    }
+  };
+
+  const saveToAsyncStorage = async (id: number) => {
+    if (!data) return;
+    const updatedCart = cart.some((item) => item.id === data.id)
+      ? cart.filter((item) => item.id !== data.id)
+      : [...cart, data];
+    setCart(updatedCart);
+    await AsyncStorage.setItem("cartFeatured", JSON.stringify(updatedCart));
+  };
+  const toggleFavorite = async (id: number) => {
+    const itemExists = await AsyncStorage.getItem(`activeItemFeatured${id}`);
+    const updatedFavorites = new Set(favoriteItems);
+    if (itemExists) {
+      await AsyncStorage.removeItem(`activeItemFeatured${id}`);
+      updatedFavorites.delete(id);
+    } else {
+      await AsyncStorage.setItem(`activeItemFeatured${id}`, `${id}`);
+      updatedFavorites.add(id);
+    }
+    setFavoriteItems(updatedFavorites);
+  };
+  const Basket = async (id: number, datas: Product) => {
+    setIsInBasket(true);
+    try {
+      const prevIDString = await AsyncStorage.getItem("plus");
+      const prevID = prevIDString !== null ? JSON.parse(prevIDString) : {};
+      const updatedPrevID = { ...prevID, [id]: 1 };
+      await AsyncStorage.setItem("plus", JSON.stringify(updatedPrevID));
+      await AsyncStorage.setItem("plusOne", JSON.stringify(updatedPrevID));
+      const prevShopCartString = await AsyncStorage.getItem("shopCart");
+      const prevShopCart =
+        prevShopCartString !== null ? JSON.parse(prevShopCartString) : [];
+      const updatedShopCart = [...prevShopCart, datas];
+      await AsyncStorage.setItem("shopCart", JSON.stringify(updatedShopCart));
+      const prevCartsString = await AsyncStorage.getItem("cartsBasket");
+      const prevCarts =
+        prevCartsString !== null ? JSON.parse(prevCartsString) : [];
+      const updatedCarts = [...prevCarts, datas];
+      await AsyncStorage.setItem("cartsBasket", JSON.stringify(updatedCarts));
+      await AsyncStorage.setItem(`activeItemsBasket_${id}`, JSON.stringify(id));
+      const activeItem = await AsyncStorage.getItem(`activeItemsBasket_${id}`);
+      checkFavoritesAndBasket
+      if (activeItem) {
+        Alert.alert("Ваш товар успешно добавлен в корзину!");
+      } else {
+        Alert.alert("Ошибка", "Не удалось добавить товар в корзину");
+      }
+    } catch (error) {
+      Alert.alert("Ошибка", "Произошла ошибка при добавлении товара в корзину");
+      console.error(error);
+    }
+  };
+
   return (
     <View style={stylesAll.background_block}>
       <View style={stylesAll.container}>
@@ -69,7 +161,22 @@ const BarrCodeId = () => {
             />
           </TouchableOpacity>
           <Text style={stylesAll.header_name}>Товар</Text>
-          <View style={stylesAll.header_back_btn}></View>
+          <Pressable
+            onPress={() => {
+              toggleFavorite(id);
+              saveToAsyncStorage(id);
+            }}
+            style={styles.heart_img_box}
+          >
+            <Image
+              style={styles.heart_img}
+              source={
+                favoriteItems.has(id)
+                  ? require("../../../assets/images/heart_card_new.png")
+                  : require("../../../assets/images/heart_card.png")
+              }
+            />
+          </Pressable>
         </View>
       </View>
       {loading ? (
@@ -77,7 +184,7 @@ const BarrCodeId = () => {
           <ActivityIndicator size="small" color="#DC0200" />
         </View>
       ) : (
-        <View>
+        <>
           {data?.status === true ? (
             <>
               <Images data={data.img} />
@@ -116,13 +223,25 @@ const BarrCodeId = () => {
                   </View>
                 </View>
               </View>
+              <TouchableOpacity
+                style={[stylesAll.button, styles.btn_product]}
+                onPress={() =>
+                  isInBasket
+                    ? router.push(`navigate/BasketPage`)
+                    : Basket(data.id, data)
+                }
+              >
+                <Text style={stylesAll.button_text}>
+                  {isInBasket ? "В корзине" : "Добавить в корзину"}
+                </Text>
+              </TouchableOpacity>
             </>
           ) : (
             <View style={stylesAll.loading_catalog_page}>
               <Text style={stylesAll.barrcode_page_text}>Товар не найден!</Text>
             </View>
           )}
-        </View>
+        </>
       )}
     </View>
   );
