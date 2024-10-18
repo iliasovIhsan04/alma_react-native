@@ -25,6 +25,8 @@ const ProductGiven = () => {
   }, []);
 
   const handleBarCodeScanned = async ({ data }) => {
+    if (scanned) return;
+
     setScanned(true);
     setBorderColor("#68B936");
 

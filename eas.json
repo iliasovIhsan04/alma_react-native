@@ -11,10 +11,16 @@
     "preview": {
       "distribution": "internal"
     },
-    "production": {
+    "productionAPK": {
       "autoIncrement": true,
       "android": {
         "buildType": "apk"
+      }
+    },
+    "productionAAB": {
+      "autoIncrement": true,
+      "android": {
+        "buildType": "app-bundle"
       }
     }
   },
