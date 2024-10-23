@@ -70,7 +70,6 @@ const Productid = () => {
           `activeItemsBasket_${id}`
         );
         setIsInBasket(!!activeItem);
-
         const itemExists = await AsyncStorage.getItem(
           `activeItemFeatured${id}`
         );

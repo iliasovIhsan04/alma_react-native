@@ -12,7 +12,7 @@ import {
   ActivityIndicator,
   Alert,
   Pressable,
-} from "react-native"; // Импортируем ActivityIndicator
+} from "react-native";
 import Images from "../ProductId/Images";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -79,7 +79,7 @@ const BarrCodeId = () => {
   const checkFavoritesAndBasket = async () => {
     try {
       const activeItem = await AsyncStorage.getItem(`activeItemsBasket_${id}`);
-      setIsInBasket(!!activeItem); // Товар корзинада болсо
+      setIsInBasket(!!activeItem);
       const itemExists = await AsyncStorage.getItem(`activeItemFeatured${id}`);
       setFavoriteItems((prev) => {
         const updatedFavorites = new Set(prev);
@@ -135,7 +135,7 @@ const BarrCodeId = () => {
       await AsyncStorage.setItem("cartsBasket", JSON.stringify(updatedCarts));
       await AsyncStorage.setItem(`activeItemsBasket_${id}`, JSON.stringify(id));
       const activeItem = await AsyncStorage.getItem(`activeItemsBasket_${id}`);
-      checkFavoritesAndBasket
+      checkFavoritesAndBasket;
       if (activeItem) {
         Alert.alert("Ваш товар успешно добавлен в корзину!");
       } else {

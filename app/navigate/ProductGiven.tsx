@@ -57,7 +57,6 @@ const ProductGiven = () => {
   if (hasPermission === false) {
     return <Text>Нет доступа к камере</Text>;
   }
-
   return (
     <>
       <View style={stylesAll.container}>
