@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "alma-market-native",
-    "slug": "alma-market-native",
+    "name": "Alma Market",
+    "slug": "Alma Market",
     "icon": "./assets/logoApple.png",
     "extra": {
       "eas": {
@@ -9,11 +9,11 @@
       }
     },
     "android": {
-      "package": "com.ihsan004.almamarketnative"
+      "package": "com.navisdevs.alma-market"
     },
-    "scheme": "almaMarketNative",
+    "scheme": "Alma Market",
     "ios": {
-      "bundleIdentifier": "com.ihsan004.almamarketnative"
+      "bundleIdentifier": "com.navisdevs.alma-market"
     }
   }
 }

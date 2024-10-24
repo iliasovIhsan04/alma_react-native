@@ -103,6 +103,7 @@ const CatalogDetails: React.FC = ({}) => {
       const fetchedData = response.data;
       setData(fetchedData);
       setLoading(true);
+      setModalFilter(false);
       if (fetchedData.length > 0) {
         if (min === minPrice && max === maxPrice) {
           const prices = fetchedData.map((product) => product.price);
@@ -115,7 +116,6 @@ const CatalogDetails: React.FC = ({}) => {
       }
       setLoading(false);
       setModal(false);
-      setModalFilter(false);
       setIsDataAvailable(fetchedData.length > 0);
     } catch (error) {
       console.error("Ошибка при получении данных:", error);

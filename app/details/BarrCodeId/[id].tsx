@@ -42,56 +42,78 @@ const BarrCodeId = () => {
   const [data, setData] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const { id } = useLocalSearchParams();
-  const [isInBasket, setIsInBasket] = useState<boolean>(false);
+  const [isInBasket, setIsInBasket] = useState(false);
   const [favoriteItems, setFavoriteItems] = useState<Set<number>>(new Set());
   const [cart, setCart] = useState<Product[]>([]);
 
   useEffect(() => {
     if (id) {
-      axios
-        .get(`${url}/product/barrcode/${id}`)
-        .then((response) => {
-          setData(response.data);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.error("Error fetching data:", error);
-          setLoading(false);
-        });
+      fetchData(id);
     }
   }, [id]);
 
+  const fetchData = async (id: string) => {
+    try {
+      const response = await axios.get(`${url}/product/barrcode/${id}`);
+      setData(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const initializeData = async () => {
+    initializeData();
+  }, []);
+
+  const initializeData = async () => {
+    try {
       const cartItems = await AsyncStorage.getItem("cartFeatured");
       if (cartItems) {
         setCart(JSON.parse(cartItems));
       }
-      const favoriteItemsKeys = await AsyncStorage.getAllKeys();
-      const favoriteIds = favoriteItemsKeys
-        .filter((key) => key.startsWith("activeItemFeatured"))
-        .map((key) => parseInt(key.replace("activeItemFeatured", "")));
+
+      const favoriteIds = await getFavoriteIds();
       setFavoriteItems(new Set(favoriteIds));
-    };
-    initializeData();
-  }, []);
+    } catch (error) {
+      console.error("Error initializing data:", error);
+    }
+  };
+
+  const getFavoriteIds = async () => {
+    const keys = await AsyncStorage.getAllKeys();
+    return keys
+      .filter((key) => key.startsWith("activeItemFeatured"))
+      .map((key) => parseInt(key.replace("activeItemFeatured", "")));
+  };
+
+  useEffect(() => {
+    if (data) {
+      checkFavoritesAndBasket();
+    }
+  }, [data]);
 
   const checkFavoritesAndBasket = async () => {
+    if (!data || !data.id) return;
     try {
-      const activeItem = await AsyncStorage.getItem(`activeItemsBasket_${id}`);
+      const activeItem = await AsyncStorage.getItem(
+        `activeItemsBasket_${data.id}`
+      );
       setIsInBasket(!!activeItem);
-      const itemExists = await AsyncStorage.getItem(`activeItemFeatured${id}`);
-      setFavoriteItems((prev) => {
-        const updatedFavorites = new Set(prev);
-        if (itemExists) {
-          updatedFavorites.add(id);
-        } else {
-          updatedFavorites.delete(id);
-        }
-        return updatedFavorites;
-      });
+      const itemExists = await AsyncStorage.getItem(
+        `activeItemFeatured${data.id}`
+      );
+
+      const updatedFavorites = new Set(favoriteItems);
+      if (itemExists) {
+        updatedFavorites.add(data.id);
+      } else {
+        updatedFavorites.delete(data.id);
+      }
+      setFavoriteItems(updatedFavorites);
     } catch (error) {
-      console.error("Ошибка при проверке избранного или корзины:", error);
+      console.error("Error checking favorites or basket:", error);
     }
   };
 
@@ -100,51 +122,66 @@ const BarrCodeId = () => {
     const updatedCart = cart.some((item) => item.id === data.id)
       ? cart.filter((item) => item.id !== data.id)
       : [...cart, data];
+
     setCart(updatedCart);
     await AsyncStorage.setItem("cartFeatured", JSON.stringify(updatedCart));
   };
+
   const toggleFavorite = async (id: number) => {
     const itemExists = await AsyncStorage.getItem(`activeItemFeatured${id}`);
     const updatedFavorites = new Set(favoriteItems);
-    if (itemExists) {
-      await AsyncStorage.removeItem(`activeItemFeatured${id}`);
-      updatedFavorites.delete(id);
-    } else {
-      await AsyncStorage.setItem(`activeItemFeatured${id}`, `${id}`);
-      updatedFavorites.add(id);
+    try {
+      if (itemExists) {
+        await AsyncStorage.removeItem(`activeItemFeatured${id}`);
+        updatedFavorites.delete(id);
+      } else {
+        await AsyncStorage.setItem(`activeItemFeatured${id}`, `${id}`);
+        updatedFavorites.add(id);
+      }
+      setFavoriteItems(updatedFavorites);
+      setIsInBasket(false);
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
     }
-    setFavoriteItems(updatedFavorites);
   };
+
   const Basket = async (id: number, datas: Product) => {
     setIsInBasket(true);
     try {
-      const prevIDString = await AsyncStorage.getItem("plus");
-      const prevID = prevIDString !== null ? JSON.parse(prevIDString) : {};
-      const updatedPrevID = { ...prevID, [id]: 1 };
-      await AsyncStorage.setItem("plus", JSON.stringify(updatedPrevID));
-      await AsyncStorage.setItem("plusOne", JSON.stringify(updatedPrevID));
-      const prevShopCartString = await AsyncStorage.getItem("shopCart");
-      const prevShopCart =
-        prevShopCartString !== null ? JSON.parse(prevShopCartString) : [];
-      const updatedShopCart = [...prevShopCart, datas];
-      await AsyncStorage.setItem("shopCart", JSON.stringify(updatedShopCart));
-      const prevCartsString = await AsyncStorage.getItem("cartsBasket");
-      const prevCarts =
-        prevCartsString !== null ? JSON.parse(prevCartsString) : [];
-      const updatedCarts = [...prevCarts, datas];
-      await AsyncStorage.setItem("cartsBasket", JSON.stringify(updatedCarts));
-      await AsyncStorage.setItem(`activeItemsBasket_${id}`, JSON.stringify(id));
-      const activeItem = await AsyncStorage.getItem(`activeItemsBasket_${id}`);
-      checkFavoritesAndBasket;
-      if (activeItem) {
-        Alert.alert("Ваш товар успешно добавлен в корзину!");
-      } else {
-        Alert.alert("Ошибка", "Не удалось добавить товар в корзину");
-      }
+      await updateAsyncStorageWithItem(id, datas);
+      Alert.alert("Ваш товар успешно добавлен в корзину!");
     } catch (error) {
       Alert.alert("Ошибка", "Произошла ошибка при добавлении товара в корзину");
       console.error(error);
     }
+  };
+
+  const updateAsyncStorageWithItem = async (id: number, datas: Product) => {
+    const prevIDString = await AsyncStorage.getItem("plus");
+    const prevID = prevIDString !== null ? JSON.parse(prevIDString) : {};
+    const updatedPrevID = { ...prevID, [id]: 1 };
+
+    await AsyncStorage.multiSet([
+      ["plus", JSON.stringify(updatedPrevID)],
+      ["plusOne", JSON.stringify(updatedPrevID)],
+      ["shopCart", JSON.stringify(await addToCart(datas))],
+      ["cartsBasket", JSON.stringify(await addToBasket(datas))],
+      [`activeItemsBasket_${id}`, JSON.stringify(id)],
+    ]);
+  };
+
+  const addToCart = async (datas: Product) => {
+    const prevShopCartString = await AsyncStorage.getItem("shopCart");
+    const prevShopCart =
+      prevShopCartString !== null ? JSON.parse(prevShopCartString) : [];
+    return [...prevShopCart, datas];
+  };
+
+  const addToBasket = async (datas: Product) => {
+    const prevCartsString = await AsyncStorage.getItem("cartsBasket");
+    const prevCarts =
+      prevCartsString !== null ? JSON.parse(prevCartsString) : [];
+    return [...prevCarts, datas];
   };
 
   return (
@@ -163,18 +200,18 @@ const BarrCodeId = () => {
           <Text style={stylesAll.header_name}>Товар</Text>
           <Pressable
             onPress={() => {
-              toggleFavorite(id);
-              saveToAsyncStorage(id);
+              toggleFavorite(data.id);
+              saveToAsyncStorage(data.id);
             }}
             style={styles.heart_img_box}
           >
             <Image
-              style={styles.heart_img}
               source={
-                favoriteItems.has(id)
+                data && data.id && favoriteItems.has(data.id)
                   ? require("../../../assets/images/heart_card_new.png")
                   : require("../../../assets/images/heart_card.png")
               }
+              style={styles.heart_img}
             />
           </Pressable>
         </View>

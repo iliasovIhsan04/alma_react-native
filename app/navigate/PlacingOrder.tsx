@@ -116,7 +116,7 @@ const PlacingOrder = () => {
       }
     } catch (error) {
       console.error("Error during order placement:", error);
-      if (!address.get_date) {
+      if (!address.get_date && !date1) {
         Alert.alert("Ошибка", "Выберите время получения");
       } else if (!address.address_to) {
         Alert.alert("Ошибка", "Добавьте адрес прежде чем заказать!");
@@ -233,7 +233,7 @@ const PlacingOrder = () => {
           <Text style={stylesAll.header_name}>Оформление заказа</Text>
           <View style={stylesAll.header_back_btn}></View>
         </View>
-        <View style={stylesAll.input_block_all}> 
+        <View style={stylesAll.input_block_all}>
           <View>
             <Text style={stylesAll.label}>Адрес доставки</Text>
             <TouchableOpacity
