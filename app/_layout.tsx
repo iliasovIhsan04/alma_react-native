@@ -29,7 +29,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (!loading && !token) {
-      router.replace("/auth/Login");
+      router.replace("/navigate/OnBoarding");
     }
   }, [loading, token]);
 

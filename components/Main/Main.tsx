@@ -211,16 +211,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexWrap: "wrap",
     gap: 10,
+    paddingHorizontal:20
   },
   apple_box: {
     width: "48%",
     height: 58,
     borderRadius: 10,
+    backgroundColor:'red'
   },
   image_apple: {
     width: "100%",
     height: "100%",
-    resizeMode: "contain",
+    overflow:'hidden',
+    borderRadius:10
   },
   check_price_box: {
     width: "48%",
@@ -230,6 +233,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 10,
     gap: 10,
-    backgroundColor: "#F5F7FA",
+    backgroundColor: "#f5f7fa",
   },
 });

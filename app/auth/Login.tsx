@@ -131,6 +131,7 @@ const Login = () => {
                 secureTextEntry={!visible}
                 onChangeText={setPassword}
                 value={password}
+                keyboardType="default"  
               />
               <TouchableOpacity onPress={handlePassword}>
                 <Ionicons

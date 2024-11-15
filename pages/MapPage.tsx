@@ -88,7 +88,7 @@ export default function MapPage() {
       }
     })();
   }, []);
-  
+
   useEffect(() => {
     axios
       .get<LocationType[]>("https://alma-market.online/map/")
@@ -110,6 +110,7 @@ export default function MapPage() {
       setActiveSection(sectionId);
     }
   };
+
   const htmlContent = `
   <!DOCTYPE html>
   <html lang="ru">
@@ -165,6 +166,10 @@ export default function MapPage() {
                       strokeColor: "#FF0000"
                   }));
               }
+
+              // Enable dragging with one finger
+              myMap.behaviors.enable('drag'); // Enable drag behavior
+              myMap.behaviors.enable('scrollZoom'); // Enable scroll zoom behavior
           });
       </script>
   </body>
