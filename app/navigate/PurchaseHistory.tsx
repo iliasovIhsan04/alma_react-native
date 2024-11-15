@@ -90,14 +90,14 @@ const PurchaseHistory = () => {
                   }}
                 >
                   <View style={styles.dataCalender}>
-                    <Text style={styles.from_text}>От:</Text>
+                    <Text style={styles.from_text}>От</Text>
                     <Text
                       style={[
                         styles.add_calender_text,
                         !dateFrom && styles.placeholderText,
                       ]}
                     >
-                      {dateFrom || "Дата"}
+                      {dateFrom ? `:${dateFrom}` : ""} 
                     </Text>
                   </View>
                   <Image
@@ -113,14 +113,14 @@ const PurchaseHistory = () => {
                   }}
                 >
                   <View style={styles.dataCalender}>
-                    <Text style={styles.from_text}>До:</Text>
+                    <Text style={styles.from_text}>До</Text>
                     <Text
                       style={[
                         styles.add_calender_text,
                         !dateTo && styles.placeholderText,
                       ]}
                     >
-                      {dateTo || "Дата"}
+                   {dateTo ?`: ${dateTo}` : ""}
                     </Text>
                   </View>
                   <Image

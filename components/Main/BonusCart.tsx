@@ -1,5 +1,6 @@
 import { AppDispatch, RootState } from "@/Redux/reducer/store";
 import { fetchUserInfo } from "@/Redux/reducer/UserInfo";
+import { stylesAll } from "@/style";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -33,7 +34,6 @@ const BonusCart = () => {
         dispatch(fetchUserInfo());
       }
     };
-
     loadUserInfo();
   }, [dispatch, token]);
 
@@ -43,7 +43,7 @@ const BonusCart = () => {
   return (
     <>
       {token && user ? (
-        <Pressable onPress={() => router.push("/(tabs)/qrCode")}>
+        <Pressable onPress={() => router.push("/(tabs)/qrCode")} style={stylesAll.container}>
           <ImageBackground
             source={require("../../assets/images/pattern.png")}
             style={styles.bonus_block}

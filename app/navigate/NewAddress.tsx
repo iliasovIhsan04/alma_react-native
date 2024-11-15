@@ -7,6 +7,9 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
 } from "react-native";
 import { stylesAll } from "../../style";
 import { router } from "expo-router";
@@ -62,7 +65,10 @@ const NewAddress = () => {
   };
 
   return (
-    <View style={stylesAll.background_block}>
+    <KeyboardAvoidingView  behavior={Platform.OS === "ios" ? "padding" : "height"}
+    style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <View style={stylesAll.background_block}>
       <View style={stylesAll.container}>
         <View style={stylesAll.header}>
           <TouchableOpacity
@@ -161,6 +167,9 @@ const NewAddress = () => {
         </View>
       </View>
     </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
+ 
   );
 };
 

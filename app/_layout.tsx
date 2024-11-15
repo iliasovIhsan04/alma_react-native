@@ -10,6 +10,7 @@ export default function RootLayout() {
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  
 
   const getToken = async (): Promise<void> => {
     try {
@@ -28,7 +29,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (!loading && !token) {
-      router.replace("/navigate/OnBoarding");
+      router.replace("/auth/Login");
     }
   }, [loading, token]);
 

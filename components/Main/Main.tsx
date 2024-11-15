@@ -10,6 +10,8 @@ import {
   Pressable,
   Animated,
   RefreshControl,
+  Platform,
+  Linking,
 } from "react-native";
 import BonusCart from "./BonusCart";
 import Header from "./Header";
@@ -26,14 +28,21 @@ import { useRoute } from "@react-navigation/native";
 
 export default function Main() {
   const dispatch: AppDispatch = useDispatch();
-  const [openModal, setOpenModal] = useState(false);
   const scaleValueModal1 = useRef(new Animated.Value(0)).current;
   const opacityValueModal1 = useRef(new Animated.Value(0)).current;
   const [modalRegistration, setModalRegistration] = useState(false);
   const scaleValueModal2 = useRef(new Animated.Value(0)).current;
   const opacityValueModal2 = useRef(new Animated.Value(0)).current;
-
   const [refreshing, setRefreshing] = useState(false);
+  const handlePress = () => {
+    const androidUrl = 'https://play.google.com/store/apps/details?id=com.alma.go';
+    const iosUrl = 'https://apps.apple.com/kg/app/alma-go-%D0%B4%D0%BE%D1%81%D1%82%D0%B0%D0%B2%D0%BA%D0%B0-%D0%BF%D1%80%D0%BE%D0%B4%D1%83%D0%BA%D1%82%D0%BE%D0%B2/id6477783621';
+
+    const url = Platform.OS === 'android' ? androidUrl : iosUrl;
+    Linking.openURL(url).catch((err) => console.error('URL ачууда каталар:', err));
+  };
+
+
   const route = useRoute();
   const { showModal } = route.params || {};
   useEffect(() => {
@@ -50,36 +59,6 @@ export default function Main() {
       setRefreshing(false);
     }
   }, [dispatch]);
-
-  useEffect(() => {
-    if (openModal) {
-      Animated.parallel([
-        Animated.spring(scaleValueModal1, {
-          toValue: 1,
-          friction: 5,
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacityValueModal1, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    } else {
-      Animated.parallel([
-        Animated.timing(scaleValueModal1, {
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacityValueModal1, {
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    }
-  }, [openModal]);
 
   useEffect(() => {
     if (modalRegistration) {
@@ -113,33 +92,6 @@ export default function Main() {
 
   return (
     <>
-      <Modal visible={openModal} transparent={true} animationType="none">
-        <Pressable
-          style={stylesAll.content_modal}
-          onPress={() => setOpenModal(false)}
-        >
-          <Animated.View
-            style={[
-              stylesAll.modal_block,
-              {
-                transform: [{ scale: scaleValueModal1 }],
-                opacity: opacityValueModal1,
-              },
-            ]}
-          >
-            <Ionicons
-              onPress={() => setOpenModal(false)}
-              size={24}
-              style={stylesAll.icon_close}
-              name="close"
-            />
-            <Image
-              style={styles.image_modal}
-              source={require("../../assets/images/soonAlmaGoo.png")}
-            />
-          </Animated.View>
-        </Pressable>
-      </Modal>
       <Modal
         visible={modalRegistration}
         transparent={true}
@@ -200,12 +152,12 @@ export default function Main() {
         }
       >
         <StoryComponent />
-        <View style={{ marginBottom: 125 }}>
+        <View style={{ marginBottom: 50 }}>
           <BonusCart />
           <View style={styles.apple_check_price}>
             <TouchableOpacity
               style={styles.apple_box}
-              onPress={() => setOpenModal(true)}
+              onPress={handlePress}
             >
               <Image
                 style={styles.image_apple}

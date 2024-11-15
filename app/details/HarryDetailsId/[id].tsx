@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     position: "absolute",
     top: 0,
-    right: 7,
+    right: 9,
   },
   list_img: {
     width: 41,
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   block_red: {
-    width: "27%",
+    width: 81,
     height: 81,
     borderRadius: 50,
     backgroundColor: "#fe211f",

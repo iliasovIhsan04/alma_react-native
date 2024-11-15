@@ -134,8 +134,8 @@ const StoryComponent = () => {
               }}
               onStorySeen={updateSeenStories}
               avatarImageStyle={{
-                width: 70,
-                height: 70,
+                width: 53,
+                height: 53, 
                 borderRadius: 50,
               }}
               renderCloseComponent={({ onPress }) => (
@@ -160,6 +160,7 @@ const StoryComponent = () => {
 const styles = StyleSheet.create({
   storyContainer: {
     flex: 1,
+    marginLeft:10
   },
   button: {
     backgroundColor: "rgba(107, 107, 107, 0.3)",

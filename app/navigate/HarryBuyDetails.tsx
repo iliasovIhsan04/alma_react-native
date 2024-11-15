@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     position: "absolute",
     top: 0,
-    right: 7,
+    right: 9,
   },
   list_img: {
     width: 41,
@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   harry_block: {
-    width: "100%",
+    width:'100%',
     height: 360,
     borderRadius: 20,
     borderColor: "#DC0200",
@@ -207,8 +207,8 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   block_red: {
-    width: "27%",
-    height: 81,
+    width:80,
+    height: 80,
     borderRadius: 50,
     backgroundColor: "#fe211f",
     flexDirection: "column",

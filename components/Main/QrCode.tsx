@@ -19,6 +19,7 @@ const QrCode = () => {
       setToken(null);
     }
   };
+
   useEffect(() => {
     const loadUserInfo = async () => {
       await getToken();
@@ -31,23 +32,23 @@ const QrCode = () => {
 
   const data = useSelector((state: RootState) => state.users);
   const user = data?.user;
-  
+
   return (
     <View style={stylesAll.background_block}>
       <View style={stylesAll.container}>
         <View style={stylesAll.header}>
-          <TouchableOpacity
-            style={stylesAll.header_back_btn}
-          ></TouchableOpacity>
-          <Text
-            style={[
-              stylesAll.header_name,
-              { textAlign: "center", flexDirection: "column" },
-            ]}
-          >
-            Ваша карта «Алма»
+          <TouchableOpacity style={stylesAll.header_back_btn}></TouchableOpacity>
+          <View style={{ flexDirection: 'column' }}>
+            <Text
+              style={[
+                stylesAll.header_name,
+                { textAlign: "center", flexDirection: "column" },
+              ]}
+            >
+              Ваша карта «Алма»
+            </Text>
             <Text style={styles.qr_code_id}>{user?.bonus_id}</Text>
-          </Text>
+          </View>
           <View style={stylesAll.header_back_btn}></View>
         </View>
         <View style={styles.qr_code_box}>
@@ -57,19 +58,32 @@ const QrCode = () => {
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   qr_code_id: {
     fontSize: 16,
     fontWeight: "400",
     color: "#DC0200",
+    textAlign: 'center',
   },
   qr_code_box: {
     width: "100%",
     height: 350,
+    backgroundColor: "#FFF", 
+    shadowColor: "#000", 
+    marginTop:10,
+    shadowOffset: {
+      width: 0,
+      height: 4, 
+    },
+    shadowOpacity: 0.3, 
+    shadowRadius: 4.65,
+    elevation: 8,
   },
   gr_code_img: {
     width: "100%",
     height: "100%",
   },
 });
+
 export default QrCode;
