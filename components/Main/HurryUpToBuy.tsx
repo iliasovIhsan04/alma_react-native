@@ -69,6 +69,7 @@ const HurryUpToBuy = () => {
         horizontal={true}
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
+        style={{marginLeft:20}}
       >
         <View style={{ gap: 10, flexDirection: "row" }}>
           {data.map((item) => (

@@ -206,15 +206,13 @@ const styles = StyleSheet.create({
     objectFit: "cover",
   },
   apple_check_price: {
-    width: "100%",
     flexDirection: "row",
     alignItems: "center",
-    flexWrap: "wrap",
     gap: 10,
     paddingHorizontal:20
   },
   apple_box: {
-    width: "48.7%",
+    flex: 1,  
     height: 58,
     borderRadius: 10,
     backgroundColor:'red'
@@ -226,8 +224,8 @@ const styles = StyleSheet.create({
     borderRadius:10
   },
   check_price_box: {
-    width: "48.7%",
-    height: 58,
+    flex: 1,  
+    height:58,
     flexDirection: "row",
     alignItems: "center",
     borderRadius: 10,
