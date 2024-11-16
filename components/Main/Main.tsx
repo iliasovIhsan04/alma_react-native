@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
     paddingHorizontal:20
   },
   apple_box: {
-    width: "48%",
+    width: "48.7%",
     height: 58,
     borderRadius: 10,
     backgroundColor:'red'
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
     borderRadius:10
   },
   check_price_box: {
-    width: "48%",
+    width: "48.7%",
     height: 58,
     flexDirection: "row",
     alignItems: "center",

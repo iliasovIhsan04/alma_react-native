@@ -7,12 +7,11 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "#DC0200",
-        headerShown: false,
+        tabBarActiveTintColor: "#DC0200",  
+        headerShown: false, 
         tabBarStyle: {
           ...(Platform.OS === 'android' && {
-            paddingTop: 10,  
-            paddingBottom: 10, 
+            height:85
           }),
         },
       }}
