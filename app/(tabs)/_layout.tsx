@@ -11,7 +11,7 @@ export default function TabLayout() {
         headerShown: false, 
         tabBarStyle: {
           ...(Platform.OS === 'android' && {
-            height:70
+            height:65
           }),
         },
       }}
