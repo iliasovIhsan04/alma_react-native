@@ -7,29 +7,24 @@ import {
   Image,
   Animated,
 } from "react-native";
-import { BarCodeScanner } from "expo-barcode-scanner";
-import { router } from "expo-router";
+import { Camera } from "expo-camera"; // expo-camera импорттоо
+import { useRouter } from "expo-router"; // router'ди колдонуу
 import { stylesAll } from "@/style";
 
 const ProductGiven = () => {
-  const [scanned, setScanned] = useState(false);
-  const [hasPermission, setHasPermission] = useState(null);
-  const [borderColor, setBorderColor] = useState("#7ED957");
-  const [scaleAnimation] = useState(new Animated.Value(1));
+  const [hasPermission, setHasPermission] = useState(null); // Камера уруксаты
+  const [scanned, setScanned] = useState(false); // Сканерленгенби текшерүү
+  const [borderColor, setBorderColor] = useState("#7ED957"); // Рамка түсү
+  const [scaleAnimation] = useState(new Animated.Value(1)); // Анимация
 
-  useEffect(() => {
-    (async () => {
-      const { status } = await BarCodeScanner.requestPermissionsAsync();
-      setHasPermission(status === "granted");
-    })();
-  }, []);
-
+  const router = useRouter(); // Router
   const handleBarCodeScanned = async ({ data }) => {
-    if (scanned) return;
+    if (scanned || !data) return;
 
     setScanned(true);
     setBorderColor("#68B936");
 
+    // Анимация
     Animated.sequence([
       Animated.timing(scaleAnimation, {
         toValue: 1.2,
@@ -43,58 +38,69 @@ const ProductGiven = () => {
       }),
     ]).start();
 
+    // Продукциянын бар-жогун текшерүү
     const productExists = await checkProduct(data);
-    router.push(`/details/BarrCodeId/${data}`);
+
+    if (productExists) {
+      router.push(`/details/BarrCodeId/${data}`); // Баракка өтүү
+    } else {
+      console.log("Өзгөчөлүк табылган жок");
+    }
   };
 
   const checkProduct = async (data) => {
-    return false;
+    // Продукцияны текшерүү
+    return false; // Бул жерде логикаңызды кошуңуз
   };
 
+  useEffect(() => {
+    (async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync(); // Камера уруксатын сурайт
+      setHasPermission(status === "granted");
+    })();
+  }, []);
+
   if (hasPermission === null) {
-    return <Text>Запрашиваем доступ к камере...</Text>;
+    return <Text>Loading...</Text>; // Уруксаттын статусы өтүнүчү күтүүдө
   }
   if (hasPermission === false) {
-    return <Text>Нет доступа к камере</Text>;
+    return <Text>No access to camera</Text>; // Камерага уруксат берилген эмес
   }
 
   return (
-    <>
-      <View style={stylesAll.container}>
-        <View style={[stylesAll.header, styles.header_given]}>
-          <TouchableOpacity
-            style={stylesAll.header_back_btn}
-            onPress={() => router.push("/")}
-          >
-            <Image
-              style={{ width: 24, height: 24 }}
-              source={require("../../assets/images/moreLeft.png")}
-            />
-          </TouchableOpacity>
-          <Text style={stylesAll.header_name}>Сканировать</Text>
-          <View style={stylesAll.header_back_btn}></View>
-        </View>
+    <View style={stylesAll.container}>
+      <View style={[stylesAll.header, styles.header_given]}>
+        <TouchableOpacity
+          style={stylesAll.header_back_btn}
+          onPress={() => router.push("/")}
+        >
+          <Image
+            style={{ width: 24, height: 24 }}
+            source={require("../../assets/images/moreLeft.png")}
+          />
+        </TouchableOpacity>
+        <Text style={stylesAll.header_name}>Сканировать</Text>
+        <View style={stylesAll.header_back_btn}></View>
       </View>
+
       <View style={styles.scannerContainer}>
-        <BarCodeScanner
-          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+        <Camera
+          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned} // Баркод сканерлөө
           style={StyleSheet.absoluteFillObject}
+          type={Camera.Constants.Type.back} // Камеранын түрү
         />
         <View style={styles.overlay}>
           <Animated.View
             style={[
               styles.scannerFrame,
-              {
-                borderColor,
-                transform: [{ scale: scaleAnimation }],
-              },
+              { borderColor, transform: [{ scale: scaleAnimation }] },
             ]}
           />
         </View>
         {scanned && (
           <TouchableOpacity
             style={styles.scanAgainButton}
-            onPress={() => setScanned(false)}
+            onPress={() => setScanned(false)} // Сканерди кайра жандандыруу
           >
             <Text style={styles.buttonText}>Сканировать снова</Text>
           </TouchableOpacity>
@@ -108,7 +114,7 @@ const ProductGiven = () => {
           </Text>
         </View>
       </View>
-    </>
+    </View>
   );
 };
 
