@@ -46,6 +46,7 @@ const Promotion = () => {
           justifyContent: "space-between",
           marginTop: 30,
           marginBottom: 10,
+          paddingHorizontal:20
         }}
       >
         <Text style={styles.prom_text}>Акции</Text>
@@ -66,6 +67,7 @@ const Promotion = () => {
         horizontal={true}
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
+        style={{marginLeft:20}}
       >
         {
           <View style={{ flexDirection: "row", gap: 10 }}>

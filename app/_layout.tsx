@@ -10,6 +10,7 @@ export default function RootLayout() {
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  
 
   const getToken = async (): Promise<void> => {
     try {

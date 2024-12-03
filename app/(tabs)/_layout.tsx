@@ -1,15 +1,19 @@
 import { Tabs } from "expo-router";
 import React from "react";
-
-import { Image, View } from "react-native";
+import { Image, View, Platform } from "react-native";
 import { stylesAll } from "../../style";
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "#DC0200",
-        headerShown: false,
+        tabBarActiveTintColor: "#DC0200",  
+        headerShown: false, 
+        tabBarStyle: {
+          ...(Platform.OS === 'android' && {
+            height:65
+          }),
+        },
       }}
     >
       <Tabs.Screen
@@ -37,7 +41,6 @@ export default function TabLayout() {
         name="catalog"
         options={{
           title: "Каталог",
-
           tabBarIcon: ({ focused }) => (
             <View>
               {focused ? (

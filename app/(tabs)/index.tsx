@@ -5,9 +5,7 @@ import { stylesAll } from "../../style";
 export default function HomeScreen() {
   return (
     <View style={stylesAll.background_block}>
-      <View style={styles.container}>
         <Main />
-      </View>
     </View>
   );
 }

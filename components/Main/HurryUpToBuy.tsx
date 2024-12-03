@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import Morees from "../../assets/svg/More";
 import { router } from "expo-router";
+import { stylesAll } from "@/style";
 interface HarryBuy {
   id: number;
   title: string;
@@ -41,9 +42,8 @@ const HurryUpToBuy = () => {
   }, []);
 
   console.log(data);
-
   return (
-    <>
+    <View>
       <View
         style={{
           flexDirection: "row",
@@ -51,6 +51,7 @@ const HurryUpToBuy = () => {
           justifyContent: "space-between",
           marginTop: 30,
           marginBottom: 10,
+          paddingHorizontal:20
         }}
       >
         <Text style={styles.prom_text}>Успей купить</Text>
@@ -68,6 +69,7 @@ const HurryUpToBuy = () => {
         horizontal={true}
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
+        style={{marginLeft:20}}
       >
         <View style={{ gap: 10, flexDirection: "row" }}>
           {data.map((item) => (
@@ -109,7 +111,7 @@ const HurryUpToBuy = () => {
           ))}
         </View>
       </ScrollView>
-    </>
+    </View>
   );
 };
 

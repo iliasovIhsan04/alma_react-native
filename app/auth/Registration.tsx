@@ -7,6 +7,9 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
 } from "react-native";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
@@ -104,7 +107,10 @@ const Registration = () => {
   const handleConfirmPassword = () => setVisible2(!visible2);
 
   return (
-    <View style={stylesAll.background_block}>
+    <KeyboardAvoidingView   behavior={Platform.OS === "ios" ? "padding" : "height"}
+    style={{ flex: 1 }}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+      <View style={stylesAll.background_block}>
       <View style={stylesAll.container}>
         <View style={[stylesAll.header, stylesAll.header_nav]}>
           <TouchableOpacity style={stylesAll.header_back_btn} />
@@ -195,6 +201,7 @@ const Registration = () => {
                   setUserData({ ...userData, password: text })
                 }
                 value={userData.password}
+                keyboardType="default"  
               />
               <TouchableOpacity onPress={handlePassword}>
                 <Ionicons
@@ -226,6 +233,7 @@ const Registration = () => {
                   setUserData({ ...userData, confirm_password: text })
                 }
                 value={userData.confirm_password}
+                keyboardType="default"  
               />
               <TouchableOpacity onPress={handleConfirmPassword}>
                 <Ionicons
@@ -269,6 +277,9 @@ const Registration = () => {
         </View>
       </View>
     </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  
   );
 };
 

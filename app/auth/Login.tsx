@@ -28,16 +28,21 @@ const Login = () => {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
   const handleLoginEvent = async () => {
     setIsLoading(true);
     const phoneNumber =
       "+996 " + phone.slice(0, 3) + phone.slice(3, 6) + phone.slice(6);
+
+      let userCredential = {
+        phone:phoneNumber, 
+        password
+      }
+
+      const handleCode = () => {
+        axios.post(url+ "/auth/send-code", userCredential)
+      }
     try {
-      const response = await axios.post(`${url}/auth/login`, {
-        phone: phoneNumber,
-        password,
-      });
+      const response = await axios.post(`${url}/auth/login`, userCredential);
       if (response.data) {
         setErrorActivation(response.data);
       }
@@ -50,7 +55,8 @@ const Login = () => {
 
       if (response.data.isactivated === false) {
         await AsyncStorage.setItem("phone", phone.replace(/\D/g, ""));
-        router.push("activation");
+        router.push("auth/Activation");
+        handleCode()
       }
 
       if (response.data.token) {
@@ -125,6 +131,7 @@ const Login = () => {
                 secureTextEntry={!visible}
                 onChangeText={setPassword}
                 value={password}
+                keyboardType="default"  
               />
               <TouchableOpacity onPress={handlePassword}>
                 <Ionicons

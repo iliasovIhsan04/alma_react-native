@@ -419,6 +419,7 @@ const MyDetails = () => {
             >
               <Text style={styles.switch_text}>Наличие домашних животных</Text>
               <Switch
+                trackColor={{ false: "#3e3e3e", true: "#25D366" }}
                 value={info.car}
                 onValueChange={(value) => {
                   setInfo((prev) => ({ ...prev, car: value }));
@@ -445,6 +446,7 @@ const MyDetails = () => {
                 onValueChange={(value) => {
                   setInfo((prev) => ({ ...prev, animal: value }));
                   toggleSwitchTwo();
+                  setIsModified(true);
                 }}
               />
             </View>

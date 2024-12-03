@@ -21,7 +21,7 @@ const Header = () => {
   }, []);
   
   return (
-    <View style={[styles.header, stylesAll.header_nav]}>
+    <View style={[styles.header, stylesAll.header_nav, stylesAll.container ]}>
       <Pressable onPress={() => router.push("/navigate/Notifications")}>
         <Image
           style={stylesAll.icons}

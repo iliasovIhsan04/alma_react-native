@@ -4,6 +4,8 @@ import {
   Alert,
   Animated,
   Image,
+  KeyboardAvoidingView,
+  Platform,
   StyleSheet,
   Text,
   TextInput,
@@ -21,6 +23,7 @@ import { Modal } from "react-native";
 import { Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { ScrollView } from "react-native";
 
 const PlacingOrder = () => {
   const [local, setLocal] = useState<string | null>(null);
@@ -172,6 +175,9 @@ const PlacingOrder = () => {
   }, [openModal]);
 
   return (
+    <KeyboardAvoidingView style={{flex:1}} behavior={Platform.OS === "ios" ? "padding" : "height"}
+    keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}> 
+   <ScrollView contentContainerStyle={{flexGrow:1}}>
     <View style={stylesAll.background_block}>
       <Modal visible={openModal} transparent={true} animationType="none">
         <Pressable style={stylesAll.content_modal}>
@@ -427,6 +433,10 @@ const PlacingOrder = () => {
         </TouchableOpacity>
       </View>
     </View>
+    </ScrollView>
+    </KeyboardAvoidingView>
+ 
+
   );
 };
 
