@@ -9,6 +9,7 @@ const AboutTheApplication = () => {
       <View style={stylesAll.container}>
         <View style={stylesAll.header}>
           <TouchableOpacity
+          
             style={stylesAll.header_back_btn}
             onPress={() => router.push("/(tabs)/profile")}
           >
