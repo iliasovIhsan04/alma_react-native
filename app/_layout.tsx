@@ -2,15 +2,14 @@ import store from "@/Redux/reducer/store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Stack, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator } from "react-native";
-import { View } from "react-native";
 import { Provider } from "react-redux";
+import * as SplashScreen from "expo-splash-screen";
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  
 
   const getToken = async (): Promise<void> => {
     try {
@@ -24,9 +23,17 @@ export default function RootLayout() {
     }
   };
   useEffect(() => {
-    getToken();
+    (async () => {
+      try {
+        await getToken(); 
+        await new Promise((resolve) => setTimeout(resolve, 3000)); 
+      } catch (error) {
+        console.error("Splash Screen Error:", error);
+      } finally {
+        await SplashScreen.hideAsync();
+      }
+    })();
   }, []);
-
   useEffect(() => {
     if (!loading && !token) {
       router.replace("/navigate/OnBoarding");
@@ -34,11 +41,7 @@ export default function RootLayout() {
   }, [loading, token]);
 
   if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="#DC0200" />
-      </View>
-    );
+    return null;
   }
   return (
     <Provider store={store}>

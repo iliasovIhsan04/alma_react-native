@@ -1,20 +1,27 @@
 {
   "expo": {
     "name": "Alma Market",
-    "slug": "alma-market-native",
+    "slug": "alma",
     "icon": "./assets/logoApple.png",
     "android": {
-      "package": "com.navisdevs.almamarket"
+      "package": "com.navisdevs.alma"
     },
-    "scheme": "alma-market",
     "ios": {
-      "bundleIdentifier": "com.navisdevs.almamarket"
+      "bundleIdentifier": "com.navisdevs.alma"
+    },
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
     },
     "version": "1.0.5",
     "extra": {
       "eas": {
         "projectId": "81f038ad-4d5e-4302-bac5-0bac45800826"
       }
-    }
+    },
+    "plugins": [
+      "expo-router"
+    ]
   }
 }
