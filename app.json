@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Alma Market",
-    "slug": "alma",
+    "slug": "alma-market-native",
     "icon": "./assets/logoApple.png",
     "android": {
       "package": "com.navisdevs.alma"
@@ -14,7 +14,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "version": "1.0.5",
+    "version": "2.0.1",
     "extra": {
       "eas": {
         "projectId": "81f038ad-4d5e-4302-bac5-0bac45800826"

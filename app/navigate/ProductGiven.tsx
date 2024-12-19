@@ -7,24 +7,23 @@ import {
   Image,
   Animated,
 } from "react-native";
-import { Camera } from "expo-camera"; // expo-camera импорттоо
-import { useRouter } from "expo-router"; // router'ди колдонуу
+import { BarCodeScanner } from "expo-barcode-scanner";
+import { useRouter } from "expo-router";
 import { stylesAll } from "@/style";
 
 const ProductGiven = () => {
-  const [hasPermission, setHasPermission] = useState(null); // Камера уруксаты
-  const [scanned, setScanned] = useState(false); // Сканерленгенби текшерүү
-  const [borderColor, setBorderColor] = useState("#7ED957"); // Рамка түсү
-  const [scaleAnimation] = useState(new Animated.Value(1)); // Анимация
+  const [hasPermission, setHasPermission] = useState(null);
+  const [scanned, setScanned] = useState(false);
+  const [borderColor, setBorderColor] = useState("#7ED957");
+  const [scaleAnimation] = useState(new Animated.Value(1));
 
-  const router = useRouter(); // Router
+  const router = useRouter();
+
   const handleBarCodeScanned = async ({ data }) => {
     if (scanned || !data) return;
-
     setScanned(true);
     setBorderColor("#68B936");
 
-    // Анимация
     Animated.sequence([
       Animated.timing(scaleAnimation, {
         toValue: 1.2,
@@ -38,92 +37,128 @@ const ProductGiven = () => {
       }),
     ]).start();
 
-    // Продукциянын бар-жогун текшерүү
     const productExists = await checkProduct(data);
 
     if (productExists) {
-      router.push(`/details/BarrCodeId/${data}`); // Баракка өтүү
+      router.push(`/details/BarrCodeId/${data}`);
     } else {
       console.log("Өзгөчөлүк табылган жок");
     }
   };
 
   const checkProduct = async (data) => {
-    // Продукцияны текшерүү
-    return false; // Бул жерде логикаңызды кошуңуз
+    return false; 
   };
 
   useEffect(() => {
     (async () => {
-      const { status } = await Camera.requestCameraPermissionsAsync(); // Камера уруксатын сурайт
+      const { status } = await BarCodeScanner.requestPermissionsAsync();
       setHasPermission(status === "granted");
     })();
   }, []);
 
   if (hasPermission === null) {
-    return <Text>Loading...</Text>; // Уруксаттын статусы өтүнүчү күтүүдө
+    return <Text>Loading...</Text>;
   }
   if (hasPermission === false) {
-    return <Text>No access to camera</Text>; // Камерага уруксат берилген эмес
+    return <Text>No access to camera</Text>;
   }
-
   return (
-    <View style={stylesAll.container}>
-      <View style={[stylesAll.header, styles.header_given]}>
-        <TouchableOpacity
-          style={stylesAll.header_back_btn}
-          onPress={() => router.push("/")}
-        >
-          <Image
-            style={{ width: 24, height: 24 }}
-            source={require("../../assets/images/moreLeft.png")}
-          />
-        </TouchableOpacity>
-        <Text style={stylesAll.header_name}>Сканировать</Text>
-        <View style={stylesAll.header_back_btn}></View>
+    <View style={styles.container_block}>
+      <View style={stylesAll.container}>
+        <View style={[stylesAll.header, styles.header_given]}>
+          <TouchableOpacity
+            style={stylesAll.header_back_btn}
+            onPress={() => router.push("/")}
+          >
+            <Image
+              style={{ width: 24, height: 24 }}
+              source={require("../../assets/images/moreLeft.png")}
+            />
+          </TouchableOpacity>
+          <Text style={stylesAll.header_name}>Сканировать</Text>
+          <View style={stylesAll.header_back_btn}></View>
+        </View>
       </View>
-
       <View style={styles.scannerContainer}>
-        <Camera
-          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned} // Баркод сканерлөө
+        <BarCodeScanner
+          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
           style={StyleSheet.absoluteFillObject}
-          type={Camera.Constants.Type.back} // Камеранын түрү
         />
-        <View style={styles.overlay}>
+        <View style={styles.overlay}> 
           <Animated.View
-            style={[
-              styles.scannerFrame,
-              { borderColor, transform: [{ scale: scaleAnimation }] },
-            ]}
+            style={[styles.scannerFrame, { borderColor, transform: [{ scale: scaleAnimation }] }]}
           />
         </View>
         {scanned && (
           <TouchableOpacity
             style={styles.scanAgainButton}
-            onPress={() => setScanned(false)} // Сканерди кайра жандандыруу
+            onPress={() => setScanned(false)}
           >
             <Text style={styles.buttonText}>Сканировать снова</Text>
           </TouchableOpacity>
         )}
-        <View style={styles.instruction_block}>
-          <Text style={styles.instructionText}>
-            Наведите на штрих код товара
-          </Text>
-          <Text style={styles.subInstructionText}>
-            Мы найдем этот товар у нас
-          </Text>
+        <View style={styles.instructionBlock}>
+          <Text style={styles.instructionText}>Наведите на штрих код товара</Text>
+          <Text style={styles.subInstructionText}>Мы найдем этот товар у нас</Text>
         </View>
       </View>
     </View>
   );
+  
 };
 
 const styles = StyleSheet.create({
   header_given: {
     paddingBottom: 10,
   },
-  instruction_block: {
-    marginTop: 280,
+  container_block: {
+    flex: 1,
+  },
+  scannerContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "transparent", 
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", 
+  },
+  scannerFrame: {
+    width: 250,
+    height: 200,
+    borderColor: "rgba(255, 255, 255, 0.6)",
+    borderWidth: 2,
+    borderRadius: 15,
+    borderStyle: "dashed",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  scanAgainButton: {
+    paddingVertical: 14,
+    paddingHorizontal: 30,
+    backgroundColor: "#68B936",
+    borderRadius: 12,
+    alignItems: "center",
+    position: "absolute",
+    bottom: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  buttonText: {
+    color: "#FFF",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  instructionBlock: {
+    marginTop: "auto",
+    marginBottom: 50,
   },
   instructionText: {
     color: "#FFF",
@@ -138,40 +173,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 5,
     fontWeight: "400",
-  },
-  scannerContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.85)",
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  scannerFrame: {
-    width: 250,
-    height: 200,
-    borderColor: "rgba(255, 255, 255, 0.6)",
-    borderWidth: 2,
-    borderRadius: 15,
-    position: "relative",
-    borderStyle: "dashed",
-  },
-  scanAgainButton: {
-    marginTop: 350,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    backgroundColor: "#68B936",
-    borderRadius: 10,
-    alignItems: "center",
-    position: "absolute",
-  },
-  buttonText: {
-    color: "#FFF",
-    fontSize: 16,
-    fontWeight: "bold",
   },
 });
 

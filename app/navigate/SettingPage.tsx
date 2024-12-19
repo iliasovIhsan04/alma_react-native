@@ -15,7 +15,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import ModalDown from "@/Modal";
 import axios from "axios";
 import { url } from "@/Api";
-
 const SettingPage = () => {
   const [isPetONe, setIsPetOne] = useState(false);
   const [isPetTwo, setIsPetTwo] = useState(false);
