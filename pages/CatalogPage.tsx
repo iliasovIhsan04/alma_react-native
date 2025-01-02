@@ -42,7 +42,6 @@ const CatalogPage = () => {
       </View>
     );
   }
-
   return (
     <View style={styles.shop_block}>
       {data.map((item) => (
