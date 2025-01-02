@@ -42,6 +42,7 @@ const BarrCodeId = () => {
   const [data, setData] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const { id } = useLocalSearchParams();
+  const notFound = id && id.includes("notFound=true");
   const [isInBasket, setIsInBasket] = useState(false);
   const [favoriteItems, setFavoriteItems] = useState<Set<number>>(new Set());
   const [cart, setCart] = useState<Product[]>([]);
@@ -222,61 +223,69 @@ const BarrCodeId = () => {
         </View>
       ) : (
         <>
-          {data?.status === true ? (
-            <>
-              <Images data={data.img} />
-              <View style={stylesAll.container}>
-                <View style={styles.product_block}>
-                  <Text style={styles.product_title}>{data.title}</Text>
-                  <View
-                    style={{ flexDirection: "column", gap: 5, marginTop: 16 }}
-                  >
-                    <View style={styles.row}>
-                      <Text style={styles.product_name}>Артикул:</Text>
-                      <Text style={styles.product_code}>{data.code}</Text>
-                    </View>
-                    <View style={styles.row}>
-                      <Text style={styles.product_name}>
-                        1 {data.price_for}
-                      </Text>
-                      <Text style={[styles.product_old_price, styles.price]}>
-                        {data.price}
-                      </Text>
-                    </View>
-                    <View style={styles.row}>
-                      <Text style={styles.product_name}>По карте</Text>
-                      <Text style={styles.product_old_price}>
-                        {data.old_price}
-                      </Text>
-                    </View>
-                  </View>
-                  <View
-                    style={{ flexDirection: "column", gap: 10, marginTop: 30 }}
-                  >
-                    <Text style={styles.description_name}>Описание:</Text>
-                    <Text style={styles.description_text}>
-                      {data.description}
-                    </Text>
-                  </View>
-                </View>
-              </View>
-              <TouchableOpacity
-                style={[stylesAll.button, styles.btn_product]}
-                onPress={() =>
-                  isInBasket
-                    ? router.push(`navigate/BasketPage`)
-                    : Basket(data.id, data)
-                }
-              >
-                <Text style={stylesAll.button_text}>
-                  {isInBasket ? "В корзине" : "Добавить в корзину"}
-                </Text>
-              </TouchableOpacity>
-            </>
-          ) : (
+          {notFound ? (
             <View style={stylesAll.loading_catalog_page}>
               <Text style={stylesAll.barrcode_page_text}>Товар не найден!</Text>
             </View>
+          ) : (
+            <>
+              {data?.status === true ? (
+                <>
+                  <Images data={data.img} />
+                  <View style={stylesAll.container}>
+                    <View style={styles.product_block}>
+                      <Text style={styles.product_title}>{data.title}</Text>
+                      <View
+                        style={{ flexDirection: "column", gap: 5, marginTop: 16 }}
+                      >
+                        <View style={styles.row}>
+                          <Text style={styles.product_name}>Артикул:</Text>
+                          <Text style={styles.product_code}>{data.code}</Text>
+                        </View>
+                        <View style={styles.row}>
+                          <Text style={styles.product_name}>
+                            1 {data.price_for}
+                          </Text>
+                          <Text style={[styles.product_old_price, styles.price]}>
+                            {data.price}
+                          </Text>
+                        </View>
+                        <View style={styles.row}>
+                          <Text style={styles.product_name}>По карте</Text>
+                          <Text style={styles.product_old_price}>
+                            {data.old_price}
+                          </Text>
+                        </View>
+                      </View>
+                      <View
+                        style={{ flexDirection: "column", gap: 10, marginTop: 30 }}
+                      >
+                        <Text style={styles.description_name}>Описание:</Text>
+                        <Text style={styles.description_text}>
+                          {data.description}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                  <TouchableOpacity
+                    style={[stylesAll.button, styles.btn_product]}
+                    onPress={() =>
+                      isInBasket
+                        ? router.push(`navigate/BasketPage`)
+                        : Basket(data.id, data)
+                    }
+                  >
+                    <Text style={stylesAll.button_text}>
+                      {isInBasket ? "В корзине" : "Добавить в корзину"}
+                    </Text>
+                  </TouchableOpacity>
+                </>
+              ) : (
+                <View style={stylesAll.loading_catalog_page}>
+                  <Text style={stylesAll.barrcode_page_text}>Товар не найден!</Text>
+                </View>
+              )}
+            </>
           )}
         </>
       )}

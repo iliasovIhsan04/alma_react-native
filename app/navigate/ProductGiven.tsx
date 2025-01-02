@@ -19,7 +19,7 @@ const ProductGiven = () => {
 
   const router = useRouter();
 
-  const handleBarCodeScanned = async ({ data }) => {
+  const handleBarCodeScanned = async ({ data }: { data: string }) => {
     if (scanned || !data) return;
     setScanned(true);
     setBorderColor("#68B936");
@@ -42,7 +42,7 @@ const ProductGiven = () => {
     if (productExists) {
       router.push(`/details/BarrCodeId/${data}`);
     } else {
-      console.log("Өзгөчөлүк табылган жок");
+      router.push(`/details/BarrCodeId/${data}?notFound=true`);
     }
   };
 
@@ -90,14 +90,14 @@ const ProductGiven = () => {
             style={[styles.scannerFrame, { borderColor, transform: [{ scale: scaleAnimation }] }]}
           />
         </View>
-        {scanned && (
+  {scanned && (
           <TouchableOpacity
             style={styles.scanAgainButton}
             onPress={() => setScanned(false)}
           >
             <Text style={styles.buttonText}>Сканировать снова</Text>
           </TouchableOpacity>
-        )}
+    )}
         <View style={styles.instructionBlock}>
           <Text style={styles.instructionText}>Наведите на штрих код товара</Text>
           <Text style={styles.subInstructionText}>Мы найдем этот товар у нас</Text>
@@ -138,13 +138,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   scanAgainButton: {
-    paddingVertical: 14,
-    paddingHorizontal: 30,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
     backgroundColor: "#68B936",
     borderRadius: 12,
     alignItems: "center",
     position: "absolute",
-    bottom: 20,
+    bottom: 110,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,

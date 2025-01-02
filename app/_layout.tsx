@@ -39,7 +39,6 @@ export default function RootLayout() {
       router.replace("/navigate/OnBoarding");
     }
   }, [loading, token]);
-
   if (loading) {
     return null;
   }
